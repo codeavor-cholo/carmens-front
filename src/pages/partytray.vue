@@ -4,10 +4,10 @@
             <div class="row q-gutter-md">
             <div class="q-pa-md q-pl-xl" style="font-size:60px;font-family: 'Domine', serif;padding-left:130px">PARTY TRAYS</div>
             <div class="row items-center q-pa-sm" style="padding-left:120px">
-            <q-input dense style="width:400px" rounded standout v-model="search" label="Search" />
+            <q-input dense style="width:400px" rounded standout="bg-white text-grey-8" clearable input-class="text-pink-6" v-model="search" label="Search" color="pink-3"/>
             </div>
             <div class="row items-center">
-            <q-btn-dropdown dense label="filter by">
+            <q-btn-dropdown dense label="filter by" flat color="grey-8">
                 <q-list>
                     <q-item clickable v-close-popup @click="onItemClick">
                     <q-item-section>

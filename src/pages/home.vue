@@ -4,7 +4,7 @@
     <q-header class="transparent text-white row items-center justify-start" style="height:63px">
       <q-toolbar>
         <div class="q-px-sm q-pt-sm q-pl-xl">
-        <img style="height:100%;width:110px" src="statics/pics/carmen.png">
+        <img style="height:100%;width:180px" src="statics/pics/carmen-logo.png" @click="$router.push('/')">
         </div>
 
         <div style="color:#E4ACBF">
@@ -13,7 +13,7 @@
         active-color="pink-3" 
         v-model="tab">
         <div class="row q-pa-sm">
-        <div><q-route-tab to="/home" name="air"><b>PARTY TRAYS</b></q-route-tab></div>
+        <div><q-route-tab to="/" name="air"><b>PARTY TRAYS</b></q-route-tab></div>
         <div><q-route-tab to="/catering"><b>CATERING SERVICES</b></q-route-tab></div>
         <div style="padding-left:400px;"><q-route-tab to="" ><b>sign up</b></q-route-tab></div>
         <div><q-route-tab to=""><b>login</b></q-route-tab></div>

@@ -1,8 +1,8 @@
 <template>
 <q-page>
-        <div class="row">
+        <div class="container row">
 <!-- LEFT PART -->
-        <div class="q-pa-sm q-pt-lg q-pl-xl">
+        <div class="col-6 q-pa-sm q-pt-xl q-pl-xl">
             <p style="font-size:60px;font-family: 'Domine', serif;padding:0;margin:0;line-height:60px">A taste of local organ<br> & seasonal flavours</p>
             <p class="q-pt-md" style="font-size:18px;font-family: 'Noto Serif SC', serif;">Whether you're in the mood for a 'small' poutine or a 'big' salad, 'just <br>one' beer or a double shot espresso, when it satisfies your tastebuds. </p>
             <!-- BUTTON FOR PARTYTRAY -->
@@ -39,7 +39,7 @@
         </div>
 <!-- END OF LEFT PART -->
 <!-- RIGHT PART -->
-        <div class="q-pa-sm q-pt-lg q-pl-xl">
+        <div class="col q-pa-sm q-pt-xl q-pl-xl">
             <div class="row q-gutter-md q-pt-sm">
                 <div>
                 <q-card flat class="transparent my-card">

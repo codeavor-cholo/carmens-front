@@ -1,8 +1,8 @@
 {
   "name": "bucs",
   "version": "0.0.1",
-  "description": "A Quasar Framework app",
-  "productName": "Quasar App",
+  "description": "Carmen's Diner and Catering Site",
+  "productName": "Carmen's Diner and Catering",
   "cordovaId": "org.cordova.quasar.app",
   "capacitorId": "",
   "author": "bucopie",

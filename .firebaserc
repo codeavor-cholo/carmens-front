@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "itsbuco-27df9"
+  },
+  "targets": {
+    "itsbuco-27df9": {
+      "hosting": {
+        "front": [
+          "carmensdinercatering"
+        ]
+      }
+    }
+  }
+}
