@@ -16,6 +16,7 @@ const routes = [
        { path: '/catering', component: () => import('pages/catering.vue') },
        { path: '/cateringpage', component: () => import('pages/cateringpage.vue') },
        { path: '/reservation', component: () => import('pages/reservation.vue') },
+       { path: '/profile', component: () => import('pages/profile.vue') },
     ]
   }
 ]
