@@ -11,12 +11,13 @@
                 v-model="tab"
                 vertical
                 inline-label
-                class="text-pink-3"
+                class="text-pink-3 full-height relative-position"
                 >
-                <q-tab name="account" icon="mail" label="My Account" />
-                <q-tab name="wish" icon="alarm" label="My Wishlist" />
-                <q-tab name="order" icon="movie" label="My Orders" />
-                <q-tab name="reserve" icon="movie" label="My Reservation" />
+                <q-tab name="account" label="My Account" />
+                <q-tab name="cart" label="My Cart" />
+                <q-tab name="wish" label="My Wishlist" />
+                <q-tab name="order" label="My Orders" />
+                <q-tab name="reserve" label="My Reservation" />
                 </q-tabs>
                 </div>
             </template>
@@ -51,6 +52,61 @@
                     </div>
                 </q-tab-panel>
 <!-- END OF ACCOUNT AREA -->
+<!-- CART AREA -->
+                <q-tab-panel name="cart">
+                    <div style="font-size:50px;font-family: 'Domine', serif;" class="q-px-xl">My Cart</div>
+                    <q-input filled v-model="search_cart" label="Search">
+                        <template v-slot:prepend>
+                        <q-icon name="search" />
+                        </template>
+                   </q-input>
+                    <q-list bordered separator>
+                            <q-item>
+                                <q-item-section>
+                                    
+                                    <div class="row items-center justify-between">
+                                        <div>
+                                            Food Category!
+                                        </div>
+                                        <q-btn flat icon="delete" text-color="red" />
+                                    </div>    
+
+
+                                    <div class="q-pb-md"> 
+                                    <q-separator class="black"/>
+                                    </div>
+
+                                    <div class="row justify-between">
+                                        <div class="row">
+                                            <div class="row items-center q-pr-md">
+                                                <q-checkbox v-model="val" />
+                                            </div>
+                                            <div>
+                                                <img style="height:100px;width:100px" src="statics/pics/foo.jpeg">
+                                            </div>
+                                            <div class="column q-gutter-md">
+                                                <div class="q-pl-md q-pt-md"><b>Breakfast Food</b></div>
+                                                <div>
+                                                <div class="row items-center q-pl-md">    
+                                                    <q-btn dense outline round text-color="grey-8" icon="remove" />    
+                                                    <q-input readonly style="width:50px" outlined dense v-model="num" />
+                                                    <q-btn dense outline round text-color="grey-8" icon="add" />
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="q-pt-md">Food Definition in Here!</div>
+                                        <div class="column q-gutter-sm justify-end">
+                                            <div class="q-px-md"><b>Total: 200 Pesos</b></div>
+                                            <div class="q-px-xl"><q-btn dense style="background-color:#e4acbf;width:120px" text-color="white" label="Checkout" /></div>
+                                        </div>
+                                    </div>
+                                        
+                                </q-item-section>
+                            </q-item>
+                            </q-list>
+                </q-tab-panel>
+<!-- END OF CART AREA -->
 <!-- WISHLIST AREA -->
                 <q-tab-panel name="wish">
                    <div style="font-size:50px;font-family: 'Domine', serif;" class="q-px-xl">My Wishlist</div>
@@ -305,7 +361,7 @@
 <!-- END OF RESERVATION AREA -->
                 </q-tab-panels>
             </template>
-
+            
             </q-splitter>
             </div>
     </q-page>
@@ -322,6 +378,9 @@ export default {
       search_wish: '',
       search_order: '',
       search_reserve: '',
+      search_cart: '',
+      val: true,
+      num: 1
     }
   }
 }
