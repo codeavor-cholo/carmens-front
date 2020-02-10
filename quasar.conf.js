@@ -67,7 +67,17 @@ module.exports = function (ctx) {
         'QDate',
         'QStepper',
         'QStep',
-        'QStepperNavigation'
+        'QStepperNavigation',
+        'QSplitter',
+        'QTabPanels',
+        'QTabPanel',
+        'QAvatar',
+        'QList',
+        'QItem',
+        'QItemSection',
+        'QItemLabel',
+        'QIcon',
+        'QScrollArea'
       ],
       directives: [
         'ClosePopup'

@@ -15,8 +15,28 @@
         <div class="row q-pa-sm">
         <div><q-route-tab to="/" name="air"><b>PARTY TRAYS</b></q-route-tab></div>
         <div><q-route-tab to="/catering"><b>CATERING SERVICES</b></q-route-tab></div>
-        <div style="padding-left:400px;"><q-route-tab to="" ><b>sign up</b></q-route-tab></div>
-        <div><q-route-tab to=""><b>login</b></q-route-tab></div>
+        <div style="padding-left:380px;"><q-route-tab to="" ><b>sign up</b></q-route-tab></div>
+        <!-- STATIC SHOW HIDE LOGIN -->
+        <div><q-tab v-show="show" @click="show=!show"><b>login</b></q-tab></div>
+        <div class="row items-center">
+          <q-btn-dropdown dense style="background-color:#e4acbf" v-show="!show" text-color="white" label="Codeavor">
+            <q-list>
+              <q-item clickable v-close-popup @click="$router.push('/profile')">
+                <q-item-section>
+                  <q-item-label>My Account</q-item-label>
+                </q-item-section>
+              </q-item>
+
+              <q-item clickable v-close-popup @click="show=!show, $router.push('/')">
+                <q-item-section>
+                  <q-item-label>Log OUt</q-item-label>
+                </q-item-section>
+              </q-item>
+
+            </q-list>
+          </q-btn-dropdown>
+          <!-- END OF STATIC -->
+          </div>
         </div>
         </q-tabs>
         </div>
@@ -55,7 +75,7 @@ export default {
     return {
       tab: 'air',
       search: '',
-      
+      show: true
      
     }
   }
