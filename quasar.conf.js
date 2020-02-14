@@ -77,7 +77,8 @@ module.exports = function (ctx) {
         'QItemSection',
         'QItemLabel',
         'QIcon',
-        'QScrollArea'
+        'QScrollArea',
+        'QCheckbox'
       ],
       directives: [
         'ClosePopup'
