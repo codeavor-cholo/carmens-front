@@ -477,7 +477,7 @@ export default {
         address: '',
         city: '',
         whatToEdit: '',
-        step: 4 ,
+        step: 1 ,
         startTime: '',
         endTime: '',
         OnlineInquiry: {},
