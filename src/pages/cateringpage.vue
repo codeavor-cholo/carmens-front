@@ -8,16 +8,59 @@
         </div>
         <div class="col-5 q-pa-xl">
              <q-card flat class="my-card">
-                <q-card-section>
-                    <div class="column items-center q-pa-sm q-pb-lg" style="font-size:20px"><b>RESERVATION FORM</b></div>
-                    <div class="column q-gutter-lg">
-                    <q-input dense filled v-model="name" label="Event Name" />
-                    <q-input dense filled v-model="pax" label="Number of Head" />
+               <q-card-section class="q-pb-none">
+                 <div class="column items-center q-pt-sm" style="font-size:20px"><b>RESERVATION FORM</b></div>
+               </q-card-section>
+               <q-slide-transition :duration="500">
+                <q-card-section v-show="formStep == 1" >
+                    <div class="column items-center">
+                    <!-- <q-input dense filled v-model="name" label="Event Name" />
+                    <q-input dense filled v-model="pax" label="Number of Head" /> -->
+                          <q-date
+                            v-model="date"
+                            minimal=""
+                            class="shadow-0 q-ma-none"
+                            mask="YYYY-MM-DD"
+                            color="grey-8"
+                          >
+                          </q-date>
                     </div>
-                    <div class="q-pa-sm q-pt-lg column items-center">
-                    <q-btn dense style="background-color:#e4acbf;width:250px" text-color="white" @click="$router.push('/reservation')" label="PROCEED TO PACKAGES" />
+                    <div class="column items-center q-mb-md">
+                    <q-btn dense style="background-color:#e4acbf;width:250px" text-color="white" label="NEXT" @click="formStep = 2"/>
                     </div>
                 </q-card-section>
+               </q-slide-transition>
+               <q-slide-transition :duration="500">
+                <q-card-section v-show="formStep == 2">
+                  <div class="column items-center q-gutter-md q-pa-md">
+                    <q-input dense outlined="" v-model="name" type="text" label="Event Name" class="full-width" color="pink-3"/>
+                    <div class="row full-width">
+                     <q-input dense outlined="" type="number" v-model="pax" label="Number of Head" class="col q-mr-sm" color="pink-3"/>
+                     <q-select class="col" color="pink-3" dense outlined  v-model="selectMotif" :options="motifOpt" emit-value map-options label="Select Motif" />
+                   </div>
+                  <div class="row full-width">
+                    <q-input type="time" class="col" color="pink-3" dense outlined v-model="startTime" hint="Start Time" mask="`YYYY-MM-DDTHH:mm:ss:sssZ`"/>
+                    <q-input type="time" class="col q-ml-sm" dense color="pink-3" outlined v-model="endTime" hint="End Time" mask="`YYYY-MM-DDTHH:mm:ss:sssZ`"/>
+                  </div>
+                  <div class="q-pa-sm q-pt-md row full-width">
+                    <q-btn dense flat color="grey-8" label="BACK" class="col q-mr-sm" @click="formStep = 1"/>
+                    <q-btn dense style="background-color:#e4acbf;" text-color="white" label="NEXT" class="col" @click="formStep = 3"/>
+                  </div>
+                  </div>
+                </q-card-section>
+               </q-slide-transition>
+               <q-slide-transition :duration="500">
+                <q-card-section v-show="formStep == 3">
+                  <div class="column items-center q-gutter-md q-pa-md ">
+                    <q-input class="q-pt-sm full-width" color="pink-3" outlined dense v-model="clientAddress" label="Event Place Address" autogrow=""/>
+                    <q-select class="q-pt-sm full-width" color="pink-3" dense outlined v-model="selectCity" :options="cityOpt" emit-value map-options label="Select City" />
+                  <div class="q-pa-sm q-pt-md row full-width">
+                    <q-btn dense flat color="grey-8" label="BACK" class="col q-mr-sm" @click="formStep = 2"/>
+                    <q-btn dense style="background-color:#e4acbf;" text-color="white" label="PROCEED TO PACKAGES" class="col-8" @click="saveInquiry"/>
+                  </div>
+                  </div>
+                </q-card-section>
+                </q-slide-transition>
              </q-card>
         </div>    
       </div>  
@@ -267,14 +310,107 @@
 
     </q-page>
 </template>
+<style>
+
+.q-date__header{
+  background: #e4acbf;
+}
+
+</style>
 
 <script>
+import { date } from 'quasar'
 export default {
   data () {
     return {
       name: '',
-      pax: ''
+      pax: '',
+      date: date.formatDate(new Date(),'YYYY-MM-DD'),
+      Motif: [],
+      City: [],
+
+      startTime: '09:00',
+      endTime: '13:00',
+      selectMotif: '',
+      formStep: 1,
+      clientAddress: '',
+      selectCity: ''
+    }
+  },
+  mounted(){
+    this.$binding('Motif', this.$firestoreApp.collection('Motif'))
+            .then(Motif => {
+            console.log(Motif, 'Motif')
+        }),
+    this.$binding('City', this.$firestoreApp.collection('City'))
+            .then(City => {
+            console.log(City, 'City')
+        })
+
+  },
+  computed : {
+    returnDate(){
+      let now = date.formatDate(new Date(),'YYYY-MM-DD')
+      if(this.date == now){
+        return 'Select Date'
+      } else {
+        return ''
+      }
+      
+    },
+    motifOpt(){
+      let optionss = this.Motif.map(m => {
+          return {
+              label: m.motif,
+              value: m.motif
+          }
+      })
+      return optionss
+    },
+    cityOpt(){
+      let optionss = this.City.map(m => {
+          return {
+              label: m.city,
+              value: m.city
+          }
+      })
+      return optionss
+    },
+  },
+  methods: {
+    saveInquiry(){
+      //get all data
+      let newInquiry= {
+        clientCity: this.selectCity,
+        clientEvent: this.name,
+        clientPax: this.pax,
+        clientPlace: this.clientAddress,
+        clientDateofReserve: this.date,
+        clientStartTime: this.startTime,
+        clientEndTime: this.endTime,
+        clientMotif: this.selectMotif,
+        clientReserveType: 'ONLINE',
+      }
+
+      console.log(newInquiry,'newInquiry')
+      //save to database
+      this.$firestoreApp.collection('OnlineInquiry').add(newInquiry)
+      .then((ref)=> {
+        let key = ref.id
+        this.$router.push('/reservation/'+key)
+      })
+      //get key order code
+      //router push to reservations page
+    },
+    formatTimeInput(time){
+      //get time to format for display
+      let baseDate = new Date(2020,1,1)
+      let arr = time.split(':')
+      let formatTime = date.addToDate(baseDate, {hours:arr[0],minutes:arr[1]})
+
+      return this.$moment(formatTime).format('LT')
     }
   }
+
 }
 </script>
