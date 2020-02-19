@@ -199,7 +199,7 @@
                                 title="Reserve the Date"
                                 icon="money"
                             >
-                              <div class="bg-grey-3 q-pa-xl rounded-borders">
+                              <div class=" q-pa-xl rounded-borders">
                                 <div class="text-subtitle2 q-pl-lg  q-mb-sm full-width">Fill up this form and <span class="text-teal">PAY NOW</span>  to reserve the date.</div>
                                 <div class="container full-width" >
                                   <div class="">
