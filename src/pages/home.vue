@@ -17,9 +17,9 @@
         <div><q-route-tab to="/catering"><b>CATERING SERVICES</b></q-route-tab></div>
         <div style="padding-left:380px;"><q-route-tab to="" ><b>sign up</b></q-route-tab></div>
         <!-- STATIC SHOW HIDE LOGIN -->
-        <div><q-tab v-show="show" @click="show=!show"><b>login</b></q-tab></div>
+        <div><q-tab v-show="show" ><b>login</b></q-tab></div>
         <div class="row items-center">
-          <q-btn-dropdown dense style="background-color:#e4acbf" v-show="!show" text-color="white" label="Codeavor">
+          <q-btn-dropdown dense style="color:#e4acbf" v-show="!show"  :label="displayName" flat>
             <q-list>
               <q-item clickable v-close-popup @click="$router.push('/profile')">
                 <q-item-section>
@@ -27,9 +27,9 @@
                 </q-item-section>
               </q-item>
 
-              <q-item clickable v-close-popup @click="show=!show, $router.push('/')">
+              <q-item clickable v-close-popup @click="tempLogout">
                 <q-item-section>
-                  <q-item-label>Log OUt</q-item-label>
+                  <q-item-label>Log Out</q-item-label>
                 </q-item-section>
               </q-item>
 
@@ -46,7 +46,7 @@
         </div>
 
         <div class="q-pa-sm">
-             <q-btn dense round icon="search" text-color="pink-2" color="white"/>
+             <q-btn dense round icon="search" text-color="pink-2" color="white" @click="tempLogout"/>
         </div>
       </q-toolbar>
     </q-header>
@@ -75,8 +75,50 @@ export default {
     return {
       tab: 'air',
       search: '',
-      show: true
+      show: true,
+      displayName: ''
      
+    }
+  },
+    created() {
+          let self = this
+          this.$firebase.auth().onAuthStateChanged(function(user) {
+              
+              if (user) {
+                let gg = {...user}
+                console.log('createdUser',user)
+                console.log('createdUser',user.uid)
+                console.log('user',gg.displayName)
+                self.show = false
+                self.displayName = gg.displayName
+                
+              } else {
+                self.show = true
+              }
+          })
+  },
+  methods:{
+    tempLogout(){
+            this.$q.dialog({
+                title: `Are you sure you want to logout?`,
+                type: 'negative',
+                color: 'pink-3',
+                class: 'text-grey-8',
+                icon: 'warning',
+                ok: 'Ok',
+                cancel: 'Cancel',
+                persistent: true
+                
+            }).onOk(()=>{
+              this.$firebase.auth().signOut()
+              .then(()=>{
+                console.log('no user')
+                this.show = false
+                this.displayName = ''
+              })
+              // this.$router.push('/')
+              // remove this comment if you are done with the testing
+            })
     }
   }
 }

@@ -1,5 +1,6 @@
 import VueFirestore from 'vue-firestore'
 import firebase from 'firebase'
+import fireb from 'firebase'
 require('firebase/firestore')
   
   // Your web app's Firebase configuration
@@ -24,6 +25,7 @@ require('firebase/firestore')
   export default async ({ Vue }) => {
     // something to do
     Vue.prototype.$firebase = firebase
+    Vue.prototype.$firebase2 = fireb
     Vue.prototype.$firestoreApp = firebase.firestore()
     Vue.prototype.$auth = AUTH
     Vue.use(VueFirestore)

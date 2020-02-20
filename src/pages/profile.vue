@@ -285,28 +285,33 @@
                         <q-tab-panels v-model="reservationtab" animated>
                         <q-tab-panel name="pending_res">
                             <q-list bordered separator>
-                            <q-item>
+                            <q-item  v-for="(reserve,i) in returnUserReservation" :key="i">
                                 <q-item-section>
-                                    <div style="font-size:25px;font-family: 'Noto Serif SC', serif; "><b>Name of Package</b></div>
+                                    <div style="font-size:25px;font-family: 'Noto Serif SC', serif; "><b>{{reserve.clientEvent}}</b></div>
                                     <div class="q-pl-xl column">
                                         <div class="row">
                                             <div class="col-6 row items-center q-gutter-sm">
                                                 <q-icon name="today" class="text-black" style="font-size: 2rem;" />
                                                 <div class="">Date of Event: </div>
+                                                <div class="text-weight-bold text-h6"> {{formatDate(reserve.clientReserveDate)}}</div>
                                             </div>
                                             <div class="col-6 row items-center q-gutter-sm">
                                                 <q-icon name="watch_later" class="text-black" style="font-size: 2rem;" />
                                                 <div class="">Time of Event: </div>
+                                                <div class="text-weight-bold text-h6"> {{formatTime(reserve.clientStartTime)}} - {{formatTime(reserve.clientEndTime)}}</div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-6 row items-center q-gutter-sm">
                                                 <q-icon name="place" class="text-black" style="font-size: 2rem;" />
                                                 <div class="">Place of Event: </div>
+                                                <div class="text-weight-bold">{{reserve.clientPlace}},{{reserve.clientCity}}</div>
                                             </div>
                                             <div class="col-6 row items-center q-gutter-sm">
                                                 <q-icon name="people" class="text-black" style="font-size: 2rem;" />
                                                 <div class="">Number of attendies: </div>
+                                                <div class="text-weight-bold text-h6">{{reserve.clientPax}}</div>
+                                                
                                             </div>
                                         </div>
                                     </div>
@@ -355,7 +360,6 @@
 
                             </q-list>
                         </q-tab-panel>
-
                         </q-tab-panels>
                 </q-tab-panel>
 <!-- END OF RESERVATION AREA -->
@@ -368,10 +372,11 @@
 </template>
 
 <script>
+import { date } from 'quasar'
 export default {
   data () {
     return {
-      tab: 'account',
+      tab: 'reserve',
       ordertab: 'pending',
       reservationtab: 'pending_res',
       splitterModel: 20,
@@ -380,7 +385,56 @@ export default {
       search_reserve: '',
       search_cart: '',
       val: true,
-      num: 1
+      num: 1,
+      Reservation: [],
+      clientUID: ''
+    }
+  },
+  created(){
+          let self = this
+          this.$firebase.auth().onAuthStateChanged(function(user) {
+              if (user) {
+                self.clientUID = user.uid
+              } else {
+                self.clientUID = ''
+                this.$router.push('/')
+              }
+          })
+  },
+  mounted(){
+        this.$binding('Reservation', this.$firestoreApp.collection('Reservation'))
+            .then(Reservation => {
+            console.log(Reservation, 'Reservation')
+        })
+  },
+  computed:{
+      returnUserReservation(){
+          try {
+
+            let reservations = this.$lodash.filter(this.Reservation,a=>{
+                return a.clientUID == this.clientUID
+            })
+            console.log('reservations',reservations)
+            return reservations
+        
+
+          } catch(err){
+              console.log(err,'err')
+              return []
+          }
+      }
+  },
+  methods: {
+    formatTime(time){
+      //get time to format for display
+      let baseDate = new Date(2020,1,1)
+      let arr = time.split(':')
+      let formatTime = date.addToDate(baseDate, {hours:arr[0],minutes:arr[1]})
+
+      return this.$moment(formatTime).format('LT')
+    },
+    formatDate(date){
+        return this.$moment(date).format('LL')
     }
   }
 }

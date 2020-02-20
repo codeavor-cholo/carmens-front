@@ -89,6 +89,8 @@ module.exports = function (ctx) {
         'QDate',
         'QSlideTransition',
         'QPopupEdit',
+        'QInnerLoading',
+        'QScrollArea'
       ],
       directives: [
         'ClosePopup'

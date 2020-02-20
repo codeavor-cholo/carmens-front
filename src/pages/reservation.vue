@@ -200,7 +200,7 @@
                                 icon="money"
                             >
                               <div class=" q-pa-xl rounded-borders">
-                                <div class="text-subtitle2 q-pl-lg  q-mb-sm full-width">Fill up this form and <span class="text-teal">PAY NOW</span>  to reserve the date.</div>
+                                <div class="text-subtitle2 q-pl-lg  q-mb-sm full-width">Fill up this contact form and <span class="text-teal">PAY NOW</span>  to reserve the date.</div>
                                 <div class="container full-width" >
                                   <div class="">
                                     <div class="q-pl-lg row q-mt-md">
@@ -243,7 +243,14 @@
                                         </q-item-section>
                                         <q-item-section class="q-mr-lg" side><strong>P {{formatNumber(5000)}}.00</strong></q-item-section>
                                     </q-item>
-
+                                    <q-item>
+                                        <q-item-section class="q-ml-lg"><strong>
+                                          <!-- <q-checkbox @input="paymentSelect" color="pink-3" v-model="reservationFee" label="Reservation Fee" /> -->
+                                        <q-radio v-model="paymentMode" val="desiredAmount" label="Desired Amount (should not be less than reservation fee)" />
+                                        </strong>
+                                        </q-item-section>
+                                        <q-item-section class="q-mr-lg" side><q-input v-model="desiredAmountInput" type="number" min="5000" label="Desired Amount" dense outlined="" color="teal" :rules="[ val => val >= 5000  || 'Amount should not be less than reservation fee.']"/></q-item-section>
+                                    </q-item>
                                   </q-list>
                                 </div>
                                     <div class="container q-mx-lg q-mt-lg relative-position">
@@ -252,7 +259,7 @@
                                         </stripe-elements>
                                         <q-btn outlined color="teal" class="col" size="md" @click="submit">PAY&nbsp;&nbsp;&nbsp;<b>P {{formatNumber(toPayAmount)}}.00</b></q-btn>
                                       </div>
-                                      <div class="dimmed absolute-full text-center rounded-borders">
+                                      <div class="dimmed absolute-full text-center rounded-borders" v-show="userLoggedIn">
                                         <div style="z-index:100" class="absolute-center">
                                           <h6 class="text-white q-ma-none q-pb-sm">Login first before proceeding to payment</h6>
                                           <q-btn color="teal" icon-right="account_circle" label="Login First" @click="completeForm"/>
@@ -260,13 +267,14 @@
                                             
                                       </div>
                                     </div>
+                                    <q-inner-loading :showing="loadingOn"/>
                               </div>
                             </q-step>
 
                             <template v-slot:navigation>
                                 <q-stepper-navigation>
-                                <q-btn @click="$refs.stepper.next()" color="teal" :label="step === 4 ? 'Finish' : 'Continue'" />
-                                <q-btn v-if="step > 1" flat color="grey-8" @click="$refs.stepper.previous()" label="Back" class="q-ml-sm" />
+                                <q-btn @click="stepcheck" color="teal" :label="step === 4 ? 'Finish' : 'Continue'" v-show="step < 4"/>
+                                <q-btn v-if="step > 1" flat color="grey-8" @click="backFunction" label="Back" class="q-ml-sm" />
                                 </q-stepper-navigation>
                             </template>
                         </q-stepper>
@@ -279,8 +287,11 @@
 <!-- END OF LEFT PART -->
 
 <!-- RIGHT PART -->
-            <div class="col-4 q-pt-xl q-pr-xl q-pl-md">
+            
+            <!-- <div> -->
+              <q-page-sticky position="top-right" :offset="[0, 0]" class="col-4 q-pt-xl q-pr-xl q-pl-md">
                 <q-card class="my-card">
+                  <div>
                     <q-card-section>
                        
                         <div class="column items-center q-pa-sm">
@@ -290,7 +301,7 @@
                                 </q-card-section>
                               </q-card>
                         </div>
-       
+                        <div v-show="step != 2">
                         <div class="q-pa-sm row justify-between">
                             <div>Date</div>
                             <div>{{this.$moment(OnlineInquiry.clientDateofReserve).format('LL')}}</div>
@@ -314,12 +325,13 @@
                             <div class="text-weight-bold">(Package price * No# of Heads)</div>
                             <div class="text-weight-bold text-teal">P {{formatNumber(returnSelectedPackagePrice * OnlineInquiry.clientPax)}}.00</div>
                         </div>
+                        </div>
                         
                         <div class="q-my-sm" v-show="returnChoiceOfFood.length !== 0"> 
                         <q-separator inset class="black"/>
                         </div>
                         
-                        <div class="q-pa-sm" v-show="returnChoiceOfFood.length !== 0">
+                        <div class="q-pa-sm" v-show="step > 1">
                           
                           <div class="text-weight-bold text-uppercase row justify-between">
                            <span>Food Choices</span> 
@@ -331,27 +343,34 @@
                             enter-active-class="animated slideUp"
                             leave-active-class="animated slideDown"
                           >
-                            <div class="q-pl-md q-pt-sm" v-for="(choice) in returnChoiceOfFood" :key="choice.viandName" v-show="showFoodChoices">
-                                <span class="text-weight-bold">{{choice.viandName}} <q-chip size="sm" :color="choice.foodChoices.length == returnLimit(choice.viandName) ? 'teal' : 'pink-6'" class="text-white" :label="choice.foodChoices.length+' / '+returnLimit(choice.viandName)" /></span>
-                              <div class="q-pl-sm q-mb-sm row" v-for="(pick) in choice.foodChoices" :key="pick.foodName">
-                                <div dense class="col q-mr-sm">{{pick.foodName}}</div>
-                                <div dense class="col-1 text-right text-weight-bold">x 1</div>
-                              </div>
-                            </div>
+
+                                <div class="q-pl-md q-pt-sm" v-for="(choice) in returnChoiceOfFood" :key="choice.viandName" v-show="showFoodChoices">
+                                    <span class="text-weight-bold">{{choice.viandName}} <q-chip size="sm" :color="choice.foodChoices.length == returnLimit(choice.viandName) ? 'teal' : 'pink-6'" class="text-white" :label="choice.foodChoices.length+' / '+returnLimit(choice.viandName)" /></span>
+                                  <div class="q-pl-sm q-mb-sm row" v-for="(pick) in choice.foodChoices" :key="pick.foodName">
+                                    <div dense class="col q-mr-sm">{{pick.foodName}}</div>
+                                    <div dense class="col-1 text-right text-weight-bold">x 1</div>
+                                  </div>
+                                </div>
                           </transition-group>
                           </q-slide-transition>
                         </div>  
 
-                        <div class="q-mt-md q-mb-sm" v-show="returnSelectedPackagePrice !== 0"> 
-                        <q-separator inset class="black"/>
-                        </div>
-                        
-                        
                         <div class="q-pa-sm" v-show="returnSelectedPackagePrice !== 0">
-                        <strong class="text-weight-bold text-uppercase">Inclusions</strong>
-                          <div class="q-px-md q-pt-sm" v-for="(choice,i) in returnSelectedPackageInclusion" :key="i">
+                          <div class="text-weight-bold text-uppercase row justify-between">
+                           <span>Inclusions</span> 
+                           <q-btn color="teal" dense size="sm" flat :label="showInclusions == true ? 'SHOW LESS':'SHOW MORE'" :icon-right="showInclusions == true ? 'expand_less':'expand_more'" @click="showInclusions = !showInclusions"/>
+                          </div>
+                          <q-slide-transition :delay="1000">
+                          <transition-group
+                            appear
+                            enter-active-class="animated slideUp"
+                            leave-active-class="animated slideDown"
+                          >
+                          <div class="q-px-md q-pt-sm" v-for="(choice) in returnSelectedPackageInclusion" :key="choice" v-show="showInclusions">
                                <span>{{choice.inclusion}}</span>
                           </div>
+                          </transition-group>
+                          </q-slide-transition>
                         </div>
                         <div class="q-pa-sm" v-show="step >= 3">
                         <strong class="text-weight-bold text-uppercase">Add-Ons</strong>
@@ -371,8 +390,12 @@
                             <div class="text-weight-bold text-teal">P {{formatNumber(returnTotalPrice)}}.00</div>
                         </div>
                     </q-card-section>
+
+                    </div>
                  </q-card>
-            </div>    
+                 </q-page-sticky>
+            <!-- </div>     -->
+            
 <!-- END OF RIGHT PART -->
 
 <!-- DATE -->
@@ -438,9 +461,9 @@
                     <q-input v-model="clientPassword" type="password" label="Enter Password" style="width:450px;" class="q-pa-sm q-px-md" outlined="" color="pink-3" dense/>
                     <div class="row q-px-md q-mt-md">
                                           
-                    <q-btn color="grey"  label="LOGIN VIA GOOGLE" @click="onClick" class="col-5"/>
+                    <q-btn color="grey"  label="LOGIN VIA GOOGLE" @click="loginGoogle" class="col-5"/>
                     <div class="text-overline text-center col-2">OR</div>
-                    <q-btn color="teal" label="LOGIN account" @click="onClick" class="col"/>
+                    <q-btn color="teal" label="LOGIN account" class="col"/>
 
                     </div>
                     
@@ -470,6 +493,7 @@ export default {
   },
   data () {
     return {
+        loadingOn:false,
         login: false,
         change: false,
         date: '',
@@ -477,7 +501,7 @@ export default {
         address: '',
         city: '',
         whatToEdit: '',
-        step: 1 ,
+        step: 1,
         startTime: '',
         endTime: '',
         OnlineInquiry: {},
@@ -498,6 +522,8 @@ export default {
         choiceOfAddOns: [],
         AddOnsQty: [],
         showFoodChoices: true,
+        showOrderSummary: false,
+        showInclusions: true,
         //for payment
         paymentMode: 'fullPayment',
         loading: false,
@@ -505,12 +531,30 @@ export default {
         publishableKey: 'pk_test_kUO5j8FaZUKitD1Qh3ibZ2HP00YkxaEOOS', 
         token: null,
         charge: null,
+        desiredAmountInput: 5000,
+        userLoggedIn: true,
         //additionalDetails
         clientFName: '',
         clientLName: '',
         clientEmail: '',
         clientContact: '',
-        clientPassword: ''
+        clientPassword: '',
+        clientUID: '',
+        //designDAta
+        thumbStyle: {
+          right: '4px',
+          borderRadius: '5px',
+          backgroundColor: '#999999',
+          width: '5px',
+          opacity: 0.75
+        },
+        barStyle: {
+          right: '2px',
+          borderRadius: '9px',
+          backgroundColor: '#ffffff',
+          width: '9px',
+          opacity: 0.2
+        }
     }
   },
   created(){
@@ -518,6 +562,18 @@ export default {
             .then(OnlineInquiry => {
             console.log(OnlineInquiry, 'OnlineInquiry')
         })
+
+          let self = this
+          this.$firebase.auth().onAuthStateChanged(function(user) {
+              if (user) {
+                self.clientUID = user.uid
+                self.userLoggedIn = false
+                self.login = false
+              } else {
+                self.clientUID = ''
+                self.userLoggedIn = true
+              }
+          })
   },
     mounted(){
     this.$binding('Motif', this.$firestoreApp.collection('Motif'))
@@ -718,7 +774,10 @@ export default {
           // this.enterAmount = this.discountedPayment
           this.amount = this.returnDownPayment     
           return this.returnDownPayment
-        } else {
+        } else if(this.paymentMode == 'desiredAmount'){
+          this.amount = parseInt(this.desiredAmountInput)
+          return this.amount
+        }else {
           // this.enterAmount = 5000
           this.amount = 5000
           return 5000  
@@ -739,6 +798,40 @@ export default {
           return []
         } catch (ERR) {
           return []
+        }
+      },
+      returnProgress(){
+        try{
+          let inquiry = this.OnlineInquiry
+          let reserveDetails = {
+              clientReserveDate: inquiry.clientDateofReserve,
+              clientFName: this.clientFName,
+              clientLName: this.clientLName,
+              clientPlace: inquiry.clientPlace,
+              clientCity: inquiry.clientCity,
+              clientEvent: inquiry.clientEvent,
+              clientMotif: inquiry.clientMotif,
+              clientPax: inquiry.clientPax,
+              clientEmail: this.clientEmail,
+              clientContact: this.clientContact,
+              clientStartTime: inquiry.clientStartTime,
+              clientEndTime: inquiry.clientEndTime,
+              clientSelectPackage: this.returnSelectedPackage,
+              clientFoodChoice: this.choiceOfFood,
+              clientAddOns: this.reMapAddOns,
+              // clientTotalPayment: this.returnTotalPrice,
+              // clientTotalDownPayment: this.returnDownPayment,
+              // clientPaidAmount: this.amount,
+              // clientPayDetails: this.paydetails,
+              // clientTokenID: this.token.id,
+              // clientPaymentType: 'CARD',
+              clientReserveType: 'ONLINE',
+              clientDateofReserve: date.formatDate(new Date(), 'YYYY-MM-DD'),
+          }
+          return reserveDetails
+        } catch(err) {
+          console.log(err,'err')
+          return {}
         }
       }
   },
@@ -859,15 +952,20 @@ export default {
             ok: 'Ok'
         })
       }else{
-          this.paydetails = charge
-          this.reserveNowCard()
-          this.$q.notify({
-                  message: 'RESERVED!',
-                  icon: 'mdi-folder-plus-outline',
-                  color: 'pink-3',
-                  textColor: 'white',
-                  position: 'center'
+          this.$q.dialog({
+            title: `Continue with the payment?`,
+            message: 'This action cannot be undone.',
+            color: 'teal',
+            textColor: 'grey',
+            icon: 'negative',
+            ok: 'YES',
+            cancel: 'NO'
+          }).onOk(()=>{
+            this.loadingOn = true
+            this.paydetails = charge
+            this.reserveNowCard()            
           })
+
       }
     },
     reserveNowCard(){
@@ -897,7 +995,37 @@ export default {
             clientPaymentType: 'CARD',
             clientReserveType: 'ONLINE',
             clientDateofReserve: date.formatDate(new Date(), 'YYYY-MM-DD'),
+            clientUID: this.clientUID
         }
+          this.$firestoreApp.collection('Reservation').add(reserveDetails)
+            .then((ref) =>{
+              let key = ref.id
+              let paymentDetails = {
+                  clientReservationKey: ref.id,
+                  clientPayDetails: this.paydetails,
+                  clientTokenID: this.token.id,
+                  clientPaymentType: 'CARD',
+                  clientUID: this.clientUID
+              }
+                  this.$firestoreApp.collection('Payments').add(paymentDetails)
+                  .then(()=>{
+                    this.loadingOn = false
+                      this.$q.dialog({
+                        title: `Reservation Created!`,
+                        message: 'Go to your account to see the details.',
+                        color: 'teal',
+                        textColor: 'grey',
+                        icon: 'negative',
+                        persistent: true,
+                        ok: 'OK',
+                        cancel: 'RETURN HOME'
+                    }).onOk(()=>{
+                      this.$router.push('/profile')
+                    }).onCancel(()=>{
+                       this.$router.push('/')
+                    })
+                  })
+            })
         console.log(reserveDetails,'reserveDetails')
     },
     completeForm(){
@@ -913,7 +1041,121 @@ export default {
       } else {
         this.login = true
       }
-    }
+    },
+    stepcheck(){
+          if(this.step === 1){
+              if(this.selected.length === 0){
+                   this.$q.dialog({
+                    title: `Enable To Continue`,
+                    message: 'Please Select Package',
+                    type: 'negative',
+                    color: 'pink-6',
+                    textColor: 'grey',
+                    icon: 'warning',
+                    ok: 'Ok'
+                })
+              }else{
+                this.showFoodChoices = true
+                this.showInclusions = false
+                this.$refs.stepper.next()
+              }
+          }else if(this.step === 2){
+              if(this.choiceOfFood.length === 0){
+                  this.$q.dialog({
+                    title: `Unable To Continue`,
+                    message: 'Please Select Food',
+                    type: 'negative',
+                    color: 'pink-6',
+                    textColor: 'grey',
+                    icon: 'warning',
+                    ok: 'Ok'
+                })
+              }else{
+                this.showInclusions = false
+                this.showFoodChoices = false
+                this.$refs.stepper.next()
+              }
+          }else if(this.step === 3){
+            this.showInclusions = false
+            this.showFoodChoices = false
+              this.$refs.stepper.next()
+          } else {
+              this.$refs.stepper.next()
+          }
+    },
+    backFunction(){
+      if(this.step === 2){
+        this.$q.dialog({
+            title: 'Moving back will remove all your Food Choices.',
+            message: 'Continue ?',
+            ok: 'Yes',
+            cancel: 'No',
+            persistent: true
+          }).onOk(() => {
+            this.choiceOfFood = []
+            this.addonsList = []
+            this.$refs.stepper.previous()
+          })
+      }else {
+          this.$refs.stepper.previous()
+      }
+      
+    },
+    loginGoogle(){
+        var provider = new this.$firebase.auth.GoogleAuthProvider();
+        this.$firebase.auth().signInWithPopup(provider)
+        .then((result)=>{
+          // This gives you a Google Access Token. You can use it to access the Google API.
+          var token = result.credential.accessToken;
+          // The signed-in user info.
+          var user = result.user;
+          console.log('token',token)
+          console.log('user',user)
+
+          var uid = user.uid
+
+          //save user details in database with token / set to update always when login in
+          let newUser = {
+            gAccessToken: token,
+            displayName: user.displayName,
+            email: user.email,
+            emailVerified: user.emailVerified,
+            refreshToken: user.refreshToken
+          }
+
+          this.$firestoreApp.collection('Customers').doc(uid).set(newUser)
+          .then(()=>{
+            console.log('saved user')
+            //save progress for future reference
+            console.log('progress', this.returnProgress)
+
+          })
+
+          console.log('newUser',newUser)
+
+        }).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // The email of the user's account used.
+        var email = error.email;
+        // The firebase.auth.AuthCredential type that was used.
+        var credential = error.credential;
+
+        console.log('error',errorCode)
+        console.log('error',errorMessage)
+        this.$q.dialog({
+            title: errorCode,
+            message: errorMessage,
+            color: 'pink-6',
+            textColor: 'grey',
+            icon: 'negative',
+            ok: 'Ok'
+        })
+        // ...
+        });
+                  
+    },
   }
 }
 </script>
