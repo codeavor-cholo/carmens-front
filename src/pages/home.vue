@@ -17,7 +17,7 @@
         <div><q-route-tab to="/catering"><b>CATERING SERVICES</b></q-route-tab></div>
         <div style="padding-left:380px;"><q-route-tab to="" ><b>sign up</b></q-route-tab></div>
         <!-- STATIC SHOW HIDE LOGIN -->
-        <div><q-tab v-show="show" ><b>login</b></q-tab></div>
+        <div><q-tab v-show="show" @click="loginGoogle"><b>login</b></q-tab></div>
         <div class="row items-center">
           <q-btn-dropdown dense style="color:#e4acbf" v-show="!show"  :label="displayName" flat>
             <q-list>
@@ -119,7 +119,62 @@ export default {
               // this.$router.push('/')
               // remove this comment if you are done with the testing
             })
-    }
+    },
+        loginGoogle(){
+        var provider = new this.$firebase.auth.GoogleAuthProvider();
+        this.$firebase.auth().signInWithPopup(provider)
+        .then((result)=>{
+          // This gives you a Google Access Token. You can use it to access the Google API.
+          var token = result.credential.accessToken;
+          // The signed-in user info.
+          var user = result.user;
+          console.log('token',token)
+          console.log('user',user)
+
+          var uid = user.uid
+
+          //save user details in database with token / set to update always when login in
+          let newUser = {
+            gAccessToken: token,
+            displayName: user.displayName,
+            email: user.email,
+            emailVerified: user.emailVerified,
+            refreshToken: user.refreshToken
+          }
+
+          this.$firestoreApp.collection('Customers').doc(uid).set(newUser)
+          .then(()=>{
+            console.log('saved user')
+            //save progress for future reference
+            console.log('progress', this.returnProgress)
+
+          })
+
+          console.log('newUser',newUser)
+
+        }).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // The email of the user's account used.
+        var email = error.email;
+        // The firebase.auth.AuthCredential type that was used.
+        var credential = error.credential;
+
+        console.log('error',errorCode)
+        console.log('error',errorMessage)
+        this.$q.dialog({
+            title: errorCode,
+            message: errorMessage,
+            color: 'pink-6',
+            textColor: 'grey',
+            icon: 'negative',
+            ok: 'Ok'
+        })
+        // ...
+        });
+                  
+    },
   }
 }
 </script>
