@@ -37,52 +37,31 @@
         </div>
 
 <!-- MOST POPULAR -->
-            <div class="row justify-center" style="font-size:20px;font-family: 'Domine', serif"> OUR FOOD SELECTION </div>
-            <div class="row q-gutter-md q-pl-lg">
+            
+            
+            <div class="row">
+                <div class="col-3 q-pt-xl q-pl-xl" style="font-size:30px;font-family: 'Domine', serif"> ALL PARTY TRAYS </div>
+                <div class="col-9">
                 <q-table grid :data="returnWithPartyTrays" :columns="columns" :pagination="pagination" :filter="filter" class="row items-center q-pa-lg q-ma-lg">
                 <template v-slot:item="props">            
-                    <div class="q-pa-xs col-xs-12 col-sm-6 col-md-3 col-lg-4 grid-style-transition" :style="props.selected ? 'transform: scale(0.95);' : ''">
-                        <q-card flat class="my-card" style="border: 2px solid;border-color:pink" >
+                    <div class="q-pa-sm grid-style-transition" :style="props.selected ? 'transform: scale(0.95);' : ''">
+                        <q-card flat class="my-card" style="width:165px;height:200px" >
                             <div>
-                            <q-card-section>
-                                <q-img :src="props.row.foodPic" style="height:150px;width:250px"/>
-                            </q-card-section>
+                                <q-img :src="props.row.foodPic" styl="height:200px" :ratio="4/3"/>
+                            
                             <q-card-section side>
-                                <q-list dense>
-                                <q-item v-for="col in props.cols.filter(col => col.name !== 'desc')" :key="col.name" v-show="col.name != 'partyTrayPrice'">
-                                    <q-item-section >
-                                    <div class="row justify-between">
-                                        <div style="font-family: 'Roboto Slab', serif;"><b>
-                                            {{ col.label }}
-                                            </b>
-                                        </div>
-                                        <div style="font-family: 'Roboto Slab', serif;">
-                                            {{ col.value }}
+                            <q-list dense>
+                                <div class="row items-center justify-between">
+                                    <div class="col">    
+                                        <div>
+                                            <div style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><b>{{props.row.foodName}}</b></div>
+                                            <div style="font-size:12px">{{props.row.partyTrayPrice[0].price}} Pesos</div>
                                         </div>
                                     </div>
-                                    </q-item-section>
-                                </q-item>
-                                <q-item class="q-mt-sm" v-show="props.row.partyTrayPrice">
-                                <span class="full-width text-center text-weight-bold" style="font-size:18px;font-family: 'Roboto Slab', serif;">PARTY TRAY PRICES</span>
-                                </q-item>
-                                <q-item v-for="(price, index) in props.row.partyTrayPrice" :key="index">
-                                    <q-item-section>
-                                    <div class="row justify-between">
-                                        <div style="font-family: 'Roboto Slab', serif;"><b>
-                                            {{ price.label }}({{price.paxMin}} - {{price.paxMax}})
-                                            </b>
-                                        </div>
-                                        <div style="font-family: 'Roboto Slab', serif;">                               
-                                            {{ price.price }}
-                                        </div>
+                                    <div class="col">
+                                        <q-btn round color="pink-3" @click="addPorder = true, openPorder(props)" class="q-ml-lg" flat size="md" icon="shopping_cart"/>
                                     </div>
-                                    </q-item-section>
-                                </q-item>
-                                <q-item>
-                                    <q-item-section class="q-mb-none q-pb-none" side>
-                                        <q-btn color="pink-3" @click="addPorder = true, openPorder(props)" class="q-ml-lg" flat size="md" icon="shopping_cart" label="Add To Basket"/>
-                                    </q-item-section>
-                                </q-item>
+                                </div>
                             </q-list>
                             </q-card-section>
                             </div>
@@ -90,10 +69,11 @@
                     </div>
                 </template>
             </q-table>
+            </div>
             </div> 
+        
 
-
-            <q-dialog v-model="addPorder">
+            <!-- <q-dialog v-model="addPorder">
             <q-card class="text-center text-weight-bold" style="min-width: 400px">
                             <q-img
                                 :src="this.selectedPorder.foodPic"
@@ -118,7 +98,7 @@
                         <q-btn flat color="deep-orange-4" label="Add To Order" @click="addToCart" v-close-popup />
                     </q-card-actions>
                 </q-card>
-            </q-dialog>      
+            </q-dialog>       -->
         
 </q-page>
 </template>
