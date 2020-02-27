@@ -316,7 +316,7 @@
                                         </div>
                                     </div>
                                     <div class="row justify-end q-gutter-md">
-                                        <q-btn dense style="background-color:#e4acbf;width:120px" text-color="white" label="Details" />
+                                        <q-btn dense style="background-color:#e4acbf;width:120px" text-color="white" @click="reserveDetails = true" label="Details" />
                                         <q-btn dense style="background-color:#e4acbf;width:120px" text-color="white" label="Payment" />
                                     </div>
                                 </q-item-section>
@@ -368,6 +368,52 @@
             
             </q-splitter>
             </div>
+
+
+            <!-- QDIALOG FOR DETAILS OF RESERVATION -->
+            <q-dialog v-model="reserveDetails" persistent>
+            <q-card style="min-width: 750px">
+                
+                    <div class="row justify-between">
+                        <div class="col q-pa-sm" style="font-size:15px">
+                            <q-card-section class="column q-gutter-sm">
+                                <div><b>Date:</b> EXAMPLE</div>
+                                <div><b>Start time:</b>EXAMPLE</div>
+                                <div><b>End Time:</b>EXAMPLE</div>
+                                <div><b>Place:</b>EXAMPLE</div>
+                                <div><b>Number of Pax:</b>EXAMPLE</div>
+                                <div><b>Motif:</b>EXAMPLE</div>
+                            </q-card-section>
+                            <div class="q-pt-xl column items-end"><b>REMAINING BALANCE</b></div>    
+                        </div>
+                        
+                        <q-separator vertical color="black" />
+                        
+                        <div class="col-8">
+                            <div class="float-right">
+                                <q-btn round flat text-color="pink-3" icon="cancel" v-close-popup />
+                            </div>
+                            <div>
+                                <div class="column">
+                                <div class="column items-center" style="font-size:40px;color:#E4ACBF;font-family: 'Zhi Mang Xing', serif;">PACKAGE NAME</div>
+                                <div class="column items-center"><b>FOOD CATEGORIES</b></div>
+                                <div class="q-pl-xl">sample food</div>
+                                <div class="q-pl-xl">sample food</div>
+                                <div class="q-pl-xl">sample food</div>
+                                <div class="q-pl-xl">sample food</div>
+                                <div class="column items-center"><b>INCLUSION</b></div>
+                                <div class="q-pl-xl">sample inclusion</div>
+                                <div class="q-pl-xl">sample inclusion</div>
+                                <div class="q-pl-xl">sample inclusion</div>
+                                <div class="q-pl-xl">sample inclusion</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+            </q-card>
+            </q-dialog>
+            <!-- END OF QDIALOG FOR DETAILS OF RESERVATION -->
     </q-page>
 </template>
 
@@ -376,6 +422,7 @@ import { date } from 'quasar'
 export default {
   data () {
     return {
+      reserveDetails: 'false',
       tab: 'reserve',
       ordertab: 'pending',
       reservationtab: 'pending_res',
