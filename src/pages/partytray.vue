@@ -13,19 +13,19 @@
             <div class="row items-center">
             <q-btn-dropdown dense label="filter by" flat color="grey-8">
                 <q-list>
-                    <q-item clickable v-close-popup @click="onItemClick">
+                    <q-item clickable v-close-popup>
                     <q-item-section>
                         <q-item-label>Photos</q-item-label>
                     </q-item-section>
                     </q-item>
 
-                    <q-item clickable v-close-popup @click="onItemClick">
+                    <q-item clickable v-close-popup>
                     <q-item-section>
                         <q-item-label>Videos</q-item-label>
                     </q-item-section>
                     </q-item>
 
-                    <q-item clickable v-close-popup @click="onItemClick">
+                    <q-item clickable v-close-popup>
                     <q-item-section>
                         <q-item-label>Articles</q-item-label>
                     </q-item-section>
@@ -59,7 +59,7 @@
                                         </div>
                                     </div>
                                     <div class="col">
-                                        <q-btn round color="pink-3" @click="addPorder = true, openPorder(props)" class="q-ml-lg" flat size="md" icon="shopping_cart"/>
+                                        <q-btn round color="pink-3" @click="openDialog(props.row)" class="q-ml-lg" flat size="md" icon="shopping_cart"/>
                                     </div>
                                 </div>
                             </q-list>
@@ -73,7 +73,7 @@
             </div> 
         
 
-            <!-- <q-dialog v-model="addPorder">
+            <q-dialog v-model="addPorder" persistent="">
             <q-card class="text-center text-weight-bold" style="min-width: 400px">
                             <q-img
                                 :src="this.selectedPorder.foodPic"
@@ -83,22 +83,25 @@
                                     {{this.selectedPorder.foodName}}
                                 </div>
                             </q-img>
+                            <div class="q-mt-md">
                             <span class="text-center text-weight-bold text-h6" style="font-family: 'Roboto Slab', serif;">PARTY TRAY SIZE/s AND PRICES</span>
-                                <div class="q-pa-sm" v-for="(price, index) in this.selectedPorder.partyTrayPrice" :key="index">
-                                    <div>
-                                        <q-checkbox @input="consolePorder" keep-color color="deep-orange-4" dense :val="price" v-model="pOrderSelected" />
-                                        {{ price.label }}({{price.paxMin}} - {{price.paxMax}}) for {{ price.price }}php
-                                        </div>
+                            </div>
+                            <div class="q-pa-sm row q-pr-xl" v-for="(price, index) in this.selectedPorder.partyTrayPrice" :key="index">
+                                <div class="col">                                
+                                    <q-checkbox class="q-mt-md" keep-color color="deep-orange-4" dense :val="price" v-model="pOrderSelected" :label="price.label+' ( '+price.paxMin+' - '+price.paxMax+' ) ₱'+price.price" @input="checkIfRemoved(price)"/>
+                                    <!-- {{ price.label }}({{price.paxMin}} - {{price.paxMax}}) for {{ price.price }}php -->
                                 </div>
-                        <q-card-section>
-                    </q-card-section>
+                                <div class="col-3">
+                                    <q-input :rules="[val => val !== null && val !== '' || 'Please type quantity', val => val > 0 || 'Mininum value is 1']" color="grey-10" v-model="orderQty[price.label]" type="number" label="QTY" outlined="" dense v-show="returnStatus(price)"/>
+                                </div>
+                            </div>
 
-                    <q-card-actions align="right" class="text-primary">
-                        <q-btn flat color="grey-8" label="Cancel" v-close-popup />
-                        <q-btn flat color="deep-orange-4" label="Add To Order" @click="addToCart" v-close-popup />
+                    <q-card-actions align="right" class="text-primary q-pa-md">
+                        <q-btn flat color="grey-6" label="Cancel" v-close-popup @click="pOrderSelected = [], orderQty = []"/>
+                        <q-btn flat color="deep-orange-4" label="Add To Basket" v-close-popup icon="shopping_cart" @click="addToBasket(selectedPorder)"/>
                     </q-card-actions>
                 </q-card>
-            </q-dialog>       -->
+            </q-dialog>      
         
 </q-page>
 </template>
@@ -108,21 +111,23 @@
 export default {
   data () {
     return {
-      search: '',
-      storageRef: null,
-      Food: [],
-      FoodCategory: [],
-      PartyTrayLabel: [],
-      selectedPorder: [],
-      addPorder: false,
-      filter: '',
-                  pagination: { sortBy: 'Category', descending: false, page: 1, rowsPerPage: 10},
-            columns: [
-                { name: 'category', required: true, label: 'Food Category', align: 'center', field: 'category', sortable: true },
-                { name: 'foodName', align: 'center', label: 'Food Name', field: 'foodName', sortable: true },
-                // { name: 'foodPrice', align: 'center', label: 'Package Price', field: 'foodPrice', sortable: true },
-
-            ],
+        orderQty: [],  
+        pOrderSelected: [],
+        search: '',
+        storageRef: null,
+        Food: [],
+        FoodCategory: [],
+        PartyTrayLabel: [],
+        selectedPorder: [],
+        TempCart: [],
+        addPorder: false,
+        filter: '',
+        pagination: { sortBy: 'Category', descending: false, page: 1, rowsPerPage: 10},
+        columns: [
+            { name: 'category', required: true, label: 'Food Category', align: 'center', field: 'category', sortable: true },
+            { name: 'foodName', align: 'center', label: 'Food Name', field: 'foodName', sortable: true },
+            // { name: 'foodPrice', align: 'center', label: 'Package Price', field: 'foodPrice', sortable: true },
+        ],
     }
   }, 
   mounted (){   
@@ -138,6 +143,10 @@ export default {
         .then(Food => {
         console.log(Food, 'Food')
         }),
+        this.$binding('TempCart', this.$firestoreApp.collection('TempCart'))
+        .then(TempCart => {
+        console.log(TempCart, 'TempCart')
+        }),
         this.storageRef = this.$firebase.storage().ref()
         console.log(this.storageRef, 'store')
   },
@@ -152,10 +161,136 @@ export default {
                 } 
             })
             return party
-        }
+        },
+
   },
   methods: {
+    openDialog(item){
+        this.selectedPorder = item
+        this.addPorder = true
+    },
+    addToBasket(props){
+        let item = {...props}
+        let key = item['.key']
+        delete item['.key']
+        item.foodKey = key
+        let size = this.pOrderSelected
+        let qty = this.orderQty
 
+        let keys = this.$lodash.keys(this.orderQty)
+        console.log(keys,'keys')
+
+        if(size.length != keys.length){
+            // this.showCompleteBanner = true
+            console.log('no sqty')
+        }
+
+        let merge = [] //sizes and qty
+        for( var x = 0; x < size.length; x++){
+            let m = {...size[x]}
+            m.qty = qty[m.label]
+            merge.push(m)
+        }
+
+        console.log(merge,'merge')
+
+        for( var y= 0; y < merge.length; y++){
+            this.openPorder(item,merge[y])
+        }
+        this.pOrderSelected = []
+        this.orderQty = []
+        
+    },
+    openPorder(props,sizeQty){
+
+        console.log(props,'props')
+        console.log(sizeQty,'size')
+        let order = {...props}
+        order.size = sizeQty.label
+        order.price = sizeQty.price
+        order.min = sizeQty.paxMin
+        order.max = sizeQty.paxMax
+        order.qty = sizeQty.qty
+        order.checkerName = order.foodName+'_'+sizeQty.label
+        delete order.partyTrayPrice
+        let key = 'addCart'
+        // get value
+        let value = this.$q.localStorage.getItem(key)
+        
+
+        console.log(value,'value')
+        console.log(order,'order ko')
+        if(value == null){
+            let itemss = []
+            itemss.push(order)
+            console.log(itemss,'to push')  
+            let addCart = {
+                items: itemss
+            }
+            console.log(addCart,'to db')
+            this.$firestoreApp.collection('TempCart').add(addCart)
+            .then((ref) =>{
+                console.log(ref.id, 'ref id')
+                let dbKey = ref.id
+                this.$q.localStorage.set(key, dbKey)
+                console.log('updated key', this.$q.localStorage.getItem(key))
+            })    
+        } else {
+            let itemss = []
+            let cartItems = this.$lodash.filter(this.TempCart, a=>{
+                return a['.key'] == value
+            })
+
+            console.log(cartItems[0].items,'cartItema')
+            if(cartItems[0].items !== undefined){
+                itemss = cartItems[0].items
+            }
+            
+
+            let indexing = this.$lodash.findIndex(itemss,a=>{
+                return a.checkerName == order.checkerName
+            })
+            console.log(indexing,'indexing')
+            if(indexing > -1){
+                itemss[indexing].qty = parseInt(itemss[indexing].qty) + parseInt(order.qty)
+            } else {
+                itemss.push(order) 
+            }
+
+            let addCart = {
+                items: itemss
+            }
+
+            this.$firestoreApp.collection('TempCart').doc(value).set(addCart)
+            .then((ref) =>{
+                console.log('cart updated')
+            })    
+        }
+        
+    },
+    returnStatus(size){
+        console.log(size)
+        console.log(this.pOrderSelected,'asd')
+        let index = this.$lodash.findIndex(this.pOrderSelected,a=>{
+            return a == size
+        })
+        console.log(index)
+        if(index > -1){
+            return true
+        } else {
+            return false
+        }
+    },
+    findIndexSelection(arr,val){
+        return this.$lodash.findIndex(arr,val)
+    },
+    checkIfRemoved(category){
+        var index = this.findIndexSelection(this.pOrderSelected,category.label)
+        if(index == -1){
+            delete this.orderQty[category.label]
+            console.log(this.orderQty,'this.orderQty')
+        }
+    },
   }
 }
 </script>

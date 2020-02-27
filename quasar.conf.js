@@ -90,7 +90,8 @@ module.exports = function (ctx) {
         'QSlideTransition',
         'QPopupEdit',
         'QInnerLoading',
-        'QScrollArea'
+        'QScrollArea',
+        'QBadge'
       ],
       directives: [
         'ClosePopup'
@@ -99,7 +100,8 @@ module.exports = function (ctx) {
       // Quasar plugins
       plugins: [
         'Dialog',
-        'Notify'
+        'Notify',
+        'LocalStorage',
       ]
     },
 
