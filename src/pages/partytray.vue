@@ -178,7 +178,7 @@ export default {
         let qty = this.orderQty
 
         let keys = this.$lodash.keys(this.orderQty)
-        console.log(keys,'keys')
+        // console.log(keys,'keys')
 
         if(size.length != keys.length){
             // this.showCompleteBanner = true
@@ -192,7 +192,7 @@ export default {
             merge.push(m)
         }
 
-        console.log(merge,'merge')
+        // console.log(merge,'merge')
 
         for( var y= 0; y < merge.length; y++){
             this.openPorder(item,merge[y])
@@ -203,8 +203,8 @@ export default {
     },
     openPorder(props,sizeQty){
 
-        console.log(props,'props')
-        console.log(sizeQty,'size')
+        // console.log(props,'props')
+        // console.log(sizeQty,'size')
         let order = {...props}
         order.size = sizeQty.label
         order.price = sizeQty.price
@@ -218,19 +218,19 @@ export default {
         let value = this.$q.localStorage.getItem(key)
         
 
-        console.log(value,'value')
-        console.log(order,'order ko')
+        // console.log(value,'value')
+        // console.log(order,'order ko')
         if(value == null){
             let itemss = []
             itemss.push(order)
-            console.log(itemss,'to push')  
+            // console.log(itemss,'to push')  
             let addCart = {
                 items: itemss
             }
-            console.log(addCart,'to db')
+            // console.log(addCart,'to db')
             this.$firestoreApp.collection('TempCart').add(addCart)
             .then((ref) =>{
-                console.log(ref.id, 'ref id')
+                // console.log(ref.id, 'ref id')
                 let dbKey = ref.id
                 this.$q.localStorage.set(key, dbKey)
                 console.log('updated key', this.$q.localStorage.getItem(key))
@@ -241,7 +241,7 @@ export default {
                 return a['.key'] == value
             })
 
-            console.log(cartItems[0].items,'cartItema')
+            // console.log(cartItems[0].items,'cartItema')
             if(cartItems[0].items !== undefined){
                 itemss = cartItems[0].items
             }
@@ -250,7 +250,7 @@ export default {
             let indexing = this.$lodash.findIndex(itemss,a=>{
                 return a.checkerName == order.checkerName
             })
-            console.log(indexing,'indexing')
+            // console.log(indexing,'indexing')
             if(indexing > -1){
                 itemss[indexing].qty = parseInt(itemss[indexing].qty) + parseInt(order.qty)
             } else {
@@ -269,12 +269,12 @@ export default {
         
     },
     returnStatus(size){
-        console.log(size)
-        console.log(this.pOrderSelected,'asd')
+        // console.log(size)
+        // console.log(this.pOrderSelected,'asd')
         let index = this.$lodash.findIndex(this.pOrderSelected,a=>{
             return a == size
         })
-        console.log(index)
+        // console.log(index)
         if(index > -1){
             return true
         } else {
@@ -288,7 +288,7 @@ export default {
         var index = this.findIndexSelection(this.pOrderSelected,category.label)
         if(index == -1){
             delete this.orderQty[category.label]
-            console.log(this.orderQty,'this.orderQty')
+            // console.log(this.orderQty,'this.orderQty')
         }
     },
   }

@@ -173,15 +173,20 @@ export default {
       try {
 
         // console.log(hi,'hi')
+        let key = this.$q.localStorage.getItem('addCart')
+        console.log(key,'key')
         let value = this.$lodash.map(this.TempCart,a=>{
-          if(a['.key'] == this.ordersKey){
+          if(a['.key'] == key){
             let g = {...a}
             g.ordersKey = a['.key']
             delete g['.key']
             return g
           }
         })
-        return value[0].items
+        var first = function(element) { return !!element }    
+        var gotcha = value.find(first)
+        console.log(gotcha,'gotcha')
+        return gotcha.items
       } catch (error) {
         console.log(error,'error')
         return []
