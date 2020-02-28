@@ -108,7 +108,7 @@
           <q-input v-model="clientPassword" type="password" label="Enter Password" style="width:450px;" class="q-pa-sm q-px-md" outlined="" color="pink-3" dense/>
           <div class="row q-px-md q-mt-md">
                                 
-          <q-btn color="grey"  label="LOGIN VIA GOOGLE" @click="loginGoogle" class="col-5"/>
+          <q-btn color="grey"  label="LOGIN VIA GOOGLE" @click="basketChecker" class="col-5"/>
           <div class="text-overline text-center col-2">OR</div>
           <q-btn color="teal" label="LOGIN account" class="col"/>
 
@@ -241,19 +241,7 @@ export default {
             })
     },
     loginGoogle(){
-            this.login = false
-            this.$q.dialog({
-                title: 'You have '+this.returnLength+` Items in your Basket`,
-                message:'This will be automatically saved to your account once you login in. Do you want to continue ?',
-                type: 'negative',
-                color: 'pink-3',
-                class: 'text-grey-8',
-                icon: 'warning',
-                ok: 'Ok',
-                cancel: 'Cancel',
-                persistent: true
-                
-            }).onOk(()=>{
+
                 let key = this.$q.localStorage.getItem('addCart')
                 var provider = new this.$firebase.auth.GoogleAuthProvider();
                 this.$firebase.auth().signInWithPopup(provider)
@@ -391,10 +379,32 @@ export default {
                 })
                 // ...
                 });
+
+     
+    },
+    basketChecker(){
+      if(this.returnCart.length != 0){
+            this.login = false
+            this.$q.dialog({
+                title: 'You have '+this.returnLength+` Items in your Basket`,
+                message:'This will be automatically saved to your account once you login in. Do you want to continue ?',
+                type: 'negative',
+                color: 'pink-3',
+                class: 'text-grey-8',
+                icon: 'warning',
+                ok: 'Ok',
+                cancel: 'Cancel',
+                persistent: true
+                
+            }).onOk(()=>{
+              this.loginGoogle()
             }).onCancel(()=>{
               this.login = true
             })
-     
+      } else {
+          this.loginGoogle()
+      } 
+
     },
     removeOrder(item){
       this.$q.dialog({
