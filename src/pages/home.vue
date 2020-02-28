@@ -17,7 +17,7 @@
         <div><q-route-tab to="/catering"><b>CATERING SERVICES</b></q-route-tab></div>
         <div style="padding-left:380px;"><q-route-tab to="" ><b>sign up</b></q-route-tab></div>
         <!-- STATIC SHOW HIDE LOGIN -->
-        <div><q-tab v-show="show" @click="loginGoogle"><b>login</b></q-tab></div>
+        <div><q-tab v-show="show" @click="login = true"><b>login</b></q-tab></div>
         <div class="row items-center">
           <q-btn-dropdown dense style="color:#e4acbf" v-show="!show"  :label="displayName" flat>
             <q-list>
@@ -91,7 +91,7 @@
           </q-card-section>
           <q-card-actions align="right" class="justify-between row">
             <div class="text-weight-bold text-h6" >SUBTOTAL : <span class="text-teal-6">{{returnSubTotal}}</span></div>
-            <q-btn label="Checkout" color="pink-6" v-close-popup  class="text-weight-bold" outline="" @click="checkOutOrders"/>
+            <q-btn :label="'Checkout '+returnLength+ ' items'" color="pink-6" v-close-popup  class="text-weight-bold" outline="" @click="checkOutOrders"/>
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -138,7 +138,7 @@ export default {
       displayName: '',
       basket: false,
       ordersKey: this.$q.localStorage.getItem('addCart'),
-      TempCart: [],
+      CartItems: [],
       login: false,
       clientEmail: '',
       clientPassword: ''
@@ -163,19 +163,26 @@ export default {
           })
   },
   mounted(){
-        this.$binding('TempCart', this.$firestoreApp.collection('TempCart'))
-        .then(TempCart => {
-        console.log(TempCart, 'TempCart')
+        this.$binding('CartItems', this.$firestoreApp.collection('CartItems'))
+        .then(CartItems => {
+        console.log(CartItems, 'CartItems')
         })
   },
   computed: {
     returnCart(){
       try {
-
         // console.log(hi,'hi')
-        let key = this.$q.localStorage.getItem('addCart')
+
+        let key 
+        var user = this.$firebase.auth().currentUser
+        if(user){
+          key = user.uid
+        } else {
+          key = this.ordersKey
+        }
+
         console.log(key,'key')
-        let value = this.$lodash.map(this.TempCart,a=>{
+        let value = this.$lodash.map(this.CartItems,a=>{
           if(a['.key'] == key){
             let g = {...a}
             g.ordersKey = a['.key']
@@ -194,7 +201,7 @@ export default {
     },
     returnLength(){
       try {
-        return this.returnCart.length
+        return this.$lodash.sumBy(this.returnCart,a=>{return parseInt(a.qty)})
       } catch (error) {
         return 0
       }
@@ -226,66 +233,168 @@ export default {
                 console.log('no user')
                 this.show = false
                 this.displayName = ''
+                this.$router.push('/')
+                location.reload()
               })
-              // this.$router.push('/')
+              // 
               // remove this comment if you are done with the testing
             })
     },
-        loginGoogle(){
-        var provider = new this.$firebase.auth.GoogleAuthProvider();
-        this.$firebase.auth().signInWithPopup(provider)
-        .then((result)=>{
-          // This gives you a Google Access Token. You can use it to access the Google API.
-          var token = result.credential.accessToken;
-          // The signed-in user info.
-          var user = result.user;
-          console.log('token',token)
-          console.log('user',user)
-
-          var uid = user.uid
-
-          //save user details in database with token / set to update always when login in
-          let newUser = {
-            gAccessToken: token,
-            displayName: user.displayName,
-            email: user.email,
-            emailVerified: user.emailVerified,
-            refreshToken: user.refreshToken
-          }
-
-          this.$firestoreApp.collection('Customers').doc(uid).set(newUser)
-          .then(()=>{
-            console.log('saved user')
-            //save progress for future reference
-            // console.log('progress', this.returnProgress)
+    loginGoogle(){
             this.login = false
+            this.$q.dialog({
+                title: 'You have '+this.returnLength+` Items in your Basket`,
+                message:'This will be automatically saved to your account once you login in. Do you want to continue ?',
+                type: 'negative',
+                color: 'pink-3',
+                class: 'text-grey-8',
+                icon: 'warning',
+                ok: 'Ok',
+                cancel: 'Cancel',
+                persistent: true
+                
+            }).onOk(()=>{
+                let key = this.$q.localStorage.getItem('addCart')
+                var provider = new this.$firebase.auth.GoogleAuthProvider();
+                this.$firebase.auth().signInWithPopup(provider)
+                .then((result)=>{
+                  // This gives you a Google Access Token. You can use it to access the Google API.
+                  var token = result.credential.accessToken;
+                  // The signed-in user info.
+                  var user = result.user;
+                  console.log('token',token)
+                  console.log('user',user)
 
-          })
+                  var uid = user.uid
 
-          console.log('newUser',newUser)
+                  //save user details in database with token / set to update always when login in
+                  let newUser = {
+                    gAccessToken: token,
+                    displayName: user.displayName,
+                    email: user.email,
+                    emailVerified: user.emailVerified,
+                    refreshToken: user.refreshToken
+                  }
 
-        }).catch(function(error) {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        // The email of the user's account used.
-        var email = error.email;
-        // The firebase.auth.AuthCredential type that was used.
-        var credential = error.credential;
+                  let index = this.$lodash.findIndex(this.CartItems,a=>{
+                    return a['.key'] == uid
+                  })
+                  console.log(index,'indexcheck')
+                  if(index == -1){
+                    if(this.returnCart.length != 0){
 
-        console.log('error',errorCode)
-        console.log('error',errorMessage)
-        this.$q.dialog({
-            title: errorCode,
-            message: errorMessage,
-            color: 'pink-6',
-            textColor: 'grey',
-            icon: 'negative',
-            ok: 'Ok'
-        })
-        // ...
-        });
-                  
+                      let addCart = {
+                        items: this.returnCart
+                      }
+                      this.$firestoreApp.collection('CartItems').doc(uid).set(addCart)
+                      .then(()=>{
+                        this.$firestoreApp.collection("CartItems").doc(key).delete().
+                          then(()=> {
+                              console.log("Document successfully deleted!")
+                              this.$q.localStorage.clear()
+                              this.$firestoreApp.collection('Customers').doc(uid).set(newUser)
+                              .then(()=>{
+                                console.log('saved user')
+                                //save progress for future reference
+                                // console.log('progress', this.returnProgress)
+                                this.login = false
+
+                              })
+
+                              console.log('newUser',newUser)
+                              // location.reload()
+                          }).catch((error)=> {
+                              console.error("Error removing document: ", error)
+                          })
+                      })
+                    }
+                  } else {
+                    let vm = this
+                    
+                    if(this.returnCart.length != 0){
+                      
+                      // console.log(key,'key')
+
+                      let value = vm.CartItems.filter(a=>{
+                        return a['.key'] == uid
+                      })
+                      // console.log(value,'value')
+                      var first = function(element) { return !!element }    
+                      var itemsFirst = value.find(first)
+                      let items = itemsFirst.items
+                      console.log(items,'items')
+                      let local = vm.returnCart
+                      console.log(local)
+                      for(var x = 0; x < local.length; x++){
+                        //check local if available in items
+                        let indexing = vm.$lodash.findIndex(items,a=>{
+                          return a.checkerName == local[x].checkerName
+                        })
+                        console.log(indexing,'indexing')
+                        if(indexing > -1){
+                            items[indexing].qty = parseInt(items[indexing].qty) + parseInt(local[x].qty)
+                        } else {
+                            items.push(order) 
+                        }
+                      }
+
+                      console.log(items, 'itemsMerge')
+                      let addCart = {
+                        items: items
+                      }
+
+                      vm.$firestoreApp.collection('CartItems').doc(uid).set(addCart)
+                      .then(()=>{
+                        vm.$firestoreApp.collection("CartItems").doc(key).delete().
+                          then(()=> {
+                              console.log("Document successfully deleted!")
+                              vm.$q.localStorage.clear()
+                              this.$firestoreApp.collection('Customers').doc(uid).set(newUser)
+                              .then(()=>{
+                                console.log('saved user')
+                                //save progress for future reference
+                                // console.log('progress', this.returnProgress)
+                                this.login = false
+
+                              })
+
+                              console.log('newUser',newUser)
+                              // location.reload()
+                          }).catch((error)=> {
+                              console.error("Error removing document: ", error)
+                          })
+                      })
+                    }
+                  }
+
+
+
+
+                }).catch(function(error) {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // The email of the user's account used.
+                var email = error.email;
+                // The firebase.auth.AuthCredential type that was used.
+                var credential = error.credential;
+
+                console.log('error',errorCode)
+                console.log('error',errorMessage)
+                this.$q.dialog({
+                    title: errorCode,
+                    message: errorMessage,
+                    color: 'pink-6',
+                    textColor: 'grey',
+                    icon: 'negative',
+                    ok: 'Ok'
+                })
+                // ...
+                });
+            }).onCancel(()=>{
+              this.login = true
+            })
+     
     },
     removeOrder(item){
       this.$q.dialog({
@@ -305,7 +414,7 @@ export default {
         let add = {
           items: orders
         }
-        this.$firestoreApp.collection('TempCart').doc(this.ordersKey).set(add)
+        this.$firestoreApp.collection('CartItems').doc(this.ordersKey).set(add)
         .then((ref) =>{
             console.log('cart updated')
             
@@ -317,6 +426,7 @@ export default {
 
     },
     checkOutOrders(){
+      this.$q.localStorage.clear()
       var user = this.$firebase.auth().currentUser
       if(user){
         console.log(user.uid,'meron pwede checkout na')
@@ -335,7 +445,7 @@ export default {
       } else {
         this.login = true
       }
-    }
+    },
   }
 }
 </script>

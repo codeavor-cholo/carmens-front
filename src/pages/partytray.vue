@@ -119,7 +119,7 @@ export default {
         FoodCategory: [],
         PartyTrayLabel: [],
         selectedPorder: [],
-        TempCart: [],
+        CartItems: [],
         addPorder: false,
         filter: '',
         pagination: { sortBy: 'Category', descending: false, page: 1, rowsPerPage: 10},
@@ -143,9 +143,9 @@ export default {
         .then(Food => {
         console.log(Food, 'Food')
         }),
-        this.$binding('TempCart', this.$firestoreApp.collection('TempCart'))
-        .then(TempCart => {
-        console.log(TempCart, 'TempCart')
+        this.$binding('CartItems', this.$firestoreApp.collection('CartItems'))
+        .then(CartItems => {
+        console.log(CartItems, 'CartItems')
         }),
         this.storageRef = this.$firebase.storage().ref()
         console.log(this.storageRef, 'store')
@@ -171,6 +171,7 @@ export default {
     },
     addToBasket(props){
         let item = {...props}
+        
         let key = item['.key']
         delete item['.key']
         item.foodKey = key
@@ -192,16 +193,45 @@ export default {
             merge.push(m)
         }
 
-        // console.log(merge,'merge')
+        console.log(merge,'merge')
+        console.log(item,'itemAddToBasket')
 
-        for( var y= 0; y < merge.length; y++){
-            this.openPorder(item,merge[y])
+        let value = this.$q.localStorage.getItem('addCart')
+        var user = this.$firebase.auth().currentUser
+        if(user){
+            let uid = user.uid
+            console.log(this.CartItems,'checking')
+            let index = this.$lodash.findIndex(this.CartItems,a=>{
+                return a['.key'] == uid
+            })
+            console.log(index,'index uid')
+            if(index == -1){
+                //first cart is add if none in database index
+                this.firstCart(item,merge[0],uid)
+            } else {
+                for( var y= 0; y < merge.length; y++){
+                    this.openPorder(item,merge[y],uid)
+                }                
+            }
+            
         }
+        else{
+            if(value == null){
+                this.firstCart(item,merge[0],'')
+            } else {
+                for( var y= 0; y < merge.length; y++){
+                    this.openPorder(item,merge[y],'')
+                }
+            }
+        }
+
+
+        
         this.pOrderSelected = []
         this.orderQty = []
         
     },
-    openPorder(props,sizeQty){
+    openPorder(props,sizeQty,uid){
 
         // console.log(props,'props')
         // console.log(sizeQty,'size')
@@ -220,15 +250,15 @@ export default {
 
         // console.log(value,'value')
         // console.log(order,'order ko')
-        if(value == null){
+        if(value == null && uid == ''){
             let itemss = []
             itemss.push(order)
-            // console.log(itemss,'to push')  
+            console.log(itemss,'to push no local')  
             let addCart = {
                 items: itemss
             }
             // console.log(addCart,'to db')
-            this.$firestoreApp.collection('TempCart').add(addCart)
+            this.$firestoreApp.collection('CartItems').add(addCart)
             .then((ref) =>{
                 // console.log(ref.id, 'ref id')
                 let dbKey = ref.id
@@ -236,12 +266,20 @@ export default {
                 console.log('updated key', this.$q.localStorage.getItem(key))
             })    
         } else {
+            let basis
+            if(uid != ''){
+                basis = uid
+            } else {
+                basis = value
+            }
+
+            console.log(itemss,'to push no local')  
             let itemss = []
-            let cartItems = this.$lodash.filter(this.TempCart, a=>{
-                return a['.key'] == value
+            let cartItems = this.$lodash.filter(this.CartItems, a=>{
+                return a['.key'] == basis
             })
 
-            // console.log(cartItems[0].items,'cartItema')
+            console.log(cartItems[0].items,'cartItema')
             if(cartItems[0].items !== undefined){
                 itemss = cartItems[0].items
             }
@@ -261,12 +299,49 @@ export default {
                 items: itemss
             }
 
-            this.$firestoreApp.collection('TempCart').doc(value).set(addCart)
+            this.$firestoreApp.collection('CartItems').doc(basis).set(addCart)
             .then((ref) =>{
                 console.log('cart updated')
             })    
         }
         
+    },
+    firstCart(props,sizeQty,uid){
+        let order = {...props}
+        order.size = sizeQty.label
+        order.price = sizeQty.price
+        order.min = sizeQty.paxMin
+        order.max = sizeQty.paxMax
+        order.qty = sizeQty.qty
+        order.checkerName = order.foodName+'_'+sizeQty.label
+        delete order.partyTrayPrice
+        let key = 'addCart'
+        let itemss = []
+
+        itemss.push(order)
+
+        console.log(itemss,'to push no local firstCart')  
+        let addCart = {
+            items: itemss
+        }
+        if(uid != ''){
+            this.$firestoreApp.collection('CartItems').doc(uid).set(addCart)
+            .then((ref) =>{
+            // console.log(ref.id, 'ref id')
+                // location.reload()
+                this.$q.localStorage.clear()
+            }) 
+        } else {
+            this.$firestoreApp.collection('CartItems').add(addCart)
+                .then((ref) =>{
+                // console.log(ref.id, 'ref id')
+                    let dbKey = ref.id
+                    this.$q.localStorage.set(key, dbKey)
+                    console.log('updated key', this.$q.localStorage.getItem(key))
+                    location.reload()
+                }) 
+        }
+
     },
     returnStatus(size){
         // console.log(size)
