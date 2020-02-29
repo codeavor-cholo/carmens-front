@@ -122,6 +122,75 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+
+
+    <q-dialog v-model="checkout" persistent>
+      <q-card style="min-width: 650px;border-radius:20px;" class="q-pa-md">
+        <div class="row justify-center q-gutter-md">
+        <q-card class="my-card" style="width:350px">
+          <q-card-section class="bg-grey-3"> 
+            <div class="row q-gutter-sm items-center">
+              <q-icon name="place" class="text-black" color="pink" style="font-size: 1.5rem;" />
+              <div>Delivery Address</div>
+            </div>
+
+            <div class="q-pt-sm q-pl-lg">Name of Customer &nbsp;&nbsp;&nbsp; number</div>
+            <div class="q-pl-lg">Delivery Address</div>
+          </q-card-section>
+          <!-- <q-separator color="black" /> -->
+          <q-card-section>
+            <div class="q-pt-sm">
+             <q-list bordered separator>
+                <q-item>
+                  <q-item-section>
+                    <div class="row q-gutter-md">
+                      <img src="statics/pics/foo.jpeg" style="height:50px;width:50px">
+                      <div class="column">
+                        <q-item-label>FOODNAME</q-item-label>
+                        <q-item-label caption lines="1">size</q-item-label>
+                        <q-item-label class="text-subtitle2" lines="1">₱ price</q-item-label>
+                      </div>
+                    </div>
+                  </q-item-section>
+                  <q-item-section side>
+                  <q-item-label caption class="q-mt-lg">x 1</q-item-label>
+                  <q-item-label lines="1" class="text-subtitle2 text-pink-6 text-weight-bold">₱ price</q-item-label>
+                </q-item-section>
+                </q-item>
+              </q-list>
+            </div>
+          </q-card-section>
+        </q-card>
+
+        <q-card class="my-card" style="width:250px;border: 5px solid;border-color: pink;">
+          <q-card-section>
+            <q-input
+              v-model="message"
+              filled
+              type="textarea"
+              class="bg-white"
+              label="Leave your message."
+            />
+            <div class="row justify-around">
+              <div class="q-pt-md">Total payment:</div>
+              <div class="q-pt-md" style="font-size:18px"><b>Total</b></div>
+            </div>
+            <div class="q-pt-md q-pb-sm text-center">Payment Method</div>
+            <div class="row justify-around">
+              <q-btn color="pink-5" label="Cash" />
+              <q-btn color="pink-5" label="Card" />
+            </div>  
+          </q-card-section>
+        </q-card>
+        </div>
+
+        <q-card-actions align="right" class="text-primary">
+          <q-btn flat label="Cancel" v-close-popup />
+          <q-btn flat label="Add address" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
       <router-view />
     </q-page-container>
 
@@ -134,6 +203,8 @@ export default {
     return {
       tab: 'air',
       search: '',
+      message:'',
+      checkout: false,
       show: true,
       displayName: '',
       basket: false,
@@ -449,6 +520,8 @@ export default {
             color:'pink-6'
         }).onOk(() => {
           console.log('orders',this.returnCart)
+          
+          this.checkout = true
         }).onCancel(()=>{
           this.basket = true
         })
