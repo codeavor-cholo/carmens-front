@@ -124,7 +124,7 @@
     </q-dialog>
 
 
-    <q-dialog v-model="checkout" persistent>
+    <!-- <q-dialog v-model="checkout" persistent>
       <q-card style="min-width: 650px;border-radius:20px;" class="q-pa-md">
         <div class="row justify-center q-gutter-md">
         <q-card class="my-card" style="width:350px">
@@ -137,7 +137,7 @@
             <div class="q-pt-sm q-pl-lg">Name of Customer &nbsp;&nbsp;&nbsp; number</div>
             <div class="q-pl-lg">Delivery Address</div>
           </q-card-section>
-          <!-- <q-separator color="black" /> -->
+          
           <q-card-section>
             <div class="q-pt-sm">
              <q-list bordered separator>
@@ -189,7 +189,7 @@
           <q-btn flat label="Add address" v-close-popup />
         </q-card-actions>
       </q-card>
-    </q-dialog>
+    </q-dialog> -->
 
       <router-view />
     </q-page-container>
@@ -204,7 +204,6 @@ export default {
       tab: 'air',
       search: '',
       message:'',
-      checkout: false,
       show: true,
       displayName: '',
       basket: false,
@@ -520,8 +519,7 @@ export default {
             color:'pink-6'
         }).onOk(() => {
           console.log('orders',this.returnCart)
-          
-          this.checkout = true
+          this.$router.push('/checkout')
         }).onCancel(()=>{
           this.basket = true
         })

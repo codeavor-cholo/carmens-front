@@ -17,6 +17,7 @@ const routes = [
        { path: '/cateringpage', component: () => import('pages/cateringpage.vue') },
        { path: '/reservation/:id', component: () => import('pages/reservation.vue') },
        { path: '/profile', component: () => import('pages/profile.vue') },
+       { path: '/checkout', component: () => import('pages/checkout.vue') },
     ]
   }
 ]
