@@ -45,13 +45,26 @@
                                     </span>
                                 </div> 
                                 <div class="q-pt-sm row">
-                                    <span class="col-12 q-pa-sm cursor-pointer v-ripple">{{OnlineInquiry.clientMotif}}<q-icon name="edit" size="sm" class="q-ml-lg" color="teal" v-ripple/>
+                                    <span class="col-12 q-pa-sm cursor-pointer v-ripple">{{returnArrayMotifToString(OnlineInquiry.clientMotif)}}<q-icon name="edit" size="sm" class="q-ml-lg" color="teal" v-ripple/>
                                         <q-popup-edit v-model="OnlineInquiry.clientMotif">
                                           <template v-slot="{ initialValue, value, emitValue, set, cancel }">
-                                            <q-select style="width: 400px" class="relative position" autofocus outlined v-model="OnlineInquiry.clientMotif" :options="motifOpt" emit-value map-options hint="Select Motif" @input="emitValue">
+                                            <q-select style="width: 400px" class="relative position" autofocus outlined v-model="OnlineInquiry.clientMotif" multiple="" :options="motifOpt" emit-value map-options hint="Select Motif" @input="emitValue">
                                               <template v-slot:after>
                                                 <q-btn flat dense color="grey-8" icon="cancel" @click.stop="cancel" />
                                                 <q-btn flat dense color="teal" icon="check_circle" @click.stop="set" />
+                                              </template>
+                                              <template v-slot:option="scope">
+                                                <q-item
+                                                  v-bind="scope.itemProps"
+                                                  v-on="scope.itemEvents"
+                                                >
+                                                  <q-item-section avatar>
+                                                    <q-avatar :style="'background-color:'+scope.opt.hex" size="3em" />
+                                                  </q-item-section>
+                                                  <q-item-section>
+                                                    <q-item-label>{{ scope.opt.label }}</q-item-label>
+                                                  </q-item-section>
+                                                </q-item>
                                               </template>
                                             </q-select>
                                           </template>
@@ -606,7 +619,8 @@ export default {
       let optionss = this.Motif.map(m => {
           return {
               label: m.motif,
-              value: m.motif
+              value: m.motif,
+              hex: m.hex
           }
       })
       console.log(optionss,'asd')
@@ -1156,6 +1170,18 @@ export default {
         });
                   
     },
+    returnArrayMotifToString(motif){
+      let string = ''
+      for(var x = 0; x < motif.length ; x++){
+        if(x == motif.length - 1){
+          string = string + motif[x]
+        } else {
+          string = string + motif[x] + ' / '
+        }
+        
+      }
+      return string
+    }
   }
 }
 </script>
