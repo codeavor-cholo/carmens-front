@@ -36,7 +36,21 @@
                     <q-input dense outlined="" v-model="name" type="text" label="Event Name" class="full-width" color="pink-3"/>
                     <div class="row full-width">
                      <q-input dense outlined="" type="number" v-model="pax" label="Number of Head" class="col q-mr-sm" color="pink-3"/>
-                     <q-select class="col" color="pink-3" dense outlined  v-model="selectMotif" :options="motifOpt" emit-value map-options label="Select Motif" />
+                     <q-select class="col" color="grey-10" dense outlined  v-model="selectMotif" options-selected-class="bg-grey text-white" multiple="" :options="motifOpt" emit-value map-options label="Select Motif" @input="showInput">
+                             <template v-slot:option="scope">
+                              <q-item
+                                v-bind="scope.itemProps"
+                                v-on="scope.itemEvents"
+                              >
+                                <q-item-section avatar>
+                                  <q-avatar :style="'background-color:'+scope.opt.hex" size="3em" />
+                                </q-item-section>
+                                <q-item-section>
+                                  <q-item-label>{{ scope.opt.label }}</q-item-label>
+                                </q-item-section>
+                              </q-item>
+                            </template>
+                     </q-select>
                    </div>
                   <div class="row full-width">
                     <q-input type="time" class="col" color="pink-3" dense outlined v-model="startTime" hint="Start Time" mask="`YYYY-MM-DDTHH:mm:ss:sssZ`"/>
@@ -331,7 +345,7 @@ export default {
 
       startTime: '09:00',
       endTime: '13:00',
-      selectMotif: '',
+      selectMotif: [],
       formStep: 1,
       clientAddress: '',
       selectCity: ''
@@ -362,7 +376,8 @@ export default {
       let optionss = this.Motif.map(m => {
           return {
               label: m.motif,
-              value: m.motif
+              value: m.motif,
+              hex: m.hex
           }
       })
       return optionss
@@ -409,6 +424,9 @@ export default {
       let formatTime = date.addToDate(baseDate, {hours:arr[0],minutes:arr[1]})
 
       return this.$moment(formatTime).format('LT')
+    },
+    showInput(){
+      console.log(this.selectMotif)
     }
   }
 
