@@ -100,10 +100,19 @@
                             >
                             <q-step
                                 :name="1"
-                                title="Select Package"
+                                title="Select Package / Customize your own"
                                 icon="settings"
                                 :done="step > 1"
                             >
+                                <div class="row q-pa-md" >
+                                  <q-radio v-model="step1choice" val="package" label="Select a package" class="col" color="teal"/>
+                                  <q-radio v-model="step1choice" val="custom" label="Customize your own" class="col" color="teal"/>
+                                </div>
+
+                                <div v-if="step1choice == 'package'">
+
+                                
+
                                 <q-table grid :data="Packages" :columns="columns" :filter="filter" row-key=".key" selection="single" :selected.sync="selected">
                                     <template v-slot:item="props">
                                         <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-4 grid-style-transition" color="pink-3" :style="props.selected ? 'transform: scale(0.95);' : ''">
@@ -141,6 +150,11 @@
                                         </div>
                                     </template>
                                 </q-table>
+                                </div>
+                                <div v-else class="text-center">
+                                  <div class="text-h6">You want to customize your own package ?</div>
+                                  <span class="text-subtitle2">Click <b class="text-teal">CONTINUE</b> to proceed to customization.</span>
+                                </div>
                             </q-step>
 
                             <q-step
@@ -358,14 +372,45 @@
                           >
 
                                 <div class="q-pl-md q-pt-sm" v-for="(choice) in returnChoiceOfFood" :key="choice.viandName" v-show="showFoodChoices">
-                                    <span class="text-weight-bold">{{choice.viandName}} <q-chip size="sm" :color="choice.foodChoices.length == returnLimit(choice.viandName) ? 'teal' : 'pink-6'" class="text-white" :label="choice.foodChoices.length+' / '+returnLimit(choice.viandName)" /></span>
+                                    <span class="text-weight-bold">{{choice.viandName}} 
+                                    <q-chip size="sm" :label="choice.foodChoices.length" color="teal" text-color="white" v-if="step1choice == 'custom'"/>  
+                                    <q-chip size="sm" v-else :color="choice.foodChoices.length == returnLimit(choice.viandName) ? 'teal' : 'pink-6'" class="text-white" :label="choice.foodChoices.length+' / '+returnLimit(choice.viandName)" /></span>
                                   <div class="q-pl-sm q-mb-sm row" v-for="(pick) in choice.foodChoices" :key="pick.foodName">
                                     <div dense class="col q-mr-sm">{{pick.foodName}}</div>
-                                    <div dense class="col-1 text-right text-weight-bold">x 1</div>
+                                    <div dense class="col-3 text-right text-weight-bold" v-if="step1choice == 'custom'">₱ {{pick.foodPrice}}.00</div>
+                                    <div dense class="col-1 text-right text-weight-bold" v-else>x 1</div>
                                   </div>
                                 </div>
                           </transition-group>
                           </q-slide-transition>
+                          <div v-show="step1choice == 'custom'">
+                            <q-separator spaced/>
+                            <div class="row justify-between">
+                              <span class="text-weight-bold">
+                                Customize Package Per Head
+                              </span>
+                              <span class="float-right">
+                                ₱ {{formatNumber(returnCustomPrice)}}.00
+                              </span>
+                            </div>
+                            <div class="row justify-between">
+                              <span class="text-weight-bold">
+                                PAX
+                              </span>
+                              <span class="float-right">
+                                x {{OnlineInquiry.clientPax}}
+                              </span>
+                            </div>
+                            <q-separator spaced/>
+                            <div class="row justify-between">
+                              <span class="text-weight-bold">
+                                Total Price
+                              </span>
+                              <span class="text-weight-bold text-teal">
+                                ₱ {{formatNumber(returnCustomPrice * OnlineInquiry.clientPax)}}.00
+                              </span>
+                            </div>
+                          </div>
                         </div>  
 
                         <div class="q-pa-sm" v-show="returnSelectedPackagePrice !== 0">
@@ -394,11 +439,11 @@
                             </div>
                         </div>
 
-                        <div class="q-mt-md q-mb-sm" v-show="returnSelectedPackagePrice !== 0"> 
+                        <div class="q-mt-md q-mb-sm" v-show="returnSelectedPackagePrice !== 0 || returnCustomPrice !== 0"> 
                         <q-separator inset class="black"/>
                         </div>
 
-                        <div class="q-pa-sm row justify-between text-h6" v-show="returnSelectedPackagePrice !== 0">
+                        <div class="q-pa-sm row justify-between text-h6" v-show="returnSelectedPackagePrice !== 0 || returnCustomPrice !== 0">
                             <div class="text-weight-bold">TOTAL PRICE</div>
                             <div class="text-weight-bold text-teal">P {{formatNumber(returnTotalPrice)}}.00</div>
                         </div>
@@ -506,6 +551,7 @@ export default {
   },
   data () {
     return {
+        step1choice: 'package',
         loadingOn:false,
         login: false,
         change: false,
@@ -522,6 +568,7 @@ export default {
         City: [],
         Packages: [],
         Inclusion: [],
+        FoodCategory: [],
         Food: [],
         Addons: [],
         filter: '',
@@ -612,7 +659,11 @@ export default {
     this.$binding('Addons', this.$firestoreApp.collection('Addons'))
             .then(Addons => {
             console.log(Addons, 'Addons')
-            })
+            }),
+    this.$binding('FoodCategory', this.$firestoreApp.collection('FoodCategory'))
+          .then(FoodCategory => {
+          console.log(FoodCategory, 'FoodCategory')
+          })
   },
   computed:{
     motifOpt(){
@@ -637,7 +688,12 @@ export default {
     },
     foodChoice(){
         try {
-          let viands = this.selected[0].viands
+          let viands
+          if(this.step1choice == 'package'){
+            viands = this.selected[0].viands
+          } else {
+            viands = this.FoodCategory
+          }
           console.log(viands)
           let foodWithPriceInViands = []
           let foods =  this.Food
@@ -687,6 +743,24 @@ export default {
         } catch (err){
           return []
         }
+      },
+      returnCustomPrice(){
+        let foods = this.returnChoiceOfFood
+        console.log(foods,'returnCustomPrice')
+        //get food choices
+        let choices = []
+        let sure
+        foods.forEach(a=>{
+          let base = a.foodChoices
+          base.forEach(b=>{
+            choices.push(b)
+          })
+        })
+        console.log('choices',choices)
+
+        return this.$lodash.sumBy(choices,a=>{
+          return parseInt(a.foodPrice)
+        })
       },
       returnSelectedPackage(){
         try {
@@ -754,19 +828,34 @@ export default {
       returnTotalPrice(){
         try {
           let vm = this
-          if(this.returnSelectedPackagePrice != 0 && vm.mergeQtyAddOns.length == 0){
-            return this.returnSelectedPackagePrice * this.OnlineInquiry.clientPax
-          } else if (vm.mergeQtyAddOns.length > 0){
-            // console.log('here')
-            let addons = vm.$lodash.sumBy(vm.mergeQtyAddOns, 'totalPrice')
-            // console.log(addons,'sum')
-            let pax = vm.returnSelectedPackagePrice * vm.OnlineInquiry.clientPax
-            // console.log(pax + addons,'sum')
-            return pax + addons
+          if(this.step1choice == 'package'){
+              if(this.returnSelectedPackagePrice != 0 && vm.mergeQtyAddOns.length == 0){
+                return this.returnSelectedPackagePrice * this.OnlineInquiry.clientPax
+              } else if (vm.mergeQtyAddOns.length > 0){
+                // console.log('here')
+                let addons = vm.$lodash.sumBy(vm.mergeQtyAddOns, 'totalPrice')
+                // console.log(addons,'sum')
+                let pax = vm.returnSelectedPackagePrice * vm.OnlineInquiry.clientPax
+                // console.log(pax + addons,'sum')
+                return pax + addons
+              } else {
+                return 0
+              }
           } else {
-            return 0
-          }
+            if(this.returnCustomPrice != 0 && vm.mergeQtyAddOns.length == 0){
+              return this.returnCustomPrice * this.OnlineInquiry.clientPax
+            } else if (vm.mergeQtyAddOns.length > 0){
 
+                let addons = vm.$lodash.sumBy(vm.mergeQtyAddOns, 'totalPrice')
+                // console.log(addons,'sum')
+                let pax = vm.returnCustomPrice * vm.OnlineInquiry.clientPax
+                // console.log(pax + addons,'sum')
+                return pax + addons
+              } else {
+                return 0
+              }
+            
+          }
         } catch (err) {
           return 0
         }
@@ -902,7 +991,7 @@ export default {
       let count = this.$lodash.filter(selection, a=>{
         return a.category == viandName
       })
-      if(count.length > qty){
+      if(count.length > qty && this.step1choice == 'package'){
         this.$q.dialog({
             title: viandName + ' Selection Max Reached',
             message: 'Removing last food choice.',
@@ -1011,6 +1100,11 @@ export default {
             clientDateofReserve: date.formatDate(new Date(), 'YYYY-MM-DD'),
             clientUID: this.clientUID
         }
+          if(this.step1choice == 'custom'){
+            reserveDetails.clientReserveType = 'ONLINE-CUSTOMIZE'
+            reserveDetails.clientSelectPackage = 'NONE'
+          }
+
           this.$firestoreApp.collection('Reservation').add(reserveDetails)
             .then((ref) =>{
               let key = ref.id
@@ -1058,7 +1152,7 @@ export default {
     },
     stepcheck(){
           if(this.step === 1){
-              if(this.selected.length === 0){
+              if(this.selected.length === 0 && this.step1choice == 'package'){
                    this.$q.dialog({
                     title: `Enable To Continue`,
                     message: 'Please Select Package',

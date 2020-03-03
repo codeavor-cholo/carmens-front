@@ -91,7 +91,8 @@ module.exports = function (ctx) {
         'QPopupEdit',
         'QInnerLoading',
         'QScrollArea',
-        'QBadge'
+        'QBadge',
+        'QRadio'
       ],
       directives: [
         'ClosePopup'
