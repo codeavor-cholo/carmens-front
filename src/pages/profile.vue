@@ -167,7 +167,7 @@
                         <q-tab-panels v-model="ordertab" animated>
                         <q-tab-panel name="pending">
                             <q-list bordered separator>
-                            <q-item>
+                            <q-item v-for="(order,i) in returnUserOrders" :key="i">
                                 <q-item-section>
                                     
                                     <div class="row items-center justify-between">
@@ -193,16 +193,15 @@
                                     <div class="row justify-between">
                                         <div class="row">
                                             <div>
-                                            <img style="height:100px;width:100px" src="statics/pics/foo.jpeg">
+                                            <img style="height:100px;width:100px" :src="order.orders[0].foodPic">
                                             </div>
                                             <div class="column">
-                                            <div class="q-pl-md q-pt-md"><b>Breakfast Food</b></div>
-                                            <div class="q-pl-md text-subtitle2">x 3</div>
+                                            <div class="q-pl-md q-pt-md"><b class="q-mr-md">{{order.orders[0].foodName}}  x {{order.orders[0].qty}}</b>{{order.orders[0].size}}</div>
+                                            <div class="q-pl-md text-subtitle2 text-grey-7">AND {{order.orders.length - 2}} MORE ITEMS . . .</div>
                                             </div>
                                         </div>
-                                        <div class="q-pt-md">Food Definition in Here!</div>
                                         <div class="column q-gutter-sm justify-end">
-                                            <div class="q-px-md"><b>Total: 200 Pesos</b></div>
+                                            <div class="q-pl-xl"><b>Total: {{order.firstPayment}}</b></div>
                                             <div class="q-px-xl"><q-btn dense style="background-color:#e4acbf;width:120px" text-color="white" label="Payment" /></div>
                                         </div>
                                     </div>
@@ -434,6 +433,7 @@ export default {
       val: true,
       num: 1,
       Reservation: [],
+      partyTrayOrders: [],
       clientUID: ''
     }
   },
@@ -452,6 +452,10 @@ export default {
         this.$binding('Reservation', this.$firestoreApp.collection('Reservation'))
             .then(Reservation => {
             console.log(Reservation, 'Reservation')
+        }),
+        this.$binding('partyTrayOrders', this.$firestoreApp.collection('partyTrayOrders'))
+            .then(partyTrayOrders => {
+            console.log(partyTrayOrders, 'partyTrayOrders')
         })
   },
   computed:{
@@ -465,6 +469,20 @@ export default {
             return reservations
         
 
+          } catch(err){
+              console.log(err,'err')
+              return []
+          }
+      },
+        returnUserOrders(){
+          try {
+
+            let reservations = this.$lodash.filter(this.partyTrayOrders,a=>{
+                return a.accountUID == this.clientUID
+            })
+            console.log('partyTrayOrders',reservations)
+            return reservations
+        
           } catch(err){
               console.log(err,'err')
               return []
