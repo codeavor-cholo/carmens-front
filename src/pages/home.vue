@@ -1,99 +1,210 @@
 <template>
   <q-layout view="hhh lpR fff">
+<!-- START OF DESKTOP HEADER    -->
+    <div class="desktop-only">
+      <q-header class="transparent text-white row items-center justify-start" style="height:63px">
+        <q-toolbar>
+          <div class="q-px-sm q-pt-sm q-pl-xl">
+          <img style="height:100%;width:180px" src="statics/pics/carmen-logo.png" @click="$router.push('/')">
+          </div>
 
-    <q-header class="transparent text-white row items-center justify-start" style="height:63px">
-      <q-toolbar>
-        <div class="q-px-sm q-pt-sm q-pl-xl">
-        <img style="height:100%;width:180px" src="statics/pics/carmen-logo.png" @click="$router.push('/')">
-        </div>
+          <div style="color:#E4ACBF">
+          <q-tabs  
+          indicator-color="transparent"
+          active-color="pink-3" 
+          v-model="tab">
+          <div class="row q-pa-sm">
+          <div><q-route-tab to="/" name="air"><b>PARTY TRAYS</b></q-route-tab></div>
+          <div><q-route-tab to="/catering"><b>CATERING SERVICES</b></q-route-tab></div>
+          <div style="padding-left:380px;"><q-route-tab to="" ><b>sign up</b></q-route-tab></div>
+          <!-- STATIC SHOW HIDE LOGIN -->
+          <div><q-tab v-show="show" @click="login = true"><b>login</b></q-tab></div>
+          <div class="row items-center">
+            <q-btn-dropdown dense style="color:#e4acbf" v-show="!show"  :label="displayName" flat>
+              <q-list>
+                <q-item clickable v-close-popup @click="$router.push('/profile')">
+                  <q-item-section>
+                    <q-item-label>My Account</q-item-label>
+                  </q-item-section>
+                </q-item>
+
+                <q-item clickable v-close-popup @click="tempLogout">
+                  <q-item-section>
+                    <q-item-label>Log Out</q-item-label>
+                  </q-item-section>
+                </q-item>
+
+              </q-list>
+            </q-btn-dropdown>
+            <!-- END OF STATIC -->
+            </div>
+          </div>
+          </q-tabs>
+          </div>
+
+          <div>
+          <q-btn dense style="background-color:#e4acbf;width:120px" text-color="white" label="view basket" @click="basket=true">
+            <q-badge color="grey-10" text-color="white" :label="returnLength" floating/>
+          </q-btn>
+          </div>
+
+          <div class="q-pa-sm">
+              <q-btn dense round icon="search" text-color="pink-2" color="white" @click="tempLogout"/>
+          </div>
+        </q-toolbar>
+      </q-header>
+    </div>
+<!-- END OF DESKTO HEADER -->
+
+<!-- START OF MOBILE HEADER    -->
+    <div class="mobile-only">
+      <q-header class="transparent text-white" style="height:63px">
+        <q-toolbar>
+
+          
+          <div class="q-pt-md">
+          <img style="height:100%;width:150px" src="statics/pics/carmen-logo.png">
+          </div>
+
+          <!-- STATIC SHOW HIDE LOGIN -->
+          <div><q-tab v-show="show" @click="login = true"><b>login</b></q-tab></div>
+          <div class="row items-center">
+            <q-btn-dropdown dense style="color:#e4acbf" v-show="!show"  :label="displayName" flat>
+              <q-list>
+                <q-item clickable v-close-popup @click="$router.push('/profile')">
+                  <q-item-section>
+                    <q-item-label>My Account</q-item-label>
+                  </q-item-section>
+                </q-item>
+
+                <q-item clickable v-close-popup @click="tempLogout">
+                  <q-item-section>
+                    <q-item-label>Log Out</q-item-label>
+                  </q-item-section>
+                </q-item>
+
+              </q-list>
+            </q-btn-dropdown>
+            <!-- END OF STATIC -->
+            </div>
+
+          <div>
+            <q-btn flat text-color="pink-3" icon="shopping_cart" @click="basket=true">
+              <q-badge color="grey-10" text-color="white" :label="returnLength" floating/>
+            </q-btn>
+          </div>
+
+          <div class="q-pa-sm">
+              <q-btn dense round icon="search" text-color="pink-2" color="white" @click="tempLogout"/>
+          </div>
+        </q-toolbar>
 
         <div style="color:#E4ACBF">
-        <q-tabs  
-        indicator-color="transparent"
-        active-color="pink-3" 
-        v-model="tab">
-        <div class="row q-pa-sm">
-        <div><q-route-tab to="/" name="air"><b>PARTY TRAYS</b></q-route-tab></div>
-        <div><q-route-tab to="/catering"><b>CATERING SERVICES</b></q-route-tab></div>
-        <div style="padding-left:380px;"><q-route-tab to="" ><b>sign up</b></q-route-tab></div>
-        <!-- STATIC SHOW HIDE LOGIN -->
-        <div><q-tab v-show="show" @click="login = true"><b>login</b></q-tab></div>
-        <div class="row items-center">
-          <q-btn-dropdown dense style="color:#e4acbf" v-show="!show"  :label="displayName" flat>
-            <q-list>
-              <q-item clickable v-close-popup @click="$router.push('/profile')">
-                <q-item-section>
-                  <q-item-label>My Account</q-item-label>
-                </q-item-section>
-              </q-item>
-
-              <q-item clickable v-close-popup @click="tempLogout">
-                <q-item-section>
-                  <q-item-label>Log Out</q-item-label>
-                </q-item-section>
-              </q-item>
-
-            </q-list>
-          </q-btn-dropdown>
-          <!-- END OF STATIC -->
+          <q-tabs  
+          indicator-color="transparent"
+          active-color="pink-3" 
+          v-model="tab">
+          
+          <q-route-tab to="/partytray" name="air"><b>PARTY TRAYS</b></q-route-tab>
+          <q-route-tab to="/cateringpage"><b>CATERING SERVICES</b></q-route-tab>
+          <!-- <div style="padding-left:380px;"><q-route-tab to="" ><b>sign up</b></q-route-tab></div> -->
+          
+          </q-tabs>
           </div>
-        </div>
-        </q-tabs>
-        </div>
 
-        <div>
-        <q-btn dense style="background-color:#e4acbf;width:120px" text-color="white" label="view basket" @click="basket=true">
-          <q-badge color="grey-10" text-color="white" :label="returnLength" floating/>
-        </q-btn>
-        </div>
-
-        <div class="q-pa-sm">
-             <q-btn dense round icon="search" text-color="pink-2" color="white" @click="tempLogout"/>
-        </div>
-      </q-toolbar>
-    </q-header>
+      </q-header>
+    </div>
+<!-- END OF MOBILE HEADER -->
 
     <q-page-container style="background: linear-gradient(to right, #ffffff 50%, #eeeeee 50%)">
         <q-dialog v-model="basket" persistent >
-        <q-card style="min-width:500px;border-radius:20px;" class="q-pa-lg">
-          <div class="row justify-between">
-            <span class="text-h6 col">BASKET <span class="text-teal-6 text-subtitle2">({{returnLength}} ITEMS)</span></span>
-            <q-btn color="grey-10" icon="close" flat round  v-close-popup />
-          </div>
-          
-          <q-card-section class="row items-center">
-            <q-scroll-area style="width: 100%; height: 400px;" :visible="false">
-            <q-list bordered class="full-width" separator="">
-              <q-item v-for="items in returnCart" :key="items['.key']">
-                <q-item-section avatar>
-                  <q-img
-                    :src="items.foodPic"
-                    :ratio="1"
-                    spinner-color="primary"
-                    spinner-size="82px"
-                    style="width:5em;border-radius:5px;"
-                    class="q-my-sm"
-                  />
-                </q-item-section>
-                <q-item-section>
-                <q-item-label>{{items.foodName}}</q-item-label>
-                <q-item-label caption lines="1">Size: {{items.size}}</q-item-label>
-                <q-item-label class="text-subtitle2" lines="1">₱ {{items.price}}</q-item-label>
-                </q-item-section>
-                <q-item-section side>
-                  <q-btn color="grey-8" icon="delete" round size="md" flat class="absolute-top-right q-ma-xs" @click="removeOrder(items)" />
-                  <q-item-label caption class="q-mt-lg">x {{items.qty}}</q-item-label>
-                  <q-item-label lines="1" class="text-subtitle2 text-pink-6 text-weight-bold">₱ {{items.price * items.qty}}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-scroll-area>
-          </q-card-section>
-          <q-card-actions align="right" class="justify-between row">
-            <div class="text-weight-bold text-h6" >SUBTOTAL : <span class="text-teal-6">{{returnSubTotal}}</span></div>
-            <q-btn :label="'Checkout '+returnLength+ ' items'" color="pink-6" v-close-popup  class="text-weight-bold" outline="" @click="checkOutOrders"/>
-          </q-card-actions>
-        </q-card>
+<!-- START OF DESKTOP BASKET -->
+        <div class="desktop-only">
+          <q-card style="min-width:500px;border-radius:20px;" class="q-pa-lg">
+            <div class="row justify-between">
+              <span class="text-h6 col">BASKET <span class="text-teal-6 text-subtitle2">({{returnLength}} ITEMS)</span></span>
+              <q-btn color="grey-10" icon="close" flat round  v-close-popup />
+            </div>
+            
+            <q-card-section class="row items-center">
+              <q-scroll-area style="width: 100%; height: 400px;" :visible="false">
+              <q-list bordered class="full-width" separator="">
+                <q-item v-for="items in returnCart" :key="items['.key']">
+                  <q-item-section avatar>
+                    <q-img
+                      :src="items.foodPic"
+                      :ratio="1"
+                      spinner-color="primary"
+                      spinner-size="82px"
+                      style="width:5em;border-radius:5px;"
+                      class="q-my-sm"
+                    />
+                  </q-item-section>
+                  <q-item-section>
+                  <q-item-label>{{items.foodName}}</q-item-label>
+                  <q-item-label caption lines="1">Size: {{items.size}}</q-item-label>
+                  <q-item-label class="text-subtitle2" lines="1">₱ {{items.price}}</q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-btn color="grey-8" icon="delete" round size="md" flat class="absolute-top-right q-ma-xs" @click="removeOrder(items)" />
+                    <q-item-label caption class="q-mt-lg">x {{items.qty}}</q-item-label>
+                    <q-item-label lines="1" class="text-subtitle2 text-pink-6 text-weight-bold">₱ {{items.price * items.qty}}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-scroll-area>
+            </q-card-section>
+            <q-card-actions align="right" class="justify-between row">
+              <div class="text-weight-bold text-h6" >SUBTOTAL : <span class="text-teal-6">{{returnSubTotal}}</span></div>
+              <q-btn :label="'Checkout '+returnLength+ ' items'" color="pink-6" v-close-popup  class="text-weight-bold" outline="" @click="checkOutOrders"/>
+            </q-card-actions>
+          </q-card>
+        </div>
+<!-- END OF DESKTOP BASKET -->
+
+<!-- START OF MOBILE BASKET -->
+        <div class="mobile-only">
+          <q-card style="border-radius:20px;" class="q-pa-sm">
+            <div class="row justify-between items-center">
+              <span class="text-h6 col">BASKET <span class="text-teal-6 text-subtitle2">({{returnLength}} ITEMS)</span></span>
+              <q-btn color="grey-10" icon="close" flat round  v-close-popup />
+            </div>
+            
+            <q-card-section class="row items-center">
+              <q-scroll-area style="width: 100%; height: 400px;" :visible="false">
+              <q-list bordered separator="">
+                <q-item v-for="items in returnCart" :key="items['.key']">
+                  <q-item-section avatar>
+                    <q-img
+                      :src="items.foodPic"
+                      :ratio="1"
+                      spinner-color="primary"
+                      spinner-size="82px"
+                      style="width:5em;border-radius:5px;"
+                      class="q-my-sm"
+                    />
+                  </q-item-section>
+                  <q-item-section>
+                  <q-item-label>{{items.foodName}}</q-item-label>
+                  <q-item-label caption lines="1">Size: {{items.size}}</q-item-label>
+                  <q-item-label class="text-subtitle2" lines="1">₱ {{items.price}}</q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-btn color="grey-8" icon="delete" round size="md" flat class="absolute-top-right q-ma-xs" @click="removeOrder(items)" />
+                    <q-item-label caption class="q-mt-lg">x {{items.qty}}</q-item-label>
+                    <q-item-label lines="1" class="text-subtitle2 text-pink-6 text-weight-bold">₱ {{items.price * items.qty}}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-scroll-area>
+            </q-card-section>
+            <q-card-actions align="center" class="column q-gutter-sm">
+              <div class="text-weight-bold text-h6" >SUBTOTAL : <span class="text-teal-6">{{returnSubTotal}}</span></div>
+              <q-btn :label="'Checkout '+returnLength+ ' items'" color="pink-6" v-close-popup  class="text-weight-bold" outline="" @click="checkOutOrders"/>
+            </q-card-actions>
+          </q-card>
+        </div>
+<!-- END OF MOBILE BASKET -->
       </q-dialog>
 
       <q-dialog v-model="login">

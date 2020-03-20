@@ -1,5 +1,7 @@
 <template>
 <q-page>
+<!-- DESKTOP ONLY -->
+    <div class="desktop-only">    
         <div>
             <div class="row q-gutter-md">
             <div class="q-pa-md q-pl-xl" style="font-size:60px;font-family: 'Domine', serif;padding-left:130px">PARTY TRAYS</div>
@@ -71,36 +73,149 @@
             </q-table>
             </div>
             </div> 
-        
+    </div>
+<!-- END OF DESKTOP ONLY -->
+
+<!-- MOBILE ONLY -->
+    <div class="mobile-only">    
+        <div>
+            <div>
+            <div class="q-pt-xl text-center" style="font-size:40px;font-family: 'Domine', serif">PARTY TRAYS</div>
+            <div class="row items-center q-pa-sm">
+            <q-input v-model="filter" dense style="width:400px" rounded standout="bg-white text-grey-8" clearable input-class="text-pink-3" label="Search Food" class="q-ma-md" outlined icon="search" >
+                <template v-slot:prepend>
+                    <q-icon name="search" color="pink-3"/>
+                </template>
+            </q-input>
+            </div>
+            <!-- <div class="row items-center">
+            <q-btn-dropdown dense label="filter by" flat color="grey-8">
+                <q-list>
+                    <q-item clickable v-close-popup>
+                    <q-item-section>
+                        <q-item-label>Photos</q-item-label>
+                    </q-item-section>
+                    </q-item>
+
+                    <q-item clickable v-close-popup>
+                    <q-item-section>
+                        <q-item-label>Videos</q-item-label>
+                    </q-item-section>
+                    </q-item>
+
+                    <q-item clickable v-close-popup>
+                    <q-item-section>
+                        <q-item-label>Articles</q-item-label>
+                    </q-item-section>
+                    </q-item>
+                </q-list>
+                </q-btn-dropdown>
+                </div> -->
+                </div>          
+        </div>
+
+<!-- MOST POPULAR -->
+            
+            
+            <div>
+                <!-- <div class="col-3 q-pt-xl q-pl-xl" style="font-size:30px;font-family: 'Domine', serif"> ALL PARTY TRAYS </div> -->
+                <div class="row justify-center">
+                <q-table grid :data="returnWithPartyTrays" :columns="columns" :pagination="pagination" :filter="filter">
+                <template v-slot:item="props">            
+                    <div class="q-pa-sm grid-style-transition" :style="props.selected ? 'transform: scale(0.95);' : ''">
+                        <q-card flat class="my-card" style="width:155px;height:200px" >
+                            <div>
+                                <q-img :src="props.row.foodPic" styl="height:200px" :ratio="4/3"/>
+                            
+                            <q-card-section side>
+                            <q-list dense>
+                                <div class="row items-center justify-between">
+                                    <div class="col">    
+                                        <div>
+                                            <div style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><b>{{props.row.foodName}}</b></div>
+                                            <div style="font-size:12px">{{props.row.partyTrayPrice[0].price}} Pesos</div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <q-btn round color="pink-3" @click="openDialog(props.row)" class="q-ml-lg" flat size="md" icon="shopping_cart"/>
+                                    </div>
+                                </div>
+                            </q-list>
+                            </q-card-section>
+                            </div>
+                        </q-card>
+                    </div>
+                </template>
+            </q-table>
+            </div>
+            </div> 
+    </div>
+<!-- END OF MOBILE ONLY -->
 
             <q-dialog v-model="addPorder" persistent="">
-            <q-card class="text-center text-weight-bold" style="min-width: 400px">
-                            <q-img
-                                :src="this.selectedPorder.foodPic"
-                                :ratio="4/3"
-                                >
-                                <div class="absolute-bottom text-subtitle1 text-center q-pa-xs">
-                                    {{this.selectedPorder.foodName}}
+<!-- DESKTOP ONLY -->
+            <div class="desktop-only">
+                <q-card class="text-center text-weight-bold" style="min-width: 400px">
+                                <q-img
+                                    :src="this.selectedPorder.foodPic"
+                                    :ratio="4/3"
+                                    >
+                                    <div class="absolute-bottom text-subtitle1 text-center q-pa-xs">
+                                        {{this.selectedPorder.foodName}}
+                                    </div>
+                                </q-img>
+                                <div class="q-mt-md">
+                                <span class="text-center text-weight-bold text-h6" style="font-family: 'Roboto Slab', serif;">PARTY TRAY SIZE/s AND PRICES</span>
                                 </div>
-                            </q-img>
-                            <div class="q-mt-md">
-                            <span class="text-center text-weight-bold text-h6" style="font-family: 'Roboto Slab', serif;">PARTY TRAY SIZE/s AND PRICES</span>
-                            </div>
-                            <div class="q-pa-sm row q-pr-xl" v-for="(price, index) in this.selectedPorder.partyTrayPrice" :key="index">
-                                <div class="col">                                
-                                    <q-checkbox class="q-mt-md" keep-color color="deep-orange-4" dense :val="price" v-model="pOrderSelected" :label="price.label+' ( '+price.paxMin+' - '+price.paxMax+' ) ₱'+price.price" @input="checkIfRemoved(price)"/>
-                                    <!-- {{ price.label }}({{price.paxMin}} - {{price.paxMax}}) for {{ price.price }}php -->
+                                <div class="q-pa-sm row q-pr-xl" v-for="(price, index) in this.selectedPorder.partyTrayPrice" :key="index">
+                                    <div class="col">                                
+                                        <q-checkbox class="q-mt-md" keep-color color="deep-orange-4" dense :val="price" v-model="pOrderSelected" :label="price.label+' ( '+price.paxMin+' - '+price.paxMax+' ) ₱'+price.price" @input="checkIfRemoved(price)"/>
+                                        <!-- {{ price.label }}({{price.paxMin}} - {{price.paxMax}}) for {{ price.price }}php -->
+                                    </div>
+                                    <div class="col-3">
+                                        <q-input :rules="[val => val !== null && val !== '' || 'Please type quantity', val => val > 0 || 'Mininum value is 1']" color="grey-10" v-model="orderQty[price.label]" type="number" label="QTY" outlined="" dense v-show="returnStatus(price)"/>
+                                    </div>
                                 </div>
-                                <div class="col-3">
-                                    <q-input :rules="[val => val !== null && val !== '' || 'Please type quantity', val => val > 0 || 'Mininum value is 1']" color="grey-10" v-model="orderQty[price.label]" type="number" label="QTY" outlined="" dense v-show="returnStatus(price)"/>
-                                </div>
-                            </div>
 
-                    <q-card-actions align="right" class="text-primary q-pa-md">
-                        <q-btn flat color="grey-6" label="Cancel" v-close-popup @click="pOrderSelected = [], orderQty = []"/>
-                        <q-btn flat color="deep-orange-4" label="Add To Basket" v-close-popup icon="shopping_cart" @click="addToBasket(selectedPorder)"/>
-                    </q-card-actions>
-                </q-card>
+                        <q-card-actions align="right" class="text-primary q-pa-md">
+                            <q-btn flat color="grey-6" label="Cancel" v-close-popup @click="pOrderSelected = [], orderQty = []"/>
+                            <q-btn flat color="deep-orange-4" label="Add To Basket" v-close-popup icon="shopping_cart" @click="addToBasket(selectedPorder)"/>
+                        </q-card-actions>
+                    </q-card>
+                </div>
+<!-- END OF DESTOP ONLY -->
+
+<!-- MOBILE ONLY -->
+            <div class="mobile-only">
+                <q-card class="text-center text-weight-bold">
+                                <q-img
+                                    :src="this.selectedPorder.foodPic"
+                                    :ratio="4/3"
+                                    >
+                                    <div class="absolute-bottom text-subtitle1 text-center q-pa-xs">
+                                        {{this.selectedPorder.foodName}}
+                                    </div>
+                                </q-img>
+                                <div class="q-mt-md">
+                                <span class="text-center text-weight-bold" style="font-family: 'Roboto Slab', serif;">PARTY TRAY SIZE/s AND PRICES</span>
+                                </div>
+                                <div class="q-pa-sm row q-pr-xl" v-for="(price, index) in this.selectedPorder.partyTrayPrice" :key="index">
+                                    <div class="col">                                
+                                        <q-checkbox class="q-mt-md" keep-color color="deep-orange-4" dense :val="price" v-model="pOrderSelected" :label="price.label+' ( '+price.paxMin+' - '+price.paxMax+' ) ₱'+price.price" @input="checkIfRemoved(price)"/>
+                                        <!-- {{ price.label }}({{price.paxMin}} - {{price.paxMax}}) for {{ price.price }}php -->
+                                    </div>
+                                    <div class="col-3">
+                                        <q-input :rules="[val => val !== null && val !== '' || 'Please type quantity', val => val > 0 || 'Mininum value is 1']" color="grey-10" v-model="orderQty[price.label]" type="number" label="QTY" outlined="" dense v-show="returnStatus(price)"/>
+                                    </div>
+                                </div>
+
+                        <q-card-actions align="center" class="text-primary q-pa-md">
+                            <q-btn flat color="grey-6" label="Cancel" v-close-popup @click="pOrderSelected = [], orderQty = []"/>
+                            <q-btn flat color="deep-orange-4" label="Add To Basket" v-close-popup icon="shopping_cart" @click="addToBasket(selectedPorder)"/>
+                        </q-card-actions>
+                    </q-card>
+                </div>
+<!-- END OF MOBILE ONLY -->
             </q-dialog>      
         
 </q-page>
