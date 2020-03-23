@@ -123,7 +123,7 @@
                 <q-table grid :data="returnWithPartyTrays" :columns="columns" :pagination="pagination" :filter="filter">
                 <template v-slot:item="props">            
                     <div class="q-pa-sm grid-style-transition" :style="props.selected ? 'transform: scale(0.95);' : ''">
-                        <q-card flat class="my-card" style="width:155px;height:200px" >
+                        <q-card flat class="my-card" style="width:164px;height:200px" >
                             <div>
                                 <q-img :src="props.row.foodPic" styl="height:200px" :ratio="4/3"/>
                             
@@ -183,7 +183,7 @@
                         </q-card-actions>
                     </q-card>
                 </div>
-<!-- END OF DESTOP ONLY -->
+<!-- END OF DESKTOP ONLY -->
 
 <!-- MOBILE ONLY -->
             <div class="mobile-only">

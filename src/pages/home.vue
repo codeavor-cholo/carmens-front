@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hhh lpR fff">
+  <q-layout view="hhh lpR fFf">
 <!-- START OF DESKTOP HEADER    -->
     <div class="desktop-only">
       <q-header class="transparent text-white row items-center justify-start" style="height:63px">
@@ -62,12 +62,12 @@
         <q-toolbar>
 
           
-          <div class="q-pt-md">
-          <img style="height:100%;width:150px" src="statics/pics/carmen-logo.png">
+          <div class="q-pt-md q-pl-md">
+          <img style="height:100%;width:180px" src="statics/pics/carmen-logo.png">
           </div>
 
           <!-- STATIC SHOW HIDE LOGIN -->
-          <div><q-tab v-show="show" @click="login = true"><b>login</b></q-tab></div>
+          <!-- <q-tab v-show="show" @click="login = true"><b>login</b></q-tab>
           <div class="row items-center">
             <q-btn-dropdown dense style="color:#e4acbf" v-show="!show"  :label="displayName" flat>
               <q-list>
@@ -85,14 +85,13 @@
 
               </q-list>
             </q-btn-dropdown>
-            <!-- END OF STATIC -->
-            </div>
+            </div> -->
 
-          <div>
+          <!-- <div>
             <q-btn flat text-color="pink-3" icon="shopping_cart" @click="basket=true">
               <q-badge color="grey-10" text-color="white" :label="returnLength" floating/>
             </q-btn>
-          </div>
+          </div> -->
 
           <div class="q-pa-sm">
               <q-btn dense round icon="search" text-color="pink-2" color="white" @click="tempLogout"/>
@@ -305,6 +304,46 @@
       <router-view />
     </q-page-container>
 
+<!-- MOBILE FOOTER -->
+  <div class="mobile-only">
+      <q-footer class="bg-grey-4 text-white">
+        <q-toolbar class="row justify-center">
+            <div style="color:#E4ACBF">  
+              <q-tabs
+              v-model="footertab"
+              active-color="pink-4"
+              indicator-color="transparent"
+              >
+              <q-tab v-show="show" @click="login = true"><b>Account</b></q-tab>
+              <div class="row items-center">
+                <q-btn-dropdown dense style="color:#e4acbf" v-show="!show"  :label="displayName" flat>
+                  <q-list>
+                    <q-item clickable v-close-popup @click="$router.push('/profile')">
+                      <q-item-section>
+                        <q-item-label>My Account</q-item-label>
+                      </q-item-section>
+                    </q-item>
+
+                    <q-item clickable v-close-popup @click="tempLogout">
+                      <q-item-section>
+                        <q-item-label>Log Out</q-item-label>
+                      </q-item-section>
+                    </q-item>
+
+                  </q-list>
+                </q-btn-dropdown>
+                </div>
+              <q-tab name="alarms" icon="notifications"><b>Notifications</b></q-tab>
+              <q-tab name="movies" icon="shopping_cart" @click="basket=true">
+                <q-badge color="grey-10" text-color="white" :label="returnLength" floating/>  
+                <b>Basket</b>
+              </q-tab>
+              </q-tabs>
+            </div>
+        </q-toolbar>
+      </q-footer>
+  </div>
+<!-- END OF MOBILE FOOTER -->
   </q-layout>
 </template>
 
@@ -313,6 +352,7 @@ export default {
   data () {
     return {
       tab: 'air',
+      footertab: 'mails',
       search: '',
       message:'',
       show: true,
