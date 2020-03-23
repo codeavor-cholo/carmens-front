@@ -297,7 +297,7 @@
                                             <div class="col-6 row items-center q-gutter-sm">
                                                 <q-icon name="watch_later" class="text-black" style="font-size: 2rem;" />
                                                 <div class="">Time of Event: </div>
-                                                <div class="text-weight-bold text-h6"> {{formatTime(reserve.clientStartTime)}} - {{formatTime(reserve.clientEndTime)}}</div>
+                                                <div class="text-weight-bold text-h6"> {{reserve.clientStartTime}} - {{reserve.clientEndTime}}</div>
                                             </div>
                                         </div>
                                         <div class="row">

@@ -170,6 +170,9 @@ export default {
         this.addPorder = true
     },
     addToBasket(props){
+
+        //start
+        //quantity merging
         let item = {...props}
         
         let key = item['.key']
@@ -179,7 +182,7 @@ export default {
         let qty = this.orderQty
 
         let keys = this.$lodash.keys(this.orderQty)
-        // console.log(keys,'keys')
+        console.log(keys,'keys')
 
         if(size.length != keys.length){
             // this.showCompleteBanner = true
@@ -192,9 +195,10 @@ export default {
             m.qty = qty[m.label]
             merge.push(m)
         }
-
+        
         console.log(merge,'merge')
         console.log(item,'itemAddToBasket')
+        //end
 
         let value = this.$q.localStorage.getItem('addCart')
         var user = this.$firebase.auth().currentUser
@@ -209,14 +213,16 @@ export default {
                 //first cart is add if none in database index
                 this.firstCart(item,merge[0],uid)
             } else {
-                for( var y= 0; y < merge.length; y++){
+                for( var y = 0; y < merge.length; y++){
                     this.openPorder(item,merge[y],uid)
                 }                
             }
             
         }
         else{
-            if(value == null){
+            //checker to pra malaman kung may laman ung local storage
+
+            if(value == null){ //kung walang laman array
                 this.firstCart(item,merge[0],'')
             } else {
                 for( var y= 0; y < merge.length; y++){
@@ -235,6 +241,8 @@ export default {
 
         // console.log(props,'props')
         // console.log(sizeQty,'size')
+
+        //start
         let order = {...props}
         order.size = sizeQty.label
         order.price = sizeQty.price
@@ -243,6 +251,10 @@ export default {
         order.qty = sizeQty.qty
         order.checkerName = order.foodName+'_'+sizeQty.label
         delete order.partyTrayPrice
+        //end
+
+
+
         let key = 'addCart'
         // get value
         let value = this.$q.localStorage.getItem(key)
@@ -285,6 +297,10 @@ export default {
             }
             
 
+
+            //checker kung may same 
+            //check sa array
+
             let indexing = this.$lodash.findIndex(itemss,a=>{
                 return a.checkerName == order.checkerName
             })
@@ -299,6 +315,8 @@ export default {
                 items: itemss
             }
 
+            //push
+
             this.$firestoreApp.collection('CartItems').doc(basis).set(addCart)
             .then((ref) =>{
                 console.log('cart updated')
@@ -307,6 +325,7 @@ export default {
         
     },
     firstCart(props,sizeQty,uid){
+        //start
         let order = {...props}
         order.size = sizeQty.label
         order.price = sizeQty.price
@@ -324,6 +343,12 @@ export default {
         let addCart = {
             items: itemss
         }
+
+        //end
+
+        //push
+
+
         if(uid != ''){
             this.$firestoreApp.collection('CartItems').doc(uid).set(addCart)
             .then((ref) =>{
