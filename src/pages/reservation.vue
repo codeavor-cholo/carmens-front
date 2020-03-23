@@ -956,6 +956,14 @@ export default {
         this.endTime = initialCity
         this.whatToEdit = whatToEdit
     },
+    formatEndTimeInput(time){
+      //get time to format for display
+      let baseDate = new Date(2020,1,1)
+      let arr = time.split(':')
+      let formatTime = date.addToDate(baseDate, {hours:parseInt(arr[0])+1,minutes:arr[1]})
+
+      return this.$moment(formatTime).format('LT')
+    },        
     changeData(){
         if(this.whatToEdit == 'Address'){
             this.OnlineInquiry.clientPlace = this.address

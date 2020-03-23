@@ -175,6 +175,7 @@
 <script>
 import { StripeElements } from 'vue-stripe-checkout'
 import { uid } from 'quasar'
+import { date } from 'quasar'
 export default {
   components: {
     StripeElements
@@ -336,7 +337,10 @@ export default {
                 paymentTerms: this.paymentOpt,
                 firstPayment: this.returnToPay,
                 totalToPayAmount: this.returnSubTotal,
-                orders: this.returnCart
+                orders: this.returnCart,
+                clientReserveDate: this.date,
+                clientStartTime: this.formatTimeInput(this.time),
+                clientEndTime: this.formatEndTimeInput(this.time)
             }
             let id = ''
             this.$firestoreApp.collection('partyTrayOrders').add(checkout)
@@ -380,7 +384,23 @@ export default {
             //delete from CartItems
             //save payment with and indication that its from party trays
 
-        }
+        },
+        formatTimeInput(time){
+            //get time to format for display
+            let baseDate = new Date(2020,1,1)
+            let arr = time.split(':')
+            let formatTime = date.addToDate(baseDate, {hours:arr[0],minutes:arr[1]})
+
+            return this.$moment(formatTime).format('LT')
+        },
+        formatEndTimeInput(time){
+            //get time to format for display
+            let baseDate = new Date(2020,1,1)
+            let arr = time.split(':')
+            let formatTime = date.addToDate(baseDate, {hours:parseInt(arr[0])+1,minutes:arr[1]})
+
+            return this.$moment(formatTime).format('LT')
+        },    
     }
 }
 </script>
