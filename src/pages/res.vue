@@ -1,87 +1,92 @@
 <template>
     <q-page>
 
-        <div class="row">
+        <div>
 <!-- LEFT PART -->
-            <div class="col-8 q-pt-xl q-pl-xl q-pl-md">
+            <div class="q-pt-xl">
                 <q-card class="my-card">
                     <q-card-section>
-                        <div class="q-px-md q-pt-md" style="font-size:30px;font-family: 'Noto Serif SC', serif;"><b>{{OnlineInquiry.clientEvent}}</b></div>
                         
-                        <div class="row q-mb-sm q-ml-md">
-                            <div class="q-pa-lg text-weight-bold col-3">EVENT DATE & TIME:</div>
-                            <div class="col-3">
-                                <div class="q-pt-md row"> 
+                
+                        <div class="q-px-md q-pt-md" style="font-size:20px;font-family: 'Noto Serif SC', serif;"><b>{{OnlineInquiry.clientEvent}}</b></div>
+                        
+                        <div class="q-mb-sm">
+                            <div class="text-weight-bold q-pt-md">EVENT DATE & TIME:</div>
+                            <div>
+                                <div class="q-pt-sm q-pl-lg row"> 
                                     <div class="col q-pa-sm">
                                     {{this.$moment(OnlineInquiry.clientDateofReserve).format('LL')}}
                                     </div>
-                                    <div class="col-3"><q-btn flat text-color="teal" icon="edit" @click="openDateDialog(OnlineInquiry.clientDateofReserve)"/></div>
+                                    <div class="col"><q-btn flat text-color="teal" icon="edit" @click="openDateDialog(OnlineInquiry.clientDateofReserve)"/></div>
                                 </div>
-                                <div class="row q-pt-sm"> 
+                                <div class="row q-pt-sm q-pl-lg"> 
                                     <div class="col q-pa-sm">
                                     {{this.formatTimeInput(OnlineInquiry.clientStartTime)}} - {{this.formatTimeInput(OnlineInquiry.clientEndTime)}}
                                     </div>
-                                    <div class="col-3"><q-btn flat text-color="teal" icon="edit" @click="openDialog(OnlineInquiry.clientStartTime,OnlineInquiry.clientEndTime,'Time')"/></div>
+                                    <div class="col"><q-btn flat text-color="teal" icon="edit" @click="openDialog(OnlineInquiry.clientStartTime,OnlineInquiry.clientEndTime,'Time')"/></div>
 
                                     
                                 </div>
                             </div>
-                            <div class="q-pt-lg q-pl-md text-weight-bold col-1 row">
-                           <span class="col-12">PAX:</span> 
-                           <span class="col-12 q-mt-md">MOTIF:</span> 
+                            <div class="q-pt-lg text-weight-bold row">
+                            <div class="col">
+                                <div class="row q-gutter-sm q-pb-sm">
+                                    <span>PAX:</span>
+                                    <span class="cursor-pointer v-ripple">{{OnlineInquiry.clientPax}}<q-icon name="edit" size="sm" class="q-ml-md" color="teal" v-ripple/>
+                                                <q-popup-edit v-model="OnlineInquiry.clientPax">
+                                                <template v-slot="{ initialValue, value, emitValue, set, cancel }">
+                                                    <q-input style="width: 400px" class="relative position" autofocus dense :value="OnlineInquiry.clientPax" hint="Enter PAX" @input="emitValue">
+                                                    <template v-slot:after>
+                                                        <q-btn flat dense color="grey-8" icon="cancel" @click.stop="cancel" />
+                                                        <q-btn flat dense color="teal" icon="check_circle" @click.stop="set" />
+                                                    </template>
+                                                    </q-input>
+                                                </template>
+                                                </q-popup-edit>
+                                            </span>
+                                </div>
                             </div>
-                            <div class="col-4">
-                                <div class="q-pt-md row">
-                                    <span class="col-12 q-pa-sm cursor-pointer v-ripple">{{OnlineInquiry.clientPax}}<q-icon name="edit" size="sm" class="q-ml-lg" color="teal" v-ripple/>
-                                        <q-popup-edit v-model="OnlineInquiry.clientPax">
-                                          <template v-slot="{ initialValue, value, emitValue, set, cancel }">
-                                            <q-input style="width: 400px" class="relative position" autofocus dense :value="OnlineInquiry.clientPax" hint="Enter PAX" @input="emitValue">
-                                              <template v-slot:after>
-                                                <q-btn flat dense color="grey-8" icon="cancel" @click.stop="cancel" />
-                                                <q-btn flat dense color="teal" icon="check_circle" @click.stop="set" />
-                                              </template>
-                                            </q-input>
-                                          </template>
-                                        </q-popup-edit>
-                                    </span>
-                                </div> 
-                                <div class="q-pt-sm row">
-                                    <span class="col-12 q-pa-sm cursor-pointer v-ripple">{{returnArrayMotifToString(OnlineInquiry.clientMotif)}}<q-icon name="edit" size="sm" class="q-ml-lg" color="teal" v-ripple/>
-                                        <q-popup-edit v-model="OnlineInquiry.clientMotif">
-                                          <template v-slot="{ initialValue, value, emitValue, set, cancel }">
-                                            <q-select style="width: 400px" class="relative position" autofocus outlined v-model="OnlineInquiry.clientMotif" multiple="" :options="motifOpt" emit-value map-options hint="Select Motif" @input="emitValue">
-                                              <template v-slot:after>
-                                                <q-btn flat dense color="grey-8" icon="cancel" @click.stop="cancel" />
-                                                <q-btn flat dense color="teal" icon="check_circle" @click.stop="set" />
-                                              </template>
-                                              <template v-slot:option="scope">
-                                                <q-item
-                                                  v-bind="scope.itemProps"
-                                                  v-on="scope.itemEvents"
-                                                >
-                                                  <q-item-section avatar>
-                                                    <q-avatar :style="'background-color:'+scope.opt.hex" size="3em" />
-                                                  </q-item-section>
-                                                  <q-item-section>
-                                                    <q-item-label>{{ scope.opt.label }}</q-item-label>
-                                                  </q-item-section>
-                                                </q-item>
-                                              </template>
-                                            </q-select>
-                                          </template>
-                                        </q-popup-edit>
-                                    </span>
-                                </div> 
+
+                            <div class="col">
+                                <div class="row q-gutter-sm">
+                                <span class="">MOTIF:</span> 
+                                <span class="cursor-pointer v-ripple">{{returnArrayMotifToString(OnlineInquiry.clientMotif)}}<q-icon name="edit" size="sm" class="q-ml-md" color="teal" v-ripple/>
+                                                <q-popup-edit v-model="OnlineInquiry.clientMotif">
+                                                <template v-slot="{ initialValue, value, emitValue, set, cancel }">
+                                                    <q-select style="width: 400px" class="relative position" autofocus outlined v-model="OnlineInquiry.clientMotif" multiple="" :options="motifOpt" emit-value map-options hint="Select Motif" @input="emitValue">
+                                                    <template v-slot:after>
+                                                        <q-btn flat dense color="grey-8" icon="cancel" @click.stop="cancel" />
+                                                        <q-btn flat dense color="teal" icon="check_circle" @click.stop="set" />
+                                                    </template>
+                                                    <template v-slot:option="scope">
+                                                        <q-item
+                                                        v-bind="scope.itemProps"
+                                                        v-on="scope.itemEvents"
+                                                        >
+                                                        <q-item-section avatar>
+                                                            <q-avatar :style="'background-color:'+scope.opt.hex" size="3em" />
+                                                        </q-item-section>
+                                                        <q-item-section>
+                                                            <q-item-label>{{ scope.opt.label }}</q-item-label>
+                                                        </q-item-section>
+                                                        </q-item>
+                                                    </template>
+                                                    </q-select>
+                                                </template>
+                                                </q-popup-edit>
+                                            </span>
+                                            </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <div class="q-pa-sm"> 
+
+                        <div> 
                         <q-card class="my-card bg-grey-3">
                         <q-card-section>
-                        <div class="row">
-                        <div class="q-px-md text-weight-bold col-3">EVENT PLACE ADDRESS:  </div>    
-                        <div class="col">{{OnlineInquiry.clientPlace}}, {{OnlineInquiry.clientCity}}  </div>
-                        <div class="col-1">
+                        <div class="column">
+                        <div class="text-weight-bold">EVENT PLACE ADDRESS:  </div>    
+                        <div>{{OnlineInquiry.clientPlace}}, {{OnlineInquiry.clientCity}}  </div>
+                        <div class="text-center">
                         <q-btn dense flat text-color="teal" label="change" @click="openDialog(OnlineInquiry.clientPlace,OnlineInquiry.clientCity,'Address')"/>
                         </div>
                         </div>
@@ -90,10 +95,11 @@
                         </q-card>                    
                         </div>
                         
-                        <div class="q-pa-sm q-pt-md"> 
+                        <div class="q-pt-md"> 
                         <q-stepper
                             v-model="step"
                             ref="stepper"
+                            vertical
                             color="pink-3"
                             active-color="pink-3" inactive-color="grey-8"
                             animated
@@ -110,8 +116,6 @@
                                 </div>
 
                                 <div v-if="step1choice == 'package'">
-
-                                
 
                                 <q-table grid :data="Packages" :columns="columns" :filter="filter" row-key=".key" selection="single" :selected.sync="selected">
                                     <template v-slot:item="props">
@@ -152,7 +156,7 @@
                                 </q-table>
                                 </div>
                                 <div v-else class="text-center">
-                                  <div class="text-h6">You want to customize your own package ?</div>
+                                  <div style="font-size:18px"><b>You want to customize your own package ?</b></div>
                                   <span class="text-subtitle2">Click <b class="text-teal">CONTINUE</b> to proceed to customization.</span>
                                 </div>
                             </q-step>
@@ -164,8 +168,8 @@
                                 :done="step > 2"
                             >
                                 <div v-for="(food,i) in foodChoice" :key="i" v-show="selected != null">
-                                  <span class="q-mb-none q-mt-md text-subtitle2"> Select <span class="text-teal text-h6 text-weight-bolder">{{returnLimit(food.viandName)}}</span> Choice<span v-show="returnLimit(food.viandName) > 1">s</span> of {{food.viandName}}  </span>
-                                  <div class="row">
+                                  <span class=" q-mt-md text-subtitle2"> Select <span class="text-teal text-h6 text-weight-bolder">{{returnLimit(food.viandName)}}</span> Choice<span v-show="returnLimit(food.viandName) > 1">s</span> of {{food.viandName}}  </span>
+                                  <div class="">
                                     <q-img
                                       v-for="(choice,j) in food.foodChoices" :key="j"
                                       :src="choice.foodPic"
@@ -188,7 +192,7 @@
                             >
                                 <div class="row">
                                   <div class="text-subtitle2 q-mb-sm full-width">Package Includes The Following:</div>
-                                  <q-card flat style="max-width: 150px" class="my-card bg-grey-3 col-3 q-ma-md" v-for="(inc,i) in returnSelectedPackageInclusion" :key="i">
+                                  <q-card flat style="max-width: 150px" class="my-card bg-grey-3 col-9 q-ma-sm text-center" v-for="(inc,i) in returnSelectedPackageInclusion" :key="i">
                                     <q-card-section>
                                         <!-- <q-checkbox color="pink-3" dense v-model="choiceOfInclusions" :val="inc" :label="inc.inclusion" />-->
                                         {{inc.inclusion}} 
@@ -197,7 +201,7 @@
                                 </div>
                                 <div class="row q-mt-md">
                                   <div class="text-subtitle2 q-mb-sm full-width">You can add any of the following ADD-ON Items:</div>
-                                  <q-card flat class="my-card bg-grey-3 col-3 q-ma-md" v-for="(inc,i) in Addons" :key="i">
+                                  <q-card flat class="my-card bg-grey-3 col-10 q-ma-sm" v-for="(inc,i) in Addons" :key="i">
                                     <q-card-section>
                                         <q-checkbox color="pink-3" dense v-model="choiceOfAddOns" :val="inc" :label="inc.addons +' - P '+inc.addonsPrice+' each'" class="text-weight-bold" @input="checkIfRemoved(inc.addons),showFoodChoices = false"/>
                                     </q-card-section>
@@ -208,12 +212,14 @@
                                       <div class="text-subtitle2 q-mb-md full-width">Fill up QTY of Add-ons needed.</div>
                                       <q-item dense v-for="(i, index) in this.choiceOfAddOns" :key="index">
                                           <q-item-section>
-                                            <div class="row items-center">
-                                              <q-item-label class="col" lines="1" >{{i.addons}}</q-item-label>
+                                            <div class="column">
+                                              <q-item-label lines="1" >{{i.addons}}</q-item-label>
                                               <q-input color="teal" outlined="" class="q-my-sm col" style="" type="number" dense min="1" v-model="AddOnsQty[i.addons]" label="Add-On Qty" />
-                                              <span class="col-2 text-weight-bold text-center" >x  P {{i.addonsPrice}} = </span>
-                                              <span class="col-3" v-show="isNaN(AddOnsQty[i.addons]) != false"><q-space></q-space></span>
-                                              <span class="col-3 text-weight-bold text-teal" v-show="isNaN(AddOnsQty[i.addons]) != true">P {{formatNumber(i.addonsPrice * AddOnsQty[i.addons])}}.00 </span>
+                                              <div class="row justify-center q-gutter-md">
+                                                <span class="text-weight-bold text-center" >x  P {{i.addonsPrice}} = </span>
+                                                <span v-show="isNaN(AddOnsQty[i.addons]) != false"><q-space></q-space></span>
+                                                <span class=" text-weight-bold text-teal" v-show="isNaN(AddOnsQty[i.addons]) != true">P {{formatNumber(i.addonsPrice * AddOnsQty[i.addons])}}.00 </span>
+                                              </div>
                                             </div>
                                           </q-item-section>
                                       </q-item>
@@ -226,65 +232,64 @@
                                 title="Reserve the Date"
                                 icon="money"
                             >
-                              <div class=" q-pa-xl rounded-borders">
-                                <div class="text-subtitle2 q-pl-lg  q-mb-sm full-width">Fill up this contact form and <span class="text-teal">PAY NOW</span>  to reserve the date.</div>
+                              <div class="rounded-borders">
+                                <div class="text-subtitle2  q-mb-sm full-width">Fill up this contact form and <span class="text-teal">PAY NOW</span>  to reserve the date.</div>
                                 <div class="container full-width" >
-                                  <div class="">
-                                    <div class="q-pl-lg row q-mt-md">
-                                      <div class="col-6 row">
+                                  <div class="column q-gutter-sm">
+                                      <div class="row">
                                       <q-input v-model="clientFName" type="text" label="First Name" class="col q-mr-md" outlined dense color="teal"/>
                                       <q-input v-model="clientLName" type="text" label="Last Name" class="col" outlined dense color="teal"/>
                                       </div>
+                                  
+                                    <div class="">
+                                      <q-input v-model="clientEmail" type="email" label="Email Address" outlined dense color="teal"/>
                                     </div>
-                                    <div class="q-mb-md q-mt-md q-pl-lg row">
-                                      <q-input v-model="clientEmail" type="email" label="Email Address" class="col-6 q-pr-sm" outlined dense color="teal"/>
-                                    </div>
-                                    <div class="q-mb-lg q-pl-lg row">
-                                      <q-input v-model="clientContact" type="number" label="Contact Number" class="col-6 q-pr-sm" outlined dense color="teal"/>
+                                    <div class="">
+                                      <q-input v-model="clientContact" type="number" label="Contact Number" outlined dense color="teal"/>
                                     </div>  
                                   </div>   
                                 </div>                           
-                                <div class="text-subtitle2 q-mb-sm q-pl-lg full-width">Select amount to pay :</div>
+                                <div class="text-subtitle2 q-mb-sm q-mt-md full-width">Select amount to pay :</div>
                                 <div>
                                   <q-list dense>
-                                    <q-item>
-                                        <q-item-section class="q-ml-lg">
+                                    <q-item class="column">
+                                        <q-item-section>
                                         <strong>
                                           <!-- <q-checkbox @input="paymentSelect" color="pink-3" v-model="fullPayment" label="Total Payment" /> -->
                                         <q-radio v-model="paymentMode" val="fullPayment" label="Total Payment" />
                                         </strong>
                                         </q-item-section>
-                                        <q-item-section class="q-mr-lg" side><strong>P {{formatNumber(returnTotalPrice)}}.00</strong></q-item-section>
+                                        <q-item-section class="text-right"><strong>P {{formatNumber(returnTotalPrice)}}.00</strong></q-item-section>
                                     </q-item>
-                                    <q-item>
-                                        <q-item-section class="q-ml-lg"><strong>
+                                    <q-item class="column">
+                                        <q-item-section><strong>
                                           <!-- <q-checkbox @input="paymentSelect" color="pink-3" v-model="downPayment" label="Down Payment Fee" /> -->
                                         <q-radio v-model="paymentMode" val="downPayment" label="Down Payment Fee (50%)" /></strong></q-item-section>
-                                        <q-item-section class="q-mr-lg" side><strong>P {{formatNumber(returnDownPayment)}}.00</strong></q-item-section>
+                                        <q-item-section class="text-right"><strong>P {{formatNumber(returnDownPayment)}}.00</strong></q-item-section>
                                     </q-item>
-                                    <q-item>
-                                        <q-item-section class="q-ml-lg"><strong>
+                                    <q-item class="column">
+                                        <q-item-section><strong>
                                           <!-- <q-checkbox @input="paymentSelect" color="pink-3" v-model="reservationFee" label="Reservation Fee" /> -->
                                         <q-radio v-model="paymentMode" val="reservationFee" label="Reservation Fee" />
                                         </strong>
                                         </q-item-section>
-                                        <q-item-section class="q-mr-lg" side><strong>P {{formatNumber(5000)}}.00</strong></q-item-section>
+                                        <q-item-section class="text-right"><strong>P {{formatNumber(5000)}}.00</strong></q-item-section>
                                     </q-item>
-                                    <q-item>
-                                        <q-item-section class="q-ml-lg"><strong>
+                                    <q-item class="column">
+                                        <q-item-section><strong>
                                           <!-- <q-checkbox @input="paymentSelect" color="pink-3" v-model="reservationFee" label="Reservation Fee" /> -->
                                         <q-radio v-model="paymentMode" val="desiredAmount" label="Desired Amount (should not be less than reservation fee)" />
                                         </strong>
                                         </q-item-section>
-                                        <q-item-section class="q-mr-lg" side><q-input v-model="desiredAmountInput" type="number" min="5000" label="Desired Amount" dense outlined="" color="teal" :rules="[ val => val >= 5000  || 'Amount should not be less than reservation fee.']"/></q-item-section>
+                                        <q-item-section><q-input v-model="desiredAmountInput" type="number" min="5000" label="Desired Amount" dense outlined="" color="teal" :rules="[ val => val >= 5000  || 'Amount should not be less than reservation fee.']"/></q-item-section>
                                     </q-item>
                                   </q-list>
                                 </div>
-                                    <div class="container q-mx-lg q-mt-lg relative-position">
-                                      <div class="row q-pa-md q-py-xl">
-                                        <stripe-elements ref="elementsRef" :pk="publishableKey" :amount="amount" @token="tokenCreated" @loading="loading = $event" outline class="col-8 q-mr-md">
+                                    <div class="container q-mt-lg relative-position">
+                                      <div class="column q-gutter-sm">
+                                        <stripe-elements ref="elementsRef" :pk="publishableKey" :amount="amount" @token="tokenCreated" @loading="loading = $event" outline>
                                         </stripe-elements>
-                                        <q-btn outlined color="teal" class="col" size="md" @click="submit">PAY&nbsp;&nbsp;&nbsp;<b>P {{formatNumber(toPayAmount)}}.00</b></q-btn>
+                                      <div class="text-center">  <q-btn outlined color="teal" class="col" size="md" @click="submit">PAY&nbsp;&nbsp;&nbsp;<b>P {{formatNumber(toPayAmount)}}.00</b></q-btn></div>
                                       </div>
                                       <div class="dimmed absolute-full text-center rounded-borders" v-show="userLoggedIn">
                                         <div style="z-index:100" class="absolute-center">
@@ -316,13 +321,14 @@
 <!-- RIGHT PART -->
             
             <!-- <div> -->
-              <q-page-sticky position="top-right" :offset="[0, 0]" class="col-4 q-pt-xl q-pr-xl q-pl-md">
+              <!-- <q-page-sticky position="top-right" :offset="[0, 0]" class="col-4 q-pt-xl q-pr-xl q-pl-md"> -->
+            <q-dialog v-model="right">
                 <q-card class="my-card">
                   <div>
                     <q-card-section>
                        
                         <div class="column items-center q-pa-sm">
-                             <q-card flat class="my-card bg-grey-3" style="width:300px">
+                             <q-card flat class="my-card bg-grey-3">
                                 <q-card-section>
                                     <div class="text-center text-uppercase">Order Summary - #<span class="text-weight-bolder">{{this.$route.params.id.toString().slice(0,6)}}</span></div>
                                 </q-card-section>
@@ -451,19 +457,24 @@
 
                     </div>
                  </q-card>
-                 </q-page-sticky>
+            </q-dialog>
+                 <!-- </q-page-sticky> -->
             <!-- </div>     -->            
 <!-- END OF RIGHT PART -->
+
+            <q-page-sticky position="top-right" :offset="[13, 50]">
+                <q-btn dense round color="pink-4" icon="done_outline" size="md" @click="right = true" />
+            </q-page-sticky>
           
 <!-- DATE -->
             <q-dialog v-model="change" persistent>
-            <q-card style="min-width: 250px">
-                <q-card-section class="q-pa-lg">
+            <q-card>
+                <q-card-section>
                 <div class="text-h6 q-mb-md">Event Date</div>
                 <q-date
                 v-model="date"
                 minimal=""
-                class="shadow-0 q-ma-none"
+                class="shadow-0"
                 mask="YYYY-MM-DD"
                 color="grey-8"
                 >
@@ -553,6 +564,7 @@ export default {
         step1choice: 'package',
         loadingOn:false,
         login: false,
+        right: false,
         change: false,
         date: '',
         adr: false,
@@ -955,14 +967,6 @@ export default {
         this.endTime = initialCity
         this.whatToEdit = whatToEdit
     },
-    formatEndTimeInput(time){
-      //get time to format for display
-      let baseDate = new Date(2020,1,1)
-      let arr = time.split(':')
-      let formatTime = date.addToDate(baseDate, {hours:parseInt(arr[0])+1,minutes:arr[1]})
-
-      return this.$moment(formatTime).format('LT')
-    },        
     changeData(){
         if(this.whatToEdit == 'Address'){
             this.OnlineInquiry.clientPlace = this.address
@@ -1092,8 +1096,8 @@ export default {
             clientPax: inquiry.clientPax,
             clientEmail: this.clientEmail,
             clientContact: this.clientContact,
-            clientStartTime: this.formatTimeInput(inquiry.clientStartTime),
-            clientEndTime: this.formatTimeInput(inquiry.clientEndTime),
+            clientStartTime: inquiry.clientStartTime,
+            clientEndTime: inquiry.clientEndTime,
             clientSelectPackage: this.returnSelectedPackage,
             clientFoodChoice: this.choiceOfFood,
             clientAddOns: this.reMapAddOns,

@@ -1,12 +1,95 @@
 <template>
     <q-page>
-      <div class="row justify-around">  
-        <div class=" col-5 q-pa-xl q-pl-xl">
-            <p class="q-pa-sm" style="font-size:60px;font-family: 'Domine', serif;padding:0;margin:0;line-height:50px">CATERING<br>SERVICES</p>
-            <p class="q-pt-md q-pa-sm" style="color:#e4acbf;font-size:18px;font-family: 'Noto Serif SC', serif;"><i>Avail our budget friendly catering packages for</i><br><i>your special life events.</i></p>
-            <p class="q-pa-sm" style="font-size:15px;font-family: 'Noto Serif SC', serif;">Fill up our reservation form to get a free quotation</p>
+<!-- START OF DESKTOP ONLY -->
+      <div class="desktop-only">
+        <div class="row justify-around">  
+          <div class=" col-5 q-pa-xl q-pl-xl">
+              <p class="q-pa-sm" style="font-size:60px;font-family: 'Domine', serif;padding:0;margin:0;line-height:50px">CATERING<br>SERVICES</p>
+              <p class="q-pt-md q-pa-sm" style="color:#e4acbf;font-size:18px;font-family: 'Noto Serif SC', serif;"><i>Avail our budget friendly catering packages for</i><br><i>your special life events.</i></p>
+              <p class="q-pa-sm" style="font-size:15px;font-family: 'Noto Serif SC', serif;">Fill up our reservation form to get a free quotation</p>
+          </div>
+          <div class="col-5 q-pa-xl">
+              <q-card flat class="my-card">
+                <q-card-section class="q-pb-none">
+                  <div class="column items-center q-pt-sm" style="font-size:20px"><b>RESERVATION FORM</b></div>
+                </q-card-section>
+                <q-slide-transition :duration="500">
+                  <q-card-section v-show="formStep == 1" >
+                      <div class="column items-center">
+                      <!-- <q-input dense filled v-model="name" label="Event Name" />
+                      <q-input dense filled v-model="pax" label="Number of Head" /> -->
+                            <q-date
+                              v-model="date"
+                              minimal=""
+                              class="shadow-0 q-ma-none"
+                              mask="YYYY-MM-DD"
+                              color="grey-8"
+                            >
+                            </q-date>
+                      </div>
+                      <div class="column items-center q-mb-md">
+                      <q-btn dense style="background-color:#e4acbf;width:250px" text-color="white" label="NEXT" @click="formStep = 2"/>
+                      </div>
+                  </q-card-section>
+                </q-slide-transition>
+                <q-slide-transition :duration="500">
+                  <q-card-section v-show="formStep == 2">
+                    <div class="column items-center q-gutter-md q-pa-md">
+                      <q-input dense outlined="" v-model="name" type="text" label="Event Name" class="full-width" color="pink-3"/>
+                      <div class="row full-width">
+                      <q-input dense outlined="" type="number" v-model="pax" label="Number of Head" class="col q-mr-sm" color="pink-3"/>
+                      <q-select class="col" color="grey-10" dense outlined  v-model="selectMotif" options-selected-class="bg-grey text-white" multiple="" :options="motifOpt" emit-value map-options label="Select Motif" @input="showInput">
+                              <template v-slot:option="scope">
+                                <q-item
+                                  v-bind="scope.itemProps"
+                                  v-on="scope.itemEvents"
+                                >
+                                  <q-item-section avatar>
+                                    <q-avatar :style="'background-color:'+scope.opt.hex" size="3em" />
+                                  </q-item-section>
+                                  <q-item-section>
+                                    <q-item-label>{{ scope.opt.label }}</q-item-label>
+                                  </q-item-section>
+                                </q-item>
+                              </template>
+                      </q-select>
+                    </div>
+                    <div class="row full-width">
+                      <q-input type="time" class="col" color="pink-3" dense outlined v-model="startTime" hint="Start Time" mask="`YYYY-MM-DDTHH:mm:ss:sssZ`"/>
+                      <q-input type="time" class="col q-ml-sm" dense color="pink-3" outlined v-model="endTime" hint="End Time" mask="`YYYY-MM-DDTHH:mm:ss:sssZ`"/>
+                    </div>
+                    <div class="q-pa-sm q-pt-md row full-width">
+                      <q-btn dense flat color="grey-8" label="BACK" class="col q-mr-sm" @click="formStep = 1"/>
+                      <q-btn dense style="background-color:#e4acbf;" text-color="white" label="NEXT" class="col" @click="formStep = 3"/>
+                    </div>
+                    </div>
+                  </q-card-section>
+                </q-slide-transition>
+                <q-slide-transition :duration="500">
+                  <q-card-section v-show="formStep == 3">
+                    <div class="column items-center q-gutter-md q-pa-md ">
+                      <q-input class="q-pt-sm full-width" color="pink-3" outlined dense v-model="clientAddress" label="Event Place Address" autogrow=""/>
+                      <q-select class="q-pt-sm full-width" color="pink-3" dense outlined v-model="selectCity" :options="cityOpt" emit-value map-options label="Select City" />
+                    <div class="q-pa-sm q-pt-md row full-width">
+                      <q-btn dense flat color="grey-8" label="BACK" class="col q-mr-sm" @click="formStep = 2"/>
+                      <q-btn dense style="background-color:#e4acbf;" text-color="white" label="PROCEED TO PACKAGES" class="col-8" @click="saveInquiry"/>
+                    </div>
+                    </div>
+                  </q-card-section>
+                  </q-slide-transition>
+              </q-card>
+          </div>    
+        </div>  
+      </div>
+<!-- END OF DESKTOP ONLY -->
+
+<!-- START OF MOBILE ONLY -->
+        <div class="q-pt-xl">
+            <p class="text-center" style="font-size:30px;font-family: 'Domine', serif">CATERING SERVICES</p>
+            <p class="q-px-sm" style="color:#e4acbf;font-size:15px;font-family: 'Noto Serif SC', serif;"><i>Avail our budget friendly catering packages for</i><br><i>your special life events.</i></p>
+            <p class="q-px-sm" style="font-size:14px;font-family: 'Noto Serif SC', serif;">Fill up our reservation form to get a free quotation</p>
         </div>
-        <div class="col-5 q-pa-xl">
+        <div class="">
              <q-card flat class="my-card">
                <q-card-section class="q-pb-none">
                  <div class="column items-center q-pt-sm" style="font-size:20px"><b>RESERVATION FORM</b></div>
@@ -70,16 +153,16 @@
                     <q-select class="q-pt-sm full-width" color="pink-3" dense outlined v-model="selectCity" :options="cityOpt" emit-value map-options label="Select City" />
                   <div class="q-pa-sm q-pt-md row full-width">
                     <q-btn dense flat color="grey-8" label="BACK" class="col q-mr-sm" @click="formStep = 2"/>
-                    <q-btn dense style="background-color:#e4acbf;" text-color="white" label="PROCEED TO PACKAGES" class="col-8" @click="saveInquiry"/>
+                    <q-btn dense style="background-color:#e4acbf;" text-color="white" label="PROCEED TO PACKAGES" class="col-8" @click="saveInquirymob"/>
                   </div>
                   </div>
                 </q-card-section>
                 </q-slide-transition>
              </q-card>
         </div>    
-      </div>  
+<!-- END OF MOBILE ONLY -->
 
-      <div>
+      <div class="desktop-only">
           <div class="row q-pt-lg">
             <div style="color:#e4acbf;font-size:20px;font-family: 'Domine', serif;padding-left:110px">FOOD CHOICES</div>
             <div class="row q-gutter-md q-pl-xl">
@@ -413,6 +496,30 @@ export default {
       .then((ref)=> {
         let key = ref.id
         this.$router.push('/reservation/'+key)
+      })
+      //get key order code
+      //router push to reservations page
+    },
+    saveInquirymob(){
+      //get all data
+      let newInquiry= {
+        clientCity: this.selectCity,
+        clientEvent: this.name,
+        clientPax: this.pax,
+        clientPlace: this.clientAddress,
+        clientDateofReserve: this.date,
+        clientStartTime: this.startTime,
+        clientEndTime: this.endTime,
+        clientMotif: this.selectMotif,
+        clientReserveType: 'ONLINE',
+      }
+
+      console.log(newInquiry,'newInquiry')
+      //save to database
+      this.$firestoreApp.collection('OnlineInquiry').add(newInquiry)
+      .then((ref)=> {
+        let key = ref.id
+        this.$router.push('/res/'+key)
       })
       //get key order code
       //router push to reservations page

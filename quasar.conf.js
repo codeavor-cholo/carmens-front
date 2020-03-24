@@ -83,6 +83,7 @@ module.exports = function (ctx) {
         'QItem',
         'QItemSection',
         'QItemLabel',
+        'QPageSticky',
         'QIcon',
         'QScrollArea',
         'QCheckbox',
