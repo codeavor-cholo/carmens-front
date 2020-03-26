@@ -54,7 +54,7 @@
         </q-toolbar>
       </q-header>
     </div>
-<!-- END OF DESKTO HEADER -->
+<!-- END OF DESKTOP HEADER -->
 
 <!-- START OF MOBILE HEADER    -->
     <div class="mobile-only">
@@ -199,7 +199,7 @@
             </q-card-section>
             <q-card-actions align="center" class="column q-gutter-sm">
               <div class="text-weight-bold text-h6" >SUBTOTAL : <span class="text-teal-6">{{returnSubTotal}}</span></div>
-              <q-btn :label="'Checkout '+returnLength+ ' items'" color="pink-6" v-close-popup  class="text-weight-bold" outline="" @click="checkOutOrders"/>
+              <q-btn :label="'Checkout '+returnLength+ ' items'" color="pink-6" v-close-popup  class="text-weight-bold" outline="" @click="checkOutOrdersMob"/>
             </q-card-actions>
           </q-card>
         </div>
@@ -671,6 +671,28 @@ export default {
         }).onOk(() => {
           console.log('orders',this.returnCart)
           this.$router.push('/checkout')
+        }).onCancel(()=>{
+          this.basket = true
+        })
+      } else {
+        this.login = true
+      }
+    },
+    checkOutOrdersMob(){
+      this.$q.localStorage.clear()
+      var user = this.$firebase.auth().currentUser
+      if(user){
+        console.log(user.uid,'meron pwede checkout na')
+          this.$q.dialog({
+            title: 'Checkout '+this.returnLength+' Items',
+            message: 'Proceed to checkout and payment ?',
+            ok: 'Yes',
+            cancel: 'Cancel',
+            persistent: true,
+            color:'pink-6'
+        }).onOk(() => {
+          console.log('orders',this.returnCart)
+          this.$router.push('/checkoutmob')
         }).onCancel(()=>{
           this.basket = true
         })
