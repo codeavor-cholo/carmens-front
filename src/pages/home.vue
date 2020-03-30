@@ -92,10 +92,6 @@
               <q-badge color="grey-10" text-color="white" :label="returnLength" floating/>
             </q-btn>
           </div> -->
-
-          <div class="q-pa-sm">
-              <q-btn dense round icon="search" text-color="pink-2" color="white" @click="tempLogout"/>
-          </div>
         </q-toolbar>
 
         <div style="color:#E4ACBF">
@@ -314,25 +310,10 @@
               active-color="pink-4"
               indicator-color="transparent"
               >
-              <q-tab v-show="show" @click="login = true"><b>Account</b></q-tab>
-              <div class="row items-center">
-                <q-btn-dropdown dense style="color:#e4acbf" v-show="!show"  :label="displayName" flat>
-                  <q-list>
-                    <q-item clickable v-close-popup @click="$router.push('/profile')">
-                      <q-item-section>
-                        <q-item-label>My Account</q-item-label>
-                      </q-item-section>
-                    </q-item>
-
-                    <q-item clickable v-close-popup @click="tempLogout">
-                      <q-item-section>
-                        <q-item-label>Log Out</q-item-label>
-                      </q-item-section>
-                    </q-item>
-
-                  </q-list>
-                </q-btn-dropdown>
-                </div>
+              <q-tab v-show="show" icon="person" @click="login = true"><b>Log In</b></q-tab>
+              <div>
+                <q-btn dense style="color:#e4acbf" icon="person" v-show="!show" flat label="Account" @click="$router.push('/profile')" />
+              </div>
               <q-tab name="alarms" icon="notifications"><b>Notifications</b></q-tab>
               <q-tab name="movies" icon="shopping_cart" @click="basket=true">
                 <q-badge color="grey-10" text-color="white" :label="returnLength" floating/>  

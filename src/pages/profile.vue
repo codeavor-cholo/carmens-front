@@ -18,6 +18,7 @@
                 <q-tab name="wish" label="My Wishlist" />
                 <q-tab name="order" label="My Orders" />
                 <q-tab name="reserve" label="My Reservation" />
+                <q-tab name="out" label="Log Out" @click="tempLogout" />
                 </q-tabs>
                 </div>
             </template>
@@ -500,7 +501,31 @@ export default {
     },
     formatDate(date){
         return this.$moment(date).format('LL')
-    }
+    },
+    tempLogout(){
+            this.$q.dialog({
+                title: `Are you sure you want to logout?`,
+                type: 'negative',
+                color: 'pink-3',
+                class: 'text-grey-8',
+                icon: 'warning',
+                ok: 'Ok',
+                cancel: 'Cancel',
+                persistent: true
+                
+            }).onOk(()=>{
+              this.$firebase.auth().signOut()
+              .then(()=>{
+                console.log('no user')
+                this.show = false
+                this.displayName = ''
+                this.$router.push('/')
+                location.reload()
+              })
+              // 
+              // remove this comment if you are done with the testing
+            })
+    },
   }
 }
 </script>
