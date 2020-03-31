@@ -93,7 +93,9 @@ module.exports = function (ctx) {
         'QInnerLoading',
         'QScrollArea',
         'QBadge',
-        'QRadio'
+        'QRadio',
+        'QSpinner',
+        'QSpinnerHourglass'
       ],
       directives: [
         'ClosePopup'

@@ -20,6 +20,7 @@ const routes = [
        { path: '/profile', component: () => import('pages/profile.vue') },
        { path: '/checkout', component: () => import('pages/checkout.vue') },
        { path: '/checkoutmob', component: () => import('pages/checkoutmob.vue') },
+       { path: '/mobilehome', component: () => import('pages/mobilehome.vue') },
     ]
   }
 ]

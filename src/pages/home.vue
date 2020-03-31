@@ -1,5 +1,20 @@
 <template>
   <q-layout view="hhh lpR fFf">
+
+        <div class="fixed-center mobile-only" v-show="splashscreen">
+          <div class="q-pa-sm" >
+              <img class="col" style="width:350px;height:100%" src="statics/pics/carmen-logo.png">
+          </div>
+
+          <div class="row justify-center">
+          <q-spinner-hourglass
+            color="pink-4"
+            size="5em"
+          />
+          <q-tooltip :offset="[0, 8]">QSpinnerBall</q-tooltip>
+          </div>
+        </div>
+
 <!-- START OF DESKTOP HEADER    -->
     <div class="desktop-only">
       <q-header class="transparent text-white row items-center justify-start" style="height:63px">
@@ -57,13 +72,13 @@
 <!-- END OF DESKTOP HEADER -->
 
 <!-- START OF MOBILE HEADER    -->
-    <div class="mobile-only">
+    <div class="mobile-only" v-show="!splashscreen">
       <q-header class="transparent text-white" style="height:63px">
         <q-toolbar>
 
           
           <div class="q-pt-md q-pl-md">
-          <img style="height:100%;width:180px" src="statics/pics/carmen-logo.png">
+          <img style="height:100%;width:180px" src="statics/pics/carmen-logo.png" @click="$router.push('/mobilehome')">
           </div>
 
           <!-- STATIC SHOW HIDE LOGIN -->
@@ -111,10 +126,11 @@
     </div>
 <!-- END OF MOBILE HEADER -->
 
+<!-- START OF QPAGE CONTAINER DESKTOP -->
+    <div class="desktop-only">
     <q-page-container style="background: linear-gradient(to right, #ffffff 50%, #eeeeee 50%)">
         <q-dialog v-model="basket" persistent >
-<!-- START OF DESKTOP BASKET -->
-        <div class="desktop-only">
+        <div>
           <q-card style="min-width:500px;border-radius:20px;" class="q-pa-lg">
             <div class="row justify-between">
               <span class="text-h6 col">BASKET <span class="text-teal-6 text-subtitle2">({{returnLength}} ITEMS)</span></span>
@@ -155,51 +171,6 @@
             </q-card-actions>
           </q-card>
         </div>
-<!-- END OF DESKTOP BASKET -->
-
-<!-- START OF MOBILE BASKET -->
-        <div class="mobile-only">
-          <q-card style="border-radius:20px;" class="q-pa-sm">
-            <div class="row justify-between items-center">
-              <span class="text-h6 col">BASKET <span class="text-teal-6 text-subtitle2">({{returnLength}} ITEMS)</span></span>
-              <q-btn color="grey-10" icon="close" flat round  v-close-popup />
-            </div>
-            
-            <q-card-section class="row items-center">
-              <q-scroll-area style="width: 100%; height: 400px;" :visible="false">
-              <q-list bordered separator="">
-                <q-item v-for="items in returnCart" :key="items['.key']">
-                  <q-item-section avatar>
-                    <q-img
-                      :src="items.foodPic"
-                      :ratio="1"
-                      spinner-color="primary"
-                      spinner-size="82px"
-                      style="width:5em;border-radius:5px;"
-                      class="q-my-sm"
-                    />
-                  </q-item-section>
-                  <q-item-section>
-                  <q-item-label>{{items.foodName}}</q-item-label>
-                  <q-item-label caption lines="1">Size: {{items.size}}</q-item-label>
-                  <q-item-label class="text-subtitle2" lines="1">₱ {{items.price}}</q-item-label>
-                  </q-item-section>
-                  <q-item-section side>
-                    <q-btn color="grey-8" icon="delete" round size="md" flat class="absolute-top-right q-ma-xs" @click="removeOrder(items)" />
-                    <q-item-label caption class="q-mt-lg">x {{items.qty}}</q-item-label>
-                    <q-item-label lines="1" class="text-subtitle2 text-pink-6 text-weight-bold">₱ {{items.price * items.qty}}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-scroll-area>
-            </q-card-section>
-            <q-card-actions align="center" class="column q-gutter-sm">
-              <div class="text-weight-bold text-h6" >SUBTOTAL : <span class="text-teal-6">{{returnSubTotal}}</span></div>
-              <q-btn :label="'Checkout '+returnLength+ ' items'" color="pink-6" v-close-popup  class="text-weight-bold" outline="" @click="checkOutOrdersMob"/>
-            </q-card-actions>
-          </q-card>
-        </div>
-<!-- END OF MOBILE BASKET -->
       </q-dialog>
 
       <q-dialog v-model="login">
@@ -299,9 +270,159 @@
 
       <router-view />
     </q-page-container>
+    </div>
+<!-- END OF QPAGE CONTAINER DESKTOP -->
+
+<!-- START OF QPAGE MOBILE -->
+<div class="mobile-only" v-show="!splashscreen">
+<q-page-container style="background: linear-gradient(to right, #ffffff 50%, #eeeeee 50%)">
+        <q-dialog v-model="basketmob" persistent >
+        <div>
+          <q-card style="border-radius:20px;" class="q-pa-sm">
+            <div class="row justify-between items-center">
+              <span class="text-h6 col">BASKET <span class="text-teal-6 text-subtitle2">({{returnLength}} ITEMS)</span></span>
+              <q-btn color="grey-10" icon="close" flat round  v-close-popup />
+            </div>
+            
+            <q-card-section class="row items-center">
+              <q-scroll-area style="width: 100%; height: 400px;" :visible="false">
+              <q-list bordered separator="">
+                <q-item v-for="items in returnCart" :key="items['.key']">
+                  <q-item-section avatar>
+                    <q-img
+                      :src="items.foodPic"
+                      :ratio="1"
+                      spinner-color="primary"
+                      spinner-size="82px"
+                      style="width:5em;border-radius:5px;"
+                      class="q-my-sm"
+                    />
+                  </q-item-section>
+                  <q-item-section>
+                  <q-item-label>{{items.foodName}}</q-item-label>
+                  <q-item-label caption lines="1">Size: {{items.size}}</q-item-label>
+                  <q-item-label class="text-subtitle2" lines="1">₱ {{items.price}}</q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-btn color="grey-8" icon="delete" round size="md" flat class="absolute-top-right q-ma-xs" @click="removeOrder(items)" />
+                    <q-item-label caption class="q-mt-lg">x {{items.qty}}</q-item-label>
+                    <q-item-label lines="1" class="text-subtitle2 text-pink-6 text-weight-bold">₱ {{items.price * items.qty}}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-scroll-area>
+            </q-card-section>
+            <q-card-actions align="center" class="column q-gutter-sm">
+              <div class="text-weight-bold text-h6" >SUBTOTAL : <span class="text-teal-6">{{returnSubTotal}}</span></div>
+              <q-btn :label="'Checkout '+returnLength+ ' items'" color="pink-6" v-close-popup  class="text-weight-bold" outline="" @click="checkOutOrdersMob"/>
+            </q-card-actions>
+          </q-card>
+        </div>
+      </q-dialog>
+
+      <q-dialog v-model="loginmob">
+      <q-card>
+        <q-card-section>
+          <div style="font-size:25px" class="q-pa-sm text-weight-bold">Login Account</div>
+          <q-btn class="text-overline text-teal" flat>CREATE ACCOUNT</q-btn>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none text-center">
+          <div class="q-pb-md">
+            <q-input v-model="clientEmail" type="email" label="Enter Email Address" outlined="" color="pink-3" dense/>
+          </div>
+          <q-input v-model="clientPassword" type="password" label="Enter Password" outlined="" color="pink-3" dense/>
+          <div class="row q-px-md items-center q-mt-md">                     
+          <q-btn color="grey"  label="LOGIN VIA GOOGLE" @click="basketChecker" class="col-5"/>
+          <div class="text-overline text-center col-2">OR</div>
+          <q-btn color="teal" label="LOGIN account" class="col"/>
+
+          </div>
+          
+        </q-card-section>
+
+        <q-card-section class="q-pt-none q-mb-md text-center">
+          
+          
+        </q-card-section>
+      </q-card>
+    </q-dialog>
+
+
+    <!-- <q-dialog v-model="checkout" persistent>
+      <q-card style="min-width: 650px;border-radius:20px;" class="q-pa-md">
+        <div class="row justify-center q-gutter-md">
+        <q-card class="my-card" style="width:350px">
+          <q-card-section class="bg-grey-3"> 
+            <div class="row q-gutter-sm items-center">
+              <q-icon name="place" class="text-black" color="pink" style="font-size: 1.5rem;" />
+              <div>Delivery Address</div>
+            </div>
+
+            <div class="q-pt-sm q-pl-lg">Name of Customer &nbsp;&nbsp;&nbsp; number</div>
+            <div class="q-pl-lg">Delivery Address</div>
+          </q-card-section>
+          
+          <q-card-section>
+            <div class="q-pt-sm">
+             <q-list bordered separator>
+                <q-item>
+                  <q-item-section>
+                    <div class="row q-gutter-md">
+                      <img src="statics/pics/foo.jpeg" style="height:50px;width:50px">
+                      <div class="column">
+                        <q-item-label>FOODNAME</q-item-label>
+                        <q-item-label caption lines="1">size</q-item-label>
+                        <q-item-label class="text-subtitle2" lines="1">₱ price</q-item-label>
+                      </div>
+                    </div>
+                  </q-item-section>
+                  <q-item-section side>
+                  <q-item-label caption class="q-mt-lg">x 1</q-item-label>
+                  <q-item-label lines="1" class="text-subtitle2 text-pink-6 text-weight-bold">₱ price</q-item-label>
+                </q-item-section>
+                </q-item>
+              </q-list>
+            </div>
+          </q-card-section>
+        </q-card>
+
+        <q-card class="my-card" style="width:250px;border: 5px solid;border-color: pink;">
+          <q-card-section>
+            <q-input
+              v-model="message"
+              filled
+              type="textarea"
+              class="bg-white"
+              label="Leave your message."
+            />
+            <div class="row justify-around">
+              <div class="q-pt-md">Total payment:</div>
+              <div class="q-pt-md" style="font-size:18px"><b>Total</b></div>
+            </div>
+            <div class="q-pt-md q-pb-sm text-center">Payment Method</div>
+            <div class="row justify-around">
+              <q-btn color="pink-5" label="Cash" />
+              <q-btn color="pink-5" label="Card" />
+            </div>  
+          </q-card-section>
+        </q-card>
+        </div>
+
+        <q-card-actions align="right" class="text-primary">
+          <q-btn flat label="Cancel" v-close-popup />
+          <q-btn flat label="Add address" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog> -->
+
+      <router-view />
+    </q-page-container>
+    </div>
+<!-- END OF QPAGE MOBILE -->
 
 <!-- MOBILE FOOTER -->
-  <div class="mobile-only">
+  <div class="mobile-only" v-show="!splashscreen">
       <q-footer class="bg-grey-4 text-white">
         <q-toolbar class="row justify-center">
             <div style="color:#E4ACBF">  
@@ -310,12 +431,12 @@
               active-color="pink-4"
               indicator-color="transparent"
               >
-              <q-tab v-show="show" icon="person" @click="login = true"><b>Log In</b></q-tab>
+              <q-tab v-show="show" icon="person" @click="loginmob = true"><b>Log In</b></q-tab>
               <div>
-                <q-btn dense style="color:#e4acbf" icon="person" v-show="!show" flat label="Account" @click="$router.push('/profile')" />
+                <q-tab dense style="color:#e4acbf" icon="person" v-show="!show" flat label="Account" @click="$router.push('/profile')" />
               </div>
               <q-tab name="alarms" icon="notifications"><b>Notifications</b></q-tab>
-              <q-tab name="movies" icon="shopping_cart" @click="basket=true">
+              <q-tab name="movies" icon="shopping_cart" @click="basketmob=true">
                 <q-badge color="grey-10" text-color="white" :label="returnLength" floating/>  
                 <b>Basket</b>
               </q-tab>
@@ -336,18 +457,26 @@ export default {
       footertab: 'mails',
       search: '',
       message:'',
+      splashscreen: true,
       show: true,
       displayName: '',
       basket: false,
+      basketmob: false,
       ordersKey: this.$q.localStorage.getItem('addCart'),
       CartItems: [],
       login: false,
+      loginmob: false,
       clientEmail: '',
       clientPassword: ''
      
     }
   },
     created() {
+          setTimeout(() => {
+          this.splashscreen=false;
+          // console.log('sdf')
+          }, 7000)
+
           let self = this
           this.$firebase.auth().onAuthStateChanged(function(user) {
               
