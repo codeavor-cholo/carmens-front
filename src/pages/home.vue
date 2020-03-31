@@ -141,7 +141,7 @@
                   </q-item-section>
                   <q-item-section>
                   <q-item-label>{{items.foodName}}</q-item-label>
-                  <q-item-label caption lines="1">Size: {{items.size}}</q-item-label>
+                  <q-item-label caption lines="1">Size: {{items.size}}({{items.min}} - {{items.max}})</q-item-label>
                   <q-item-label class="text-subtitle2" lines="1">₱ {{items.price}}</q-item-label>
                   </q-item-section>
                   <q-item-section side>
@@ -628,6 +628,7 @@ export default {
 
     },
     removeOrder(item){
+      console.log(this.ordersKey, 'keke')
       this.$q.dialog({
         title: 'Remove '+item.foodName + ' ?',
         message: 'Do you want to remove this item from your basket?.',
