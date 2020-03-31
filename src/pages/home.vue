@@ -645,7 +645,17 @@ export default {
         let add = {
           items: orders
         }
-        this.$firestoreApp.collection('CartItems').doc(this.ordersKey).set(add)
+
+        let key 
+        var user = this.$firebase.auth().currentUser
+        if(user){
+          key = user.uid
+        } else {
+          key = this.ordersKey
+        }
+
+
+        this.$firestoreApp.collection('CartItems').doc(key).set(add)
         .then((ref) =>{
             console.log('cart updated')
             
