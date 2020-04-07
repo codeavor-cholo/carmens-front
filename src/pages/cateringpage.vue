@@ -204,37 +204,20 @@
             <div>
              <q-table grid :data="Packages" :columns="columnss" :rows-per-page-options="[0]" hide-bottom :pagination.sync="paginations" row-key=".key">
                     <template v-slot:item="props">
-                        <div class="q-pa-xs q-pl-lg col-xs-12 col-sm-6 col-md-4 col-lg-4 grid-style-transition" color="pink-3">
-                            <q-card class="q-pl-lg my-card" style="height: 555px;border: 2px solid;border-color: grey;">
-                                <q-card-section side>
-                                    <q-list dense>
-                                    <q-item class="q-mt-sm">
-                                    <span class="full-width text-center text-teal text-h6 text-weight-bold">
-                                        <strong dense>{{props.row.name}} </strong>
-                                        <br>
-                                        <q-chip class="text-center">{{props.row.price}}php per pax</q-chip>
-                                    </span>
-                                    </q-item>     
-                                    <q-separator class="q-mt-sm"/>
-                                    <q-item class="q-mt-sm text-grey-8" v-show="props.row.viands">
-                                    <span class="full-width text-center text-weight-bold">FOOD CATEGORIES</span>
-                                    </q-item>
-                                    <q-item v-for="(price, index) in props.row.viands" :key="index" class="text-grey-8">
-                                        <q-item-section>
-                                        <q-item-label> {{ price.viandsQty }} viand<span v-show="price.viandsQty != '1'">s</span> of {{ price.category }}</q-item-label>
-                                        </q-item-section>
-                                    </q-item>
-                                    <q-separator class="q-mt-sm"/>
-                                    <q-item class="q-mt-sm" v-show="props.row.inclusions">
-                                    <span class="full-width text-center text-weight-bold text-grey-8" >INCLUSIONS</span>
-                                    </q-item>
-                                    <q-item v-for="(price, index) in props.row.inclusions" :key="index" class="text-grey-8">
-                                        <q-item-section>
-                                        <q-item-label> {{ price.inclusion }}</q-item-label>
-                                        </q-item-section>
-                                    </q-item>
-                                </q-list>
-                                </q-card-section>
+                        <div class="q-pa-xs q-pl-lg col-xs-12 col-sm-6 col-md-3 col-lg-4 grid-style-transition" color="pink-3">
+                            <q-card class="my-card" style="height: 470px">
+                              <q-card-section class="column items-center">
+                                <div style="font-size:50px;color:#E4ACBF;font-family: 'Zhi Mang Xing', cursive;">{{props.row.name}}</div>
+                                <div style="font-size:15px"><b>{{props.row.price}}php per pax</b></div>
+                                  <div class="q-pt-lg" style="color:#E4ACBF;font-size:15px" ><b>FOOD CHOICES</b></div>  
+                                <div v-for="(price, index) in props.row.viands" :key="index" >
+                                  <div class="q-pt-sm" style="font-size:12px"><i>{{ price.viandsQty }} viand<span v-show="price.viandsQty != '1'">s</span> of {{ price.category }}</i></div>
+                                </div>
+                                <div class="q-pt-lg" style="color:#E4ACBF;font-size:15px"><b>INCLUSIONS</b></div>
+                                <div v-for="(s, indexs) in props.row.inclusions" :key="indexs">
+                                  <div style="font-size:12px"><i>{{ s.inclusion }}</i></div>
+                                </div>
+                              </q-card-section>
                             </q-card>
                         </div>
                     </template>

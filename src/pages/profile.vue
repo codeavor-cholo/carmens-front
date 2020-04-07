@@ -125,7 +125,7 @@
                                                                     <div>Latest tracking update will be put here!</div>
                                                                 </div>
                                                                     <div class="q-pr-xl">
-                                                                    <q-btn dense style="background-color:#e4acbf;width:120px" text-color="white" label="Track" />
+                                                                    <q-btn dense style="background-color:#e4acbf;width:120px" text-color="white" @click="openStatus(props.row),partytraystatus = true" label="View Status" />
                                                                     </div>
                                                                 </div>
                                                                 <q-separator inset/>
@@ -178,7 +178,7 @@
                                                                     <div class="col-4"><p class="q-pt-none q-mt-none q-pb-none q-mb-none" style="font-size: 1.2rem"><b>Time:</b> {{props.row.clientStartTime}}</p></div>
                                                                 </div>
                                                             </div>
-                                                            <q-separator inset/>
+                                                            <!-- <q-separator inset/>
                                                             <div class="row items-center justify-between">
                                                                 <div class="row items-center">
                                                                     <div class="q-pa-sm ">
@@ -187,10 +187,10 @@
                                                                     <div>Latest tracking update will be put here!</div>
                                                                 </div>
                                                                     <div class="q-pr-xl">
-                                                                    <q-btn dense style="background-color:#e4acbf;width:120px" text-color="white" label="Track" />
+                                                                    <q-btn dense style="background-color:#e4acbf;width:120px" text-color="white" @click="viewstatus = true" label="Track" />
                                                                     </div>
-                                                                </div>
-                                                                <q-separator inset/>
+                                                                </div> -->
+                                                                <q-separator inset/> 
                                                             <q-item v-for="(i, index) in props.row.orders" :key="index">
                                                                 <q-item-section avatar>
                                                                     <q-img :src="i.foodPic" :ratio="1" spinner-color="primary" spinner-size="82px" style="width:5em;border-radius:5px;" class="q-my-sm" />
@@ -244,6 +244,19 @@
                             <template v-slot:item="props">
                                     <q-card flat class="col-12" style="border: 2px solid;border-color: #ffdab9;margin-bottom: 5px" >
                                         <q-card-section side>
+                                            <q-separator inset/>
+                                                    <div class="row items-center justify-between">
+                                                        <div class="row items-center">
+                                                            <div class="q-pa-sm ">
+                                                            <q-icon name="local_shipping" style="font-size: 2rem" />
+                                                            </div>
+                                                            <div>Latest tracking update will be put here!</div>
+                                                        </div>
+                                                            <div class="q-pr-xl">
+                                                            <q-btn dense style="background-color:#e4acbf;width:120px" text-color="white" @click="openStatus(props.row), eventstatus = true" label="View Status" />
+                                                            </div>
+                                                        </div>
+                                                <q-separator inset/>
                                             <q-list dense>
                                             <q-item >
                                                 <q-item-section>
@@ -610,6 +623,55 @@
                         </q-card-actions>
                     </q-card>
                 </q-dialog>
+                <!-- status -->
+                <q-dialog v-model="viewstatus" persistent>
+                    <q-card style="min-width: 200px">
+                        <q-card-section class="items-center">
+                            <div class="row text-overline items-center justify-around">  
+                                <div style="font-size:20px">Delivery Status</div>
+                            </div>
+                            <div v-if="this.partytraystatus === true">
+                                <q-timeline color="grey-6" class="q-pa-md">
+                                    <div class="q-pl-md">
+                                    <q-timeline-entry
+                                        v-for="(status,i) in this.orderStatusArray"
+                                        :key="i"
+                                        :title="status" 
+                                        :subtitle="returnStatusTime(i)"  
+                                        :icon="returnIcon(i)" 
+                                        :color="returnColor(i)"
+                                        :class="status[i] == undefined ? 'text-grey-6' : 'text-grey-10'"
+                                    >
+                                    </q-timeline-entry>
+
+                                    </div>
+                                </q-timeline>
+                            </div>
+                            <div v-else>
+                                <q-timeline color="deep-orange-4">
+                                    <div class="q-pl-md">
+
+                                    <q-timeline-entry
+                                        v-for="(status,i) in this.eventStatusArray"
+                                        :key="i"
+                                        :title="status" 
+                                        :subtitle="returnStatusTime(i)"  
+                                        :icon="returnIcon(i)" 
+                                        :color="returnColor(i)"
+                                        :class="status[i] == undefined ? 'text-grey-6' : 'text-grey-10'"
+                                    >
+
+                                    </q-timeline-entry>
+                                    </div>
+                                </q-timeline>
+                            </div>
+                        </q-card-section>
+
+                        <q-card-actions align="right">
+                        <q-btn label="Cancel" @click="eventstatus = false,partytraystatus = false" v-close-popup flat dense/>
+                        </q-card-actions>
+                    </q-card>
+                </q-dialog>
     </q-page>
 </template>
 
@@ -622,6 +684,11 @@ export default {
   },
   data () {
     return {
+      eventstatus: false,
+      partytraystatus: false,
+      eventStatusArray: ['Preparing Food!','Preparing Setup!','The Catering Team is en route!','Arrived at the Event Area','Setup on Progress','Event Place Is Ready!'],
+      orderStatusArray: ['Order Confirmed!','Preparing Order!','Done Preparing!','Pending for Delivery','Order is  out for delivery!','Order Delivered!'],
+      viewstatus: false,
       storageRef: null,
       startTime: '09:00',
       endTime: '13:00',
@@ -657,6 +724,7 @@ export default {
       selectedPayment: [],
       partyTrayOrders: [],
       clientUID: '',
+      status: [],
       id: '',
       filterReserve: '',
       pagination: { sortBy: 'clientReserveDate', descending: false, page: 1, rowsPerPage: 10000},
@@ -686,6 +754,10 @@ export default {
           })
   },
   mounted(){
+        this.$binding('EventStatus', this.$firestoreApp.collection('EventStatus'))
+        .then(EventStatus => {
+        console.log(EventStatus, 'EventStatus')
+        }),
         this.$binding('CartItems', this.$firestoreApp.collection('CartItems'))
         .then(CartItems => {
         console.log(CartItems, 'CartItems')
@@ -835,6 +907,50 @@ export default {
       }
   },
   methods: {
+    openStatus(props){
+            this.selectedStatus = props 
+            this.viewstatus = true
+            try {
+                    let reservations = this.$lodash.filter(this.EventStatus,a=>{
+                        return a.reservationKey == props['.key']
+                        console.log('ss',a.reservationKey)
+                    })
+                    this.status = reservations
+                    
+                    console.log('id',this.status)
+                    return this.status
+            } catch(err){
+                console.log(err,'err')
+                return []
+            }
+    },
+    returnColor(index){
+          try {
+              if(this.status[index] === undefined){
+                  return 'deep-orange-4'
+              }else{
+                  return 'green'
+              }
+          } catch (error) {
+              return 'green'
+          }          
+      },
+    returnIcon(index){
+          try {
+              if(this.status[index] !== undefined){
+                  return 'check'
+              }
+          } catch (error) {
+              return ''
+          }
+      },
+    returnStatusTime(index){
+          try {
+              return this.$moment(this.status[index].dateTime).format('LT')
+          } catch (error) {
+              return '--:-- --'
+          }
+      },
     rescheduleNow(){
         var reschedBago = {
             clientUID: this.selectedResched.clientUID,
