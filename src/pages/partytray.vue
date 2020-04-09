@@ -44,7 +44,7 @@
             <div class="row">
                 <div class="col-3 q-pt-xl q-pl-xl" style="font-size:30px;font-family: 'Domine', serif"> ALL PARTY TRAYS </div>
                 <div class="col-9">
-                <q-table grid :data="returnWithPartyTrays" :columns="columns" :pagination="pagination" :filter="filter" class="row items-center q-pa-lg q-ma-lg">
+                <q-table grid :data="returnWithPartyTrays" :columns="columns" :rows-per-page-options="[0]" hide-bottom :pagination="pagination" :filter="filter" class="row items-center q-pa-lg q-ma-lg">
                 <template v-slot:item="props">            
                     <div class="q-pa-sm grid-style-transition" :style="props.selected ? 'transform: scale(0.95);' : ''">
                         <q-card flat class="my-card" style="width:165px;height:200px" >
@@ -120,7 +120,7 @@
             <div>
                 <!-- <div class="col-3 q-pt-xl q-pl-xl" style="font-size:30px;font-family: 'Domine', serif"> ALL PARTY TRAYS </div> -->
                 <div class="row justify-center">
-                <q-table grid :data="returnWithPartyTrays" :columns="columns" :pagination="pagination" :filter="filter">
+                <q-table grid :data="returnWithPartyTrays" :columns="columns" :rows-per-page-options="[0]" hide-bottom :pagination="pagination" :filter="filter">
                 <template v-slot:item="props">            
                     <div class="q-pa-sm grid-style-transition" :style="props.selected ? 'transform: scale(0.95);' : ''">
                         <q-card flat class="my-card" style="width:164px;height:200px" >
@@ -237,7 +237,7 @@ export default {
         CartItems: [],
         addPorder: false,
         filter: '',
-        pagination: { sortBy: 'Category', descending: false, page: 1, rowsPerPage: 10},
+        pagination: { sortBy: 'Category', descending: false, page: 1, rowsPerPage: 10000},
         columns: [
             { name: 'category', required: true, label: 'Food Category', align: 'center', field: 'category', sortable: true },
             { name: 'foodName', align: 'center', label: 'Food Name', field: 'foodName', sortable: true },
@@ -271,9 +271,7 @@ export default {
   computed: {
         returnWithPartyTrays(){
             let party = this.$lodash.filter(this.Food, a=>{
-                if(a.partyTrayPrice != null){
-                    return a
-                } 
+                return a.partyTrayPrice
             })
             return party
         },
