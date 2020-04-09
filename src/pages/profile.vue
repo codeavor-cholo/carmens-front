@@ -1136,7 +1136,8 @@ export default {
                         clientPaymentType: 'CARD',
                         clientUID: this.selectedPayment.clientUID,
                         transactionType: 'ONLINE',
-                        forReservation: true
+                        forReservation: true,
+                        clientPaymentDate: date.formatDate(new Date(), 'YYYY-MM-DD')
                     }
                     this.$firestoreApp.collection('Payments').add(paymentDetails)
                     .then(()=>{

@@ -358,6 +358,7 @@ export default {
                         clientUID: this.uid,
                         transactionType: 'ONLINE',
                         forPartyTray: true,
+                        clientPaymentDate: date.formatDate(new Date(), 'YYYY-MM-DD')
                     }
                     this.$firestoreApp.collection('Payments').add(details)
                     .then(()=>{
