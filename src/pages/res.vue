@@ -169,11 +169,11 @@
                             >
                                 <div v-for="(food,i) in foodChoice" :key="i" v-show="selected != null">
                                   <span class=" q-mt-md text-subtitle2"> Select <span class="text-teal text-h6 text-weight-bolder">{{returnLimit(food.viandName)}}</span> Choice<span v-show="returnLimit(food.viandName) > 1">s</span> of {{food.viandName}}  </span>
-                                  <div class="">
+                                  <div class="q-pr-lg">
                                     <q-img
                                       v-for="(choice,j) in food.foodChoices" :key="j"
                                       :src="choice.foodPic"
-                                      :ratio="1"
+                                      :ratio="1.5"
                                       class="col-3 q-ma-md rounded-borders"
                                       :style="returnSelectedStatus(choice) ? 'transform: scale(0.95);border: 4px solid;border-color: pink;' : ''"
                                     >
@@ -236,10 +236,10 @@
                                 <div class="text-subtitle2  q-mb-sm full-width">Fill up this contact form and <span class="text-teal">PAY NOW</span>  to reserve the date.</div>
                                 <div class="container full-width" >
                                   <div class="column q-gutter-sm">
-                                      <div class="row">
-                                      <q-input v-model="clientFName" type="text" label="First Name" class="col q-mr-md" outlined dense color="teal"/>
-                                      <q-input v-model="clientLName" type="text" label="Last Name" class="col" outlined dense color="teal"/>
-                                      </div>
+                                      
+                                      <q-input v-model="clientFName" type="text" label="First Name" outlined dense color="teal"/>
+                                      <q-input v-model="clientLName" type="text" label="Last Name" outlined dense color="teal"/>
+                                      
                                   
                                     <div class="">
                                       <q-input v-model="clientEmail" type="email" label="Email Address" outlined dense color="teal"/>

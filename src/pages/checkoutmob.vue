@@ -1,10 +1,12 @@
 <template>
     <q-page>
-<!-- START OF DESKTOP -->
-        <div class="desktop-only">
-        <div class="container row q-gutter-md q-pt-xl q-pb-xl">
+
+<!-- START OF MOBILE -->
+        <div class="mobile-only">
+        <div class="q-pt-xl">
         
-        <div class="col-4 q-pl-xl">
+        <div>
+            <q-dialog v-model="car">
             <q-card class="my-card" style="border: 5px solid;border-color: pink;">
                 <q-card-section class="bg-grey-3"> 
                 <div class="row q-gutter-sm items-center">
@@ -54,14 +56,16 @@
                 <div class="q-ml-md text-teal-6"><b>₱ {{returnSubTotal}}</b></div>
             </div>
             </q-card>
+            </q-dialog>
         </div>
         
-        <div class="col-7">
+        <div>
             <q-card class="my-card">
                  <q-stepper
                     v-model="step"
                     ref="stepper"
                     color="pink-4"
+                    vertical
                     active-color="pink-3" inactive-color="grey-8"
                     animated
                     >
@@ -71,38 +75,33 @@
                         icon="settings"
                         :done="step > 1"
                     >
-                        <div class="text-h5">Please fill-up all the details below </div>
+                        <div style="font-size:18px"><b>Please fill-up all the details below</b></div>
 
                         <div class="column q-gutter-md q-pt-md">
-                            <div class="row">
-                                <div class="col q-pr-sm"><q-input outlined v-model="fname" color="pink-3" label="First Name" /></div>
-                                <div class="col q-pl-sm"><q-input outlined v-model="lname" color="pink-3" label="Last Name" /></div>
-                            </div>
+                            
+                                <div><q-input dense outlined v-model="fname" color="pink-3" label="First Name" /></div>
+                                <div><q-input dense outlined v-model="lname" color="pink-3" label="Last Name" /></div>
+                            
                             <q-input 
                             outlined v-model="cnum"  
                             mask="(####) ### - ####"
                             fill-mask
+                            dense
                             color="pink-3" 
                             label="Contact Number" />
-                            <q-input color="pink-3" outlined v-model="address" label="Delivery Address" />
-                            <q-select color="pink-3" outlined v-model="city" :options="cityOpt" label="Select City" emit-value="" map-options=""/>
+                            <q-input dense color="pink-3" outlined v-model="address" label="Delivery Address" />
+                            <q-select dense color="pink-3" outlined v-model="city" :options="cityOpt" label="Select City" emit-value="" map-options=""/>
                         </div>
                         <div class="column q-gutter-md q-pt-md">
-                            <div class="text-h6">Delivery Date and Time</div>
-                            <div class="row">
-                                <div class="col">
-                                    <q-date
-                                        v-model="date"
-                                        landscape
-                                        minimal
-                                        flat
-                                        color="pink-6"
-                                    />
-                                </div>
-                                <div class="col">
-                                    <q-input v-model="time" type="time" label="Delivery Time" outlined color="pink-6"/>
-                                </div>
-                            </div>
+                            <div style="font-size:18px"><b>Delivery Date and Time</b></div> 
+                            <q-input dense v-model="time" type="time" label="Delivery Time" outlined color="pink-6"/>    
+                            <q-date
+                                v-model="date"
+                                minimal
+                                flat
+                                color="pink-6"
+                            />                                
+                            
                         </div>
                     </q-step>
 
@@ -112,8 +111,8 @@
                         icon="credit_card"
                         :done="step > 2"
                     >
-                    <div class="row">
-                        <div class="q-pa-md col">
+                    <div>
+                        <div>
                             <div class="text-h6 text-weight-bold">Order Summary</div>
                             <div class="q-pl-md row q-gutter-sm items-center q-pt-sm">
                                 <q-icon name="place" class="text-black" color="pink" style="font-size: 1.5rem;" />
@@ -130,7 +129,7 @@
                             </div>
                         </div>    
                         
-                        <div class="col q-pl-md q-pa-md ">    
+                        <div class="q-pt-md">    
                             <div class="text-h6 text-weight-bold">Delivery Message</div>
                             <q-input
                             v-model="message"
@@ -142,17 +141,19 @@
                             /> 
                         </div>    
                     </div>  
-                    <div class="row q-pa-md q-mt-md bg-grey-2">
-                        <div class="col q-pa-sm text-weight-bold">Payment Options</div>
-                        <div class="col-3"><q-radio v-model="paymentOpt" val="FULL" label="FULL PAYMENT" color="pink-6"/></div>
-                        <div class="col q-pa-sm text-weight-bold">₱ {{returnSubTotal}}</div>
-                        <div class="col-3"><q-radio v-model="paymentOpt" val="COD" label="50% PAYMENT, 50% COD" color="pink-6"/></div>
-                        <div class="col q-pa-sm text-weight-bold">₱ {{returnSubTotal *.5}} NOW, ₱ {{returnSubTotal *.5}} LATER</div>
+                    <div class="column q-pa-md q-mt-md bg-grey-2">
+                        <div class="text-center text-weight-bold">Payment Options</div>
+                        <div><q-radio v-model="paymentOpt" val="FULL" label="FULL PAYMENT" color="pink-6"/></div>
+                        <div class="text-right"><b>₱ {{returnSubTotal}}</b></div>
+                        <div><q-radio v-model="paymentOpt" val="COD" label="50% PAYMENT, 50% COD" color="pink-6"/></div>
+                        <div class="text-right text-weight-bold">₱ {{returnSubTotal *.5}} NOW, ₱ {{returnSubTotal *.5}} LATER</div>
                     </div>
-                    <div class="row q-pa-md q-py-xl">
-                        <stripe-elements ref="elementsRef" :pk="publishableKey" :amount="returnToPay" @token="tokenCreated" @loading="loading = $event" outline class="col-8 q-mr-md">
+                    <div class="column q-gutter-md q-py-md">
+                        <stripe-elements ref="elementsRef" :pk="publishableKey" :amount="returnToPay" @token="tokenCreated" @loading="loading = $event" outline>
                         </stripe-elements>
-                    <q-btn outlined color="teal" class="col" size="md" @click="submit">PAY&nbsp;&nbsp;&nbsp;<b>P {{formatNumber(returnToPay)}}.00</b></q-btn>
+                        <div class="text-center">
+                        <q-btn outlined color="teal" @click="submit">PAY&nbsp;&nbsp;&nbsp;<b>P {{formatNumber(returnToPay)}}.00</b></q-btn>
+                        </div>
                     </div>
                     </q-step>
 
@@ -167,7 +168,11 @@
         </div>
         </div>
         </div>
-<!-- END OF DESKTOP -->
+<!-- END OF MOBILE -->
+
+        <q-page-sticky position="top-right" :offset="[13, 50]">
+            <q-btn dense round color="pink-4" icon="shopping_cart" size="md" @click="car = true" />
+        </q-page-sticky>
 
     </q-page>    
 </template>     
@@ -361,9 +366,7 @@ export default {
                         clientTokenID: this.token.id,
                         clientPaymentType: 'CARD',
                         clientUID: this.uid,
-                        transactionType: 'ONLINE',
                         forPartyTray: true,
-                        clientPaymentDate: date.formatDate(new Date(), 'YYYY-MM-DD')
                     }
                     this.$firestoreApp.collection('Payments').add(details)
                     .then(()=>{
