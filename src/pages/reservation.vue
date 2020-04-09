@@ -1120,7 +1120,9 @@ export default {
                   clientPayDetails: this.paydetails,
                   clientTokenID: this.token.id,
                   clientPaymentType: 'CARD',
-                  clientUID: this.clientUID
+                  clientUID: this.clientUID,
+                  transactionType: 'ONLINE',
+                  forReservation: true
               }
                   this.$firestoreApp.collection('Payments').add(paymentDetails)
                   .then(()=>{

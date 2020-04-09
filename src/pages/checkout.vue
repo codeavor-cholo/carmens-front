@@ -356,6 +356,7 @@ export default {
                         clientTokenID: this.token.id,
                         clientPaymentType: 'CARD',
                         clientUID: this.uid,
+                        transactionType: 'ONLINE',
                         forPartyTray: true,
                     }
                     this.$firestoreApp.collection('Payments').add(details)

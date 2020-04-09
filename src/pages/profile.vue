@@ -868,7 +868,7 @@ export default {
           try {
             if(this.reservationtab === 'pending_res'){
                 let reservations = this.$lodash.filter(this.Reservation,a=>{
-                    return a.clientUID == this.clientUID && a.clientReserveDate > date.formatDate(new Date(), 'YYYY-MM-DD')
+                    return a.clientUID == this.clientUID && a.clientReserveDate >= date.formatDate(new Date(), 'YYYY-MM-DD')
                 })
                 console.log('reservations',reservations)
                 return reservations
@@ -1134,7 +1134,9 @@ export default {
                         clientPayDetails: this.paydetails,
                         clientTokenID: this.token.id,
                         clientPaymentType: 'CARD',
-                        clientUID: this.clientUID
+                        clientUID: this.selectedPayment.clientUID,
+                        transactionType: 'ONLINE',
+                        forReservation: true
                     }
                     this.$firestoreApp.collection('Payments').add(paymentDetails)
                     .then(()=>{
