@@ -12,15 +12,15 @@
                         
                         <div class="q-mb-sm">
                             <div class="text-weight-bold q-pt-md">EVENT DATE & TIME:</div>
-                            <div>
-                                <div class="q-pt-sm q-pl-lg row"> 
-                                    <div class="col q-pa-sm">
+                            <div class="row">
+                                <div class="q-pt-sm col row"> 
+                                    <div class="col">
                                     {{this.$moment(OnlineInquiry.clientDateofReserve).format('LL')}}
                                     </div>
                                     <div class="col"><q-btn flat text-color="teal" icon="edit" @click="openDateDialog(OnlineInquiry.clientDateofReserve)"/></div>
                                 </div>
-                                <div class="row q-pt-sm q-pl-lg"> 
-                                    <div class="col q-pa-sm">
+                                <div class="row q-pt-sm col"> 
+                                    <div class="col">
                                     {{this.formatTimeInput(OnlineInquiry.clientStartTime)}} - {{this.formatTimeInput(OnlineInquiry.clientEndTime)}}
                                     </div>
                                     <div class="col"><q-btn flat text-color="teal" icon="edit" @click="openDialog(OnlineInquiry.clientStartTime,OnlineInquiry.clientEndTime,'Time')"/></div>
@@ -33,17 +33,17 @@
                                 <div class="row q-gutter-sm q-pb-sm">
                                     <span>PAX:</span>
                                     <span class="cursor-pointer v-ripple">{{OnlineInquiry.clientPax}}<q-icon name="edit" size="sm" class="q-ml-md" color="teal" v-ripple/>
-                                                <q-popup-edit v-model="OnlineInquiry.clientPax">
-                                                <template v-slot="{ initialValue, value, emitValue, set, cancel }">
-                                                    <q-input style="width: 400px" class="relative position" autofocus dense :value="OnlineInquiry.clientPax" hint="Enter PAX" @input="emitValue">
-                                                    <template v-slot:after>
-                                                        <q-btn flat dense color="grey-8" icon="cancel" @click.stop="cancel" />
-                                                        <q-btn flat dense color="teal" icon="check_circle" @click.stop="set" />
-                                                    </template>
-                                                    </q-input>
-                                                </template>
-                                                </q-popup-edit>
-                                            </span>
+                                              <q-popup-edit v-model="OnlineInquiry.clientPax" anchor="top right">
+                                              <template v-slot="{ initialValue, value, emitValue, set, cancel }">
+                                                <q-input type="number" class="relative position q-mb-md q-mt-sm" autofocus dense :value="OnlineInquiry.clientPax" hint="Enter PAX" @input="emitValue" error-message="We can't accomodate pax greater than 150 anymore. Lower down your number of pax / Go back and select another date." :error="!isValid">
+                                                  <template v-slot:after>
+                                                    <q-btn flat  dense color="grey-8" icon="cancel" @click.stop="cancel" />
+                                                    <q-btn label="SET" dense color="teal" icon="check_circle" @click.stop="set" :disable="!isValid"/>
+                                                  </template>
+                                                </q-input>
+                                              </template>
+                                            </q-popup-edit>
+                                    </span>
                                 </div>
                             </div>
 
@@ -462,8 +462,8 @@
             <!-- </div>     -->            
 <!-- END OF RIGHT PART -->
 
-            <q-page-sticky position="top-right" :offset="[13, 50]">
-                <q-btn dense round color="pink-4" icon="done_outline" size="md" @click="right = true" />
+            <q-page-sticky position="bottom-right" :offset="[18, 18]">
+                <q-btn dense round color="pink-4" icon="list" size="lg" @click="right = true" />
             </q-page-sticky>
           
 <!-- DATE -->
@@ -477,6 +477,10 @@
                 class="shadow-0"
                 mask="YYYY-MM-DD"
                 color="grey-8"
+                :options="returnOpenDates"
+                :events="returnReserved"
+                event-color="blue"
+                @input="atInput"
                 >
                 </q-date>
                 </q-card-section>
@@ -501,7 +505,7 @@
 
 
                 <q-card-section v-show="whatToEdit == 'Time'">
-                <div class="text-h6 q-mb-md">Event Start & End Time</div>
+                <div class="text-h6 q-my-md">Event Start & End Time</div>
 
                 <div class="q-pt-sm row">
                     <q-input type="time" class="col" color="teal" dense outlined v-model="startTime" hint="Start Time" mask="`YYYY-MM-DDTHH:mm:ss:sssZ`"/>
@@ -589,6 +593,8 @@ export default {
             { name: 'price', align: 'center', label: 'Package Per Head Price', field: 'price', sortable: true },
         ],
         selected: [],
+        Reservation: [],
+        blockCount: 0,
         choiceOfFood: [],
         choiceOfAddOns: [],
         AddOnsQty: [],
@@ -674,9 +680,49 @@ export default {
     this.$binding('FoodCategory', this.$firestoreApp.collection('FoodCategory'))
           .then(FoodCategory => {
           console.log(FoodCategory, 'FoodCategory')
-          })
+          }),
+    this.$binding('Reservation', this.$firestoreApp.collection('Reservation'))
+            .then(Reservation => {
+            console.log(Reservation, 'Reservation')
+        })
   },
   computed:{
+    isValid () {
+      let max = 150
+
+      let value = this.OnlineInquiry.clientDateofReserve
+        let eventCount = 1
+        let eventsBase = []
+
+        let filter = this.Reservation.forEach(a=>{
+          if(date.formatDate(value,'YYYY-MM-DD') == date.formatDate(a.clientReserveDate,'YYYY-MM-DD')){
+            eventsBase.push(a)
+          }
+        })
+
+        eventsBase.forEach(b=>{
+          let count = b.clientPax > 150 ? 2 : 1
+          // console.log(b['.key'],' - ',b.clientPax,' = ',count)
+          eventCount = eventCount + count
+        })
+       
+        if(eventCount > 4){
+          this.blockCount = (4 - eventCount) + 1
+          console.log('BLOCKED',value)
+          console.log(this.blockCount,'remaining event')
+        } else {
+          this.blockCount = (4 - eventCount) + 1
+          console.log(eventCount,value)
+          console.log(this.blockCount,'remaining event')  
+        } 
+
+
+      if (this.blockCount <= 1){
+        return this.OnlineInquiry.clientPax <= max
+      } else {
+        return true
+      }
+    },   
     motifOpt(){
       let optionss = this.Motif.map(m => {
           return {
@@ -1286,6 +1332,75 @@ export default {
         
       }
       return string
+    },
+    returnOpenDates(base){
+      let today = new Date()
+      let format = date.formatDate(today,'YYYY/MM/DD')
+      if(format < base){
+        let eventCount = 1
+        let eventsBase = []
+
+        let filter = this.Reservation.forEach(a=>{
+          if(date.formatDate(base,'YYYY-MM-DD') == date.formatDate(a.clientReserveDate,'YYYY-MM-DD')){
+            eventsBase.push(a)
+          }
+        })
+
+        eventsBase.forEach(b=>{
+          let count = b.clientPax > 150 ? 2 : 1
+          // console.log(b['.key'],' - ',b.clientPax,' = ',count)
+          eventCount = eventCount + count
+        })
+       
+        if(eventCount > 4){
+          // console.log('BLOCKED',base)
+          return false
+        } else {
+          // console.log(eventCount,base)
+          return true
+        }
+      }
+    },
+    returnReserved(base){
+        let eventsBase = []
+
+        let filter = this.Reservation.forEach(a=>{
+          if(date.formatDate(base,'YYYY-MM-DD') == date.formatDate(a.clientReserveDate,'YYYY-MM-DD')){
+            eventsBase.push(a)
+          }
+        })
+
+        if(eventsBase.length > 0){
+          return true
+        } else {
+          return false
+        }
+    },
+    atInput(value){
+        let eventCount = 1
+        let eventsBase = []
+
+        let filter = this.Reservation.forEach(a=>{
+          if(date.formatDate(value,'YYYY-MM-DD') == date.formatDate(a.clientReserveDate,'YYYY-MM-DD')){
+            eventsBase.push(a)
+          }
+        })
+
+        eventsBase.forEach(b=>{
+          let count = b.clientPax > 150 ? 2 : 1
+          // console.log(b['.key'],' - ',b.clientPax,' = ',count)
+          eventCount = eventCount + count
+        })
+       
+        if(eventCount > 4){
+          this.blockCount = (4 - eventCount) + 1
+          console.log('BLOCKED',value)
+          console.log(this.blockCount,'remaining event')
+        } else {
+          this.blockCount = (4 - eventCount) + 1
+          console.log(eventCount,value)
+          console.log(this.blockCount,'remaining event')  
+        }      
     }
   }
 }
