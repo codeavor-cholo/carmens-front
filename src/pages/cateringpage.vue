@@ -84,6 +84,7 @@
 <!-- END OF DESKTOP ONLY -->
 
 <!-- START OF MOBILE ONLY -->
+        <div class="mobile-only">
         <div class="q-pt-xl">
             <p class="text-center" style="font-size:30px;font-family: 'Domine', serif">CATERING SERVICES</p>
             <p class="q-px-sm" style="color:#e4acbf;font-size:15px;font-family: 'Noto Serif SC', serif;"><i>Avail our budget friendly catering packages for</i><br><i>your special life events.</i></p>
@@ -159,6 +160,7 @@
                 </q-card-section>
                 </q-slide-transition>
              </q-card>
+        </div>
         </div>    
 <!-- END OF MOBILE ONLY -->
 

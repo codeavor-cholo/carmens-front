@@ -57,15 +57,15 @@
           </q-tabs>
           </div>
 
+          <div class="q-pr-sm">
+              <q-btn dense flat style="font-size: 1.3em;" round icon="notifications" text-color="pink-2" color="white" @click="$router.push('/notification')"/>
+          </div>
           <div>
           <q-btn dense style="background-color:#e4acbf;width:120px" text-color="white" label="view basket" @click="basket=true">
             <q-badge color="grey-10" text-color="white" :label="returnLength" floating/>
           </q-btn>
           </div>
 
-          <div class="q-pa-sm">
-              <q-btn dense round icon="search" text-color="pink-2" color="white" @click="tempLogout"/>
-          </div>
         </q-toolbar>
       </q-header>
     </div>
@@ -78,7 +78,7 @@
 
           
           <div class="q-pt-md q-pl-md">
-          <img style="height:100%;width:180px" src="statics/pics/carmen-logo.png" @click="$router.push('/mobilehome')">
+          <img style="height:100%;width:180px" src="statics/pics/carmen-logo.png" @click="$router.push('/')">
           </div>
 
           <!-- STATIC SHOW HIDE LOGIN -->
@@ -433,9 +433,9 @@
               >
               <q-tab v-show="show" icon="person" @click="loginmob = true"><b>Log In</b></q-tab>
               <div>
-                <q-tab dense style="color:#e4acbf" icon="person" v-show="!show" flat label="Account" @click="$router.push('/profile')" />
+                <q-tab dense style="color:#e4acbf" icon="person" v-show="!show" flat label="Account" @click="$router.push('/profilemob')" />
               </div>
-              <q-tab name="alarms" icon="notifications"><b>Notifications</b></q-tab>
+              <q-tab name="alarms" icon="notifications" @click="$router.push('/notification')"><b>Notifications</b></q-tab>
               <q-tab name="movies" icon="shopping_cart" @click="basketmob=true">
                 <q-badge color="grey-10" text-color="white" :label="returnLength" floating/>  
                 <b>Basket</b>

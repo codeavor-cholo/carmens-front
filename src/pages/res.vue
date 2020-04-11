@@ -1139,7 +1139,7 @@ export default {
                         ok: 'OK',
                         cancel: 'RETURN HOME'
                     }).onOk(()=>{
-                      this.$router.push('/profile')
+                      this.$router.push('/profilemob')
                     }).onCancel(()=>{
                        this.$router.push('/')
                     })

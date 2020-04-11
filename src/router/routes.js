@@ -18,9 +18,11 @@ const routes = [
        { path: '/reservation/:id', component: () => import('pages/reservation.vue') },
        { path: '/res/:id', component: () => import('pages/res.vue') },
        { path: '/profile', component: () => import('pages/profile.vue') },
+       { path: '/profilemob', component: () => import('pages/profilemob.vue') },
        { path: '/checkout', component: () => import('pages/checkout.vue') },
        { path: '/checkoutmob', component: () => import('pages/checkoutmob.vue') },
        { path: '/mobilehome', component: () => import('pages/mobilehome.vue') },
+       { path: '/notification', component: () => import('pages/notification.vue') },
     ]
   }
 ]

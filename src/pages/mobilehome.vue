@@ -1,21 +1,7 @@
 <template>
 <q-page class="q-py-md">
 
-        <!-- <div class="fixed-center" v-show="splashscreen">
-          <div class="q-pa-sm" >
-              <img class="col" style="width:350px;height:100%" src="statics/pics/carmen-logo.png">
-          </div>
-
-          <div class="row justify-center">
-          <q-spinner-hourglass
-            color="primary"
-            size="4em"
-          />
-          <q-tooltip :offset="[0, 8]">QSpinnerBall</q-tooltip>
-          </div>
-        </div> -->
-
-<!-- <div v-show="!splashscreen"> -->
+        
 <!-- PARTY TRAY PART -->
         <div class="q-pt-xl">
             <p class="q-px-md text-weight-bold" style="font-size:28px;font-family: 'Domine', serif;">A taste of local organ<br> & seasonal flavours</p>
@@ -26,39 +12,33 @@
             </div>
             <div class="q-pa-md q-pt-lg" style="font-size:20px;font-family: 'Noto Serif SC', serif;"><b>Our Hot Offers</b></div>
             
-            <div class="q-px-md row q-gutter-lg">
-                <q-card flat class="my-card" style="width:150px;height:170px">
-                <img src="statics/pics/foo.jpeg">
-                <q-card-section>
-                <div><b>Breakfast Food</b></div>
-                <div class="text-subtitle2">20 items</div>
-                </q-card-section>
-                </q-card>
-
-                <q-card flat class="my-card" style="width:150px;height:170px">
-                <img src="statics/pics/foo.jpeg">
-                <q-card-section>
-                <div><b>Breakfast Food</b></div>
-                <div class="text-subtitle2">20 items</div>
-                </q-card-section>
-                </q-card>
-
-                <q-card flat class="my-card" style="width:150px;height:170px">
-                <img src="statics/pics/foo.jpeg">
-                <q-card-section>
-                <div><b>Breakfast Food</b></div>
-                <div class="text-subtitle2">20 items</div>
-                </q-card-section>
-                </q-card>
-
-                <q-card flat class="my-card" style="width:150px;height:170px">
-                <img src="statics/pics/foo.jpeg">
-                <q-card-section>
-                <div><b>Breakfast Food</b></div>
-                <div class="text-subtitle2">20 items</div>
-                </q-card-section>
-                </q-card>
-
+            <div class="row q-pl-sm ">
+                <div>
+                <q-table grid :data="returnWithPartyTrays" :columns="columns" :rows-per-page-options="[0]" hide-bottom :pagination.sync="pagination" :filter="filter" class="row justify-center items-center">
+                <template v-slot:item="props">            
+                      <q-card flat class="my-card col-4 q-pa-sm" style="width:174px;height:200px" >
+                          <div>
+                              <q-img :src="props.row.foodPic" styl="height:200px" :ratio="4/3"/>
+                          <q-card-section side>
+                          <q-list dense>
+                              <div class="row items-center justify-between">
+                                  <div>    
+                                      <div>
+                                          <div style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><b>{{props.row.foodName}}</b></div>
+                                          <!-- <div style="font-size:12px">{{props.row.partyTrayPrice[0].price}} Pesos</div> -->
+                                      </div>
+                                  </div>
+                                  <!-- <div class="col">
+                                      <q-btn round color="pink-3" @click="openDialog(props.row)" class="q-ml-lg" flat size="md" icon="shopping_cart"/>
+                                  </div> -->
+                              </div>
+                          </q-list>
+                          </q-card-section>
+                          </div>
+                      </q-card>
+                  </template>
+            </q-table>
+            </div>
             </div>    
         </div>
 <!-- END OF PARTY TRAY PART -->
@@ -73,47 +53,63 @@
             </div>
         </div>
 
-        <div class="row q-pa-sm q-pt-md q-gutter-sm">
-             <q-card class="my-card" style="width:165px">
-                <q-card-section class="column items-center">
-                  <div style="font-size:30px;color:#E4ACBF;font-family: 'Zhi Mang Xing', cursive;">The Paradise</div>
-                  <div style="font-size:12px"><b>CATERING MENU</b></div>
-                  <div class="q-pt-lg" style="color:#E4ACBF;font-size:12px"><b>STARTER</b></div>
-                  <div class="q-pt-sm" style="font-size:11px"><i>Lentif Salad with Cumin</i></div>
-                  <div style="font-size:11px"><i>Tabbouich with Mint</i></div>
-                  <div style="font-size:11px"><i>Bobo Ghanoush</i></div>
-                  <div class="q-pt-lg" style="color:#E4ACBF;font-size:12px"><b>ENTREE</b></div>
-                  <div class="q-pt-sm" style="font-size:11px"><i>Chicken Souviaki</i></div>
-                  <div style="font-size:11px"><i>Beef Falafel with Walnuts</i></div>
-                  <div style="font-size:11px"><i>Chickpea Stew with Saffron</i></div>
-                  <div class="q-pt-lg" style="color:#E4ACBF;font-size:12px"><b>DESSERT</b></div>
-                  <div class="q-pt-sm ellipsis" style="font-size:11px"><i>Turkish Delight Cheesecake</i></div>
-                  <div class="ellipsis" style="font-size:11px"><i>Semolina Almond-Anis</i></div>
-                  <div style="font-size:11px"><i>Knafeh with Orange</i></div>
-                </q-card-section>
-              </q-card>
-
-              <q-card class="my-card" style="width:165px">
-                <q-card-section class="column items-center">
-                  <div style="font-size:30px;color:#E4ACBF;font-family: 'Zhi Mang Xing', cursive;">The Paradise</div>
-                  <div style="font-size:12px"><b>CATERING MENU</b></div>
-                  <div class="q-pt-lg" style="color:#E4ACBF;font-size:12px"><b>STARTER</b></div>
-                  <div class="q-pt-sm" style="font-size:11px"><i>Lentif Salad with Cumin</i></div>
-                  <div style="font-size:11px"><i>Tabbouich with Mint</i></div>
-                  <div style="font-size:11px"><i>Bobo Ghanoush</i></div>
-                  <div class="q-pt-lg" style="color:#E4ACBF;font-size:12px"><b>ENTREE</b></div>
-                  <div class="q-pt-sm" style="font-size:11px"><i>Chicken Souviaki</i></div>
-                  <div style="font-size:11px"><i>Beef Falafel with Walnuts</i></div>
-                  <div style="font-size:11px"><i>Chickpea Stew with Saffron</i></div>
-                  <div class="q-pt-lg" style="color:#E4ACBF;font-size:12px"><b>DESSERT</b></div>
-                  <div class="q-pt-sm ellipsis" style="font-size:11px"><i>Turkish Delight Cheesecake</i></div>
-                  <div class="ellipsis" style="font-size:11px"><i>Semolina Almond-Anis</i></div>
-                  <div style="font-size:11px"><i>Knafeh with Orange</i></div>
-                </q-card-section>
-              </q-card>      
+        <div class="q-px-lg q-pt-sm">
+             <q-table grid :data="Packages" :columns="columnss" :rows-per-page-options="[0]" hide-bottom :pagination.sync="paginations" row-key=".key">
+                    <template v-slot:item="props">
+                        <div class="q-pa-xs col-xs-12 col-sm-6 col-md-6 col-lg-4 grid-style-transition" color="pink-3">
+                            <q-card class="my-card" style="height: 470px">
+                              <q-card-section class="column items-center">
+                                <div style="font-size:50px;color:#E4ACBF;font-family: 'Zhi Mang Xing', cursive;">{{props.row.name}}</div>
+                                <div style="font-size:15px"><b>{{props.row.price}}php per pax</b></div>
+                                  <div class="q-pt-lg" style="color:#E4ACBF;font-size:15px" ><b>FOOD CHOICES</b></div>  
+                                <div v-for="(price, index) in props.row.viands" :key="index" >
+                                  <div class="q-pt-sm" style="font-size:12px"><i>{{ price.viandsQty }} viand<span v-show="price.viandsQty != '1'">s</span> of {{ price.category }}</i></div>
+                                </div>
+                                <div class="q-pt-lg" style="color:#E4ACBF;font-size:15px"><b>INCLUSIONS</b></div>
+                                <div v-for="(s, indexs) in props.row.inclusions" :key="indexs">
+                                  <div style="font-size:12px"><i>{{ s.inclusion }}</i></div>
+                                </div>
+                              </q-card-section>
+                            </q-card>
+                            
+                            
+                            <!-- <q-card class="my-card" style="height: 555px;border: 2px solid;border-color: grey;">
+                                <q-card-section side>
+                                    <q-list dense>
+                                    <q-item class="q-mt-sm">
+                                    <span class="full-width text-center text-teal text-h6 text-weight-bold">
+                                        <strong dense>{{props.row.name}} </strong>
+                                        <br>
+                                        <q-chip class="text-center">{{props.row.price}}php per pax</q-chip>
+                                    </span>
+                                    </q-item>     
+                                    <q-separator class="q-mt-sm"/>
+                                    <q-item class="q-mt-sm text-grey-8" v-show="props.row.viands">
+                                    <span class="full-width text-center text-weight-bold">FOOD CATEGORIES</span>
+                                    </q-item>
+                                    <q-item v-for="(price, index) in props.row.viands" :key="index" class="text-grey-8">
+                                        <q-item-section>
+                                        <q-item-label> {{ price.viandsQty }} viand<span v-show="price.viandsQty != '1'">s</span> of {{ price.category }}</q-item-label>
+                                        </q-item-section>
+                                    </q-item>
+                                    <q-separator class="q-mt-sm"/>
+                                    <q-item class="q-mt-sm" v-show="props.row.inclusions">
+                                    <span class="full-width text-center text-weight-bold text-grey-8" >INCLUSIONS</span>
+                                    </q-item>
+                                    <q-item v-for="(price, index) in props.row.inclusions" :key="index" class="text-grey-8">
+                                        <q-item-section>
+                                        <q-item-label> {{ price.inclusion }}</q-item-label>
+                                        </q-item-section>
+                                    </q-item>
+                                </q-list>
+                                </q-card-section>
+                            </q-card> -->
+                        </div>
+                    </template>
+                </q-table>      
             </div>
 <!-- END OF CATERING PART -->
-<!-- </div> -->
+
 </q-page>
 </template>
 
@@ -121,14 +117,57 @@
 export default {
   data () {
     return {
-      splashscreen: true,
+        Food: [],
+        Packages: [],
+        filter: '',
+        paginations: { sortBy: 'Category', descending: false, page: 2, rowsPerPage: 2},
+        pagination: { sortBy: 'Category', descending: false, page: 1, rowsPerPage: 10000},
+        pagination: { sortBy: 'Category', descending: false, page: 1, rowsPerPage: 100},
+        paginations: { sortBy: 'Category', descending: false, page: 1, rowsPerPage: 100},
+        columnss: [
+            { name: 'category', required: true, label: 'Food Category', align: 'center', field: 'category', sortable: true },
+            { name: 'foodName', align: 'center', label: 'Food Name', field: 'foodName', sortable: true },
+            // { name: 'foodPrice', align: 'center', label: 'Package Price', field: 'foodPrice', sortable: true },
+        ],
+        columns: [
+            { name: 'category', required: true, label: 'Food Category', align: 'center', field: 'category', sortable: true },
+            { name: 'foodName', align: 'center', label: 'Food Name', field: 'foodName', sortable: true },
+            // { name: 'foodPrice', align: 'center', label: 'Package Price', field: 'foodPrice', sortable: true },
+        ],
+        columns: [
+            { name: 'category', required: true, label: 'Food Category', align: 'center', field: 'category', sortable: true },
+            { name: 'foodName', align: 'center', label: 'Food Name', field: 'foodName', sortable: true },
+            // { name: 'foodPrice', align: 'center', label: 'Package Price', field: 'foodPrice', sortable: true },
+        ],
+        columnss: [
+            { name: 'name', required: true, label: 'Package name', align: 'center', field: 'name', sortable: true },
+            { name: 'price', align: 'center', label: 'Package Per Head Price', field: 'price', sortable: true },
+        ],
     }
   },
-  created() {
-    setTimeout(() => {
-          this.splashscreen=false;
-          // console.log('sdf')
-          }, 5000)
+  mounted(){
+    this.$binding('Food', this.$firestoreApp.collection('Food'))
+        .then(Food => {
+        console.log(Food, 'Food')
+        }),
+    this.$binding('Packages', this.$firestoreApp.collection('Packages'))
+            .then(Packages => {
+            console.log(Packages, 'Packages')
+            })
+  },
+  computed:{
+    returnWithPartyTrays(){
+            let party = this.$lodash.filter(this.Food, a=>{
+                return a.partyTrayPrice
+            })
+            return party
+        },
+    returnFood(){
+            let party = this.$lodash.filter(this.Food, a=>{
+                return a.foodPrice
+            })
+            return party
+        },
   }
 }
 </script>
