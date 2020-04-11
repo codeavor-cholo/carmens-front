@@ -895,7 +895,7 @@ export default {
                 return reservations
             }else{
                 let reservations = this.$lodash.filter(this.partyTrayOrders,a=>{
-                return a.accountUID == this.clientUID && a.clientReserveDate > date.formatDate(new Date(), 'YYYY/MM/DD')
+                return a.accountUID == this.clientUID && a.clientReserveDate >= date.formatDate(new Date(), 'YYYY/MM/DD')
                 })
                 console.log('partyTrayOrders',reservations)
                 return reservations
