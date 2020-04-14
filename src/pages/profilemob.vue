@@ -283,7 +283,7 @@
                             <template v-slot:item="props">
                                     <q-card flat class="col-12" style="border: 2px solid;border-color: #ffdab9;margin-bottom: 5px" >
                                         <q-card-section side>
-                                            <q-list dense>
+                                            <q-list dense> 
                                             <q-item >
                                                 <q-item-section>
                                                     <div style="font-size:25px;font-family: 'Noto Serif SC', serif; "><b>{{props.row.clientEvent}}</b></div>
