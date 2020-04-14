@@ -619,7 +619,8 @@ export default {
           backgroundColor: '#ffffff',
           width: '9px',
           opacity: 0.2
-        }
+        },
+        blockCount: 0,
     }
   },
   created(){
