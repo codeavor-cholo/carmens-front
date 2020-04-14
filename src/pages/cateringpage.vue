@@ -24,6 +24,10 @@
                               class="shadow-0 q-ma-none"
                               mask="YYYY-MM-DD"
                               color="grey-8"
+                              :options="returnOpenDates"
+                              :events="returnReserved"
+                              event-color="blue"
+                              @input="atInput"
                             >
                             </q-date>
                       </div>
@@ -35,9 +39,21 @@
                 <q-slide-transition :duration="500">
                   <q-card-section v-show="formStep == 2">
                     <div class="column items-center q-gutter-md q-pa-md">
+                      <div class="text-red" v-show="!isValid"><q-icon name="error"/> We can't accomodate pax greater than <b class="text-h6">150</b> anymore. Lower down your number of pax / Go back and select another date. </div>
                       <q-input dense outlined="" v-model="name" type="text" label="Event Name" class="full-width" color="pink-3"/>
                       <div class="row full-width">
-                      <q-input dense outlined="" type="number" v-model="pax" label="Number of Head" class="col q-mr-sm" color="pink-3"/>
+                      <q-input 
+                        dense outlined="" 
+                        type="number" 
+                        v-model="pax" 
+                        hide-bottom-space=""
+                        :error="!isValid"
+                        label="Number of Head"
+                        class="col q-mr-sm"
+                        color="pink-3"
+                      />
+
+
                       <q-select class="col" color="grey-10" dense outlined  v-model="selectMotif" options-selected-class="bg-grey text-white" multiple="" :options="motifOpt" emit-value map-options label="Select Motif" @input="showInput">
                               <template v-slot:option="scope">
                                 <q-item
@@ -84,7 +100,8 @@
 <!-- END OF DESKTOP ONLY -->
 
 <!-- START OF MOBILE ONLY -->
-        <div class="mobile-only">
+
+      <div class="mobile-only">
         <div class="q-pt-xl">
             <p class="text-center" style="font-size:30px;font-family: 'Domine', serif">CATERING SERVICES</p>
             <p class="q-px-sm" style="color:#e4acbf;font-size:15px;font-family: 'Noto Serif SC', serif;"><i>Avail our budget friendly catering packages for</i><br><i>your special life events.</i></p>
@@ -106,6 +123,10 @@
                             class="shadow-0 q-ma-none"
                             mask="YYYY-MM-DD"
                             color="grey-8"
+                            :options="returnOpenDates"
+                            :events="returnReserved"
+                            event-color="blue"
+                            @input="atInput"
                           >
                           </q-date>
                     </div>
@@ -117,9 +138,19 @@
                <q-slide-transition :duration="500">
                 <q-card-section v-show="formStep == 2">
                   <div class="column items-center q-gutter-md q-pa-md">
+                    <div class="text-red" v-show="!isValid"><q-icon name="error"/>  We can't accomodate pax greater than <b class="text-h6">150</b> anymore. Lower down your number of pax / Go back and select another date. </div>
                     <q-input dense outlined="" v-model="name" type="text" label="Event Name" class="full-width" color="pink-3"/>
                     <div class="row full-width">
-                     <q-input dense outlined="" type="number" v-model="pax" label="Number of Head" class="col q-mr-sm" color="pink-3"/>
+                      <q-input 
+                        dense outlined="" 
+                        type="number" 
+                        v-model="pax" 
+                        hide-bottom-space=""
+                        :error="!isValid"
+                        label="Number of Head"
+                        class="col q-mr-sm"
+                        color="pink-3"
+                      />
                      <q-select class="col" color="grey-10" dense outlined  v-model="selectMotif" options-selected-class="bg-grey text-white" multiple="" :options="motifOpt" emit-value map-options label="Select Motif" @input="showInput">
                              <template v-slot:option="scope">
                               <q-item
@@ -162,6 +193,7 @@
              </q-card>
         </div>
         </div>    
+      </div>
 <!-- END OF MOBILE ONLY -->
 
       <div class="desktop-only">
@@ -246,7 +278,7 @@ export default {
   data () {
     return {
       name: '',
-      pax: '',
+      pax: 0,
       date: date.formatDate(new Date(),'YYYY-MM-DD'),
       Motif: [],
       City: [],
@@ -258,7 +290,9 @@ export default {
       clientAddress: '',
       selectCity: '',
       Food: [],
+      filter: '',
       Packages: [],
+      Reservation: [],
       pagination: { sortBy: 'Category', descending: false, page: 1, rowsPerPage: 10000},
       paginations: { sortBy: 'Category', descending: false, page: 1, rowsPerPage: 10000},
       columns: [
@@ -270,6 +304,7 @@ export default {
             { name: 'name', required: true, label: 'Package name', align: 'center', field: 'name', sortable: true },
             { name: 'price', align: 'center', label: 'Package Per Head Price', field: 'price', sortable: true },
       ],
+      blockCount: 0
     }
   },
   mounted(){
@@ -288,9 +323,21 @@ export default {
     this.$binding('Food', this.$firestoreApp.collection('Food'))
             .then(Food => {
             console.log(Food, 'Food')
+        }),
+    this.$binding('Reservation', this.$firestoreApp.collection('Reservation'))
+            .then(Reservation => {
+            console.log(Reservation, 'Reservation')
         })
   },
   computed : {
+    isValid () {
+      let max = 150
+      if (this.blockCount <= 1){
+        return this.pax <= max
+      } else {
+        return true
+      }
+    },    
     returnWithPartyTrays(){
         let party = this.$lodash.filter(this.Food, a=>{
               return a.foodPrice
@@ -385,7 +432,77 @@ export default {
     },
     showInput(){
       console.log(this.selectMotif)
+    },
+    returnReserved(base){
+        let eventsBase = []
+
+        let filter = this.Reservation.forEach(a=>{
+          if(date.formatDate(base,'YYYY-MM-DD') == date.formatDate(a.clientReserveDate,'YYYY-MM-DD')){
+            eventsBase.push(a)
+          }
+        })
+
+        if(eventsBase.length > 0){
+          return true
+        } else {
+          return false
+        }
+    },
+    returnOpenDates(base){
+      let today = new Date()
+      let format = date.formatDate(today,'YYYY/MM/DD')
+      if(format < base){
+        let eventCount = 1
+        let eventsBase = []
+
+        let filter = this.Reservation.forEach(a=>{
+          if(date.formatDate(base,'YYYY-MM-DD') == date.formatDate(a.clientReserveDate,'YYYY-MM-DD')){
+            eventsBase.push(a)
+          }
+        })
+
+        eventsBase.forEach(b=>{
+          let count = b.clientPax > 150 ? 2 : 1
+          // console.log(b['.key'],' - ',b.clientPax,' = ',count)
+          eventCount = eventCount + count
+        })
+       
+        if(eventCount > 4){
+          // console.log('BLOCKED',base)
+          return false
+        } else {
+          // console.log(eventCount,base)
+          return true
+        }
+      }
+    },
+    atInput(value){
+        let eventCount = 1
+        let eventsBase = []
+
+        let filter = this.Reservation.forEach(a=>{
+          if(date.formatDate(value,'YYYY-MM-DD') == date.formatDate(a.clientReserveDate,'YYYY-MM-DD')){
+            eventsBase.push(a)
+          }
+        })
+
+        eventsBase.forEach(b=>{
+          let count = b.clientPax > 150 ? 2 : 1
+          // console.log(b['.key'],' - ',b.clientPax,' = ',count)
+          eventCount = eventCount + count
+        })
+       
+        if(eventCount > 4){
+          this.blockCount = (4 - eventCount) + 1
+          console.log('BLOCKED',value)
+          console.log(this.blockCount,'remaining event')
+        } else {
+          this.blockCount = (4 - eventCount) + 1
+          console.log(eventCount,value)
+          console.log(this.blockCount,'remaining event')  
+        }      
     }
+
   }
 
 }

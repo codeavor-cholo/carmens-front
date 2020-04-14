@@ -33,12 +33,12 @@
                             <div class="col-4">
                                 <div class="q-pt-md row">
                                     <span class="col-12 q-pa-sm cursor-pointer v-ripple">{{OnlineInquiry.clientPax}}<q-icon name="edit" size="sm" class="q-ml-lg" color="teal" v-ripple/>
-                                        <q-popup-edit v-model="OnlineInquiry.clientPax">
+                                        <q-popup-edit v-model="OnlineInquiry.clientPax" >
                                           <template v-slot="{ initialValue, value, emitValue, set, cancel }">
-                                            <q-input style="width: 400px" class="relative position" autofocus dense :value="OnlineInquiry.clientPax" hint="Enter PAX" @input="emitValue">
+                                            <q-input style="width: 400px" type="number" class="relative position q-mb-md q-mt-sm" autofocus dense :value="OnlineInquiry.clientPax" hint="Enter PAX" @input="emitValue" error-message="We can't accomodate pax greater than 150 anymore. Lower down your number of pax / Go back and select another date." :error="!isValid">
                                               <template v-slot:after>
                                                 <q-btn flat dense color="grey-8" icon="cancel" @click.stop="cancel" />
-                                                <q-btn flat dense color="teal" icon="check_circle" @click.stop="set" />
+                                                <q-btn flat dense color="teal" icon="check_circle" @click.stop="set" :disable="!isValid"/>
                                               </template>
                                             </q-input>
                                           </template>
@@ -466,6 +466,10 @@
                 class="shadow-0 q-ma-none"
                 mask="YYYY-MM-DD"
                 color="grey-8"
+                :options="returnOpenDates"
+                :events="returnReserved"
+                event-color="blue"
+                @input="atInput"
                 >
                 </q-date>
                 </q-card-section>
@@ -490,7 +494,7 @@
 
 
                 <q-card-section v-show="whatToEdit == 'Time'">
-                <div class="text-h6 q-mb-md">Event Start & End Time</div>
+                <div class="text-h6 q-my-md">Event Start & End Time</div>
 
                 <div class="q-pt-sm row">
                     <q-input type="time" class="col" color="teal" dense outlined v-model="startTime" hint="Start Time" mask="`YYYY-MM-DDTHH:mm:ss:sssZ`"/>
@@ -570,6 +574,8 @@ export default {
         FoodCategory: [],
         Food: [],
         Addons: [],
+        Reservation:[],
+        blockCount : 0,
         filter: '',
         pagination: { sortBy: 'Category', descending: false, page: 1, rowsPerPage: 10},
         columns: [
@@ -613,7 +619,8 @@ export default {
           backgroundColor: '#ffffff',
           width: '9px',
           opacity: 0.2
-        }
+        },
+        blockCount: 0,
     }
   },
   created(){
@@ -662,9 +669,49 @@ export default {
     this.$binding('FoodCategory', this.$firestoreApp.collection('FoodCategory'))
           .then(FoodCategory => {
           console.log(FoodCategory, 'FoodCategory')
-          })
+          }),
+    this.$binding('Reservation', this.$firestoreApp.collection('Reservation'))
+            .then(Reservation => {
+            console.log(Reservation, 'Reservation')
+        })
   },
   computed:{
+    isValid () {
+      let max = 150
+
+      let value = this.OnlineInquiry.clientDateofReserve
+        let eventCount = 1
+        let eventsBase = []
+
+        let filter = this.Reservation.forEach(a=>{
+          if(date.formatDate(value,'YYYY-MM-DD') == date.formatDate(a.clientReserveDate,'YYYY-MM-DD')){
+            eventsBase.push(a)
+          }
+        })
+
+        eventsBase.forEach(b=>{
+          let count = b.clientPax > 150 ? 2 : 1
+          // console.log(b['.key'],' - ',b.clientPax,' = ',count)
+          eventCount = eventCount + count
+        })
+       
+        if(eventCount > 4){
+          this.blockCount = (4 - eventCount) + 1
+          console.log('BLOCKED',value)
+          console.log(this.blockCount,'remaining event')
+        } else {
+          this.blockCount = (4 - eventCount) + 1
+          console.log(eventCount,value)
+          console.log(this.blockCount,'remaining event')  
+        } 
+
+
+      if (this.blockCount <= 1){
+        return this.OnlineInquiry.clientPax <= max
+      } else {
+        return true
+      }
+    },   
     motifOpt(){
       let optionss = this.Motif.map(m => {
           return {
@@ -1285,6 +1332,75 @@ export default {
         
       }
       return string
+    },
+    returnOpenDates(base){
+      let today = new Date()
+      let format = date.formatDate(today,'YYYY/MM/DD')
+      if(format < base){
+        let eventCount = 1
+        let eventsBase = []
+
+        let filter = this.Reservation.forEach(a=>{
+          if(date.formatDate(base,'YYYY-MM-DD') == date.formatDate(a.clientReserveDate,'YYYY-MM-DD')){
+            eventsBase.push(a)
+          }
+        })
+
+        eventsBase.forEach(b=>{
+          let count = b.clientPax > 150 ? 2 : 1
+          // console.log(b['.key'],' - ',b.clientPax,' = ',count)
+          eventCount = eventCount + count
+        })
+       
+        if(eventCount > 4){
+          // console.log('BLOCKED',base)
+          return false
+        } else {
+          // console.log(eventCount,base)
+          return true
+        }
+      }
+    },
+    returnReserved(base){
+        let eventsBase = []
+
+        let filter = this.Reservation.forEach(a=>{
+          if(date.formatDate(base,'YYYY-MM-DD') == date.formatDate(a.clientReserveDate,'YYYY-MM-DD')){
+            eventsBase.push(a)
+          }
+        })
+
+        if(eventsBase.length > 0){
+          return true
+        } else {
+          return false
+        }
+    },
+    atInput(value){
+        let eventCount = 1
+        let eventsBase = []
+
+        let filter = this.Reservation.forEach(a=>{
+          if(date.formatDate(value,'YYYY-MM-DD') == date.formatDate(a.clientReserveDate,'YYYY-MM-DD')){
+            eventsBase.push(a)
+          }
+        })
+
+        eventsBase.forEach(b=>{
+          let count = b.clientPax > 150 ? 2 : 1
+          // console.log(b['.key'],' - ',b.clientPax,' = ',count)
+          eventCount = eventCount + count
+        })
+       
+        if(eventCount > 4){
+          this.blockCount = (4 - eventCount) + 1
+          console.log('BLOCKED',value)
+          console.log(this.blockCount,'remaining event')
+        } else {
+          this.blockCount = (4 - eventCount) + 1
+          console.log(eventCount,value)
+          console.log(this.blockCount,'remaining event')  
+        }      
     }
   }
 }
