@@ -24,7 +24,8 @@ const routes = [
        { path: '/mobilehome', component: () => import('pages/mobilehome.vue') },
        { path: '/notification', component: () => import('pages/notification.vue') },
     ]
-  }
+  },
+  { path: '/loginmob', component: () => import('pages/loginmob.vue') },
 ]
 
 // Always leave this as last one
