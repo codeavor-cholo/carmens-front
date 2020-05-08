@@ -22,7 +22,7 @@
                     <div class="row items-center q-pl-xl">
                     <div class="q-px-xl">
                         <q-avatar size="120px" font-size="52px" color="teal" text-color="white">
-                        <img src="statics/pics/foo.jpeg">
+                        <img :src="returnUserProfile.photoURL">
                         </q-avatar>
                     </div>
                     <div class="q-px-xl" style="padding-left:200px">
@@ -31,9 +31,9 @@
                     </div>
                     
                     <div class="column q-px-xl q-pt-lg q-gutter-md">
-                    <div class="q-pl-xl" style="font-size:20px;font-family: 'Noto Serif SC', serif;">Name: Codeavor</div>
-                    <div class="q-pl-xl" style="font-size:20px;font-family: 'Noto Serif SC', serif;">Contact Number: 0999-999-9999</div>
-                    <div class="q-pl-xl" style="font-size:20px;font-family: 'Noto Serif SC', serif;">Delivery Address: Tondo, Manila</div>
+                    <div class="q-pl-xl" style="font-size:20px;font-family: 'Noto Serif SC', serif;">Name: {{returnUserProfile.displayName}}</div>
+                    <div class="q-pl-xl" style="font-size:20px;font-family: 'Noto Serif SC', serif;">Contact Number:  {{returnUserProfile.phoneNumber}} <q-btn color="pink-3" flat icon="add" label="add" v-show="returnUserProfile.phoneNumber == null" /></div>
+                    <div class="q-pl-xl" style="font-size:20px;font-family: 'Noto Serif SC', serif;">Delivery Address: {{returnUserProfile.phoneNumber}}<q-btn color="pink-3" flat icon="add" label="add" v-show="returnUserProfile.phoneNumber == null" /></div>
                     </div>
                 </q-tab-panel>
 <!-- END OF ACCOUNT AREA -->
@@ -624,7 +624,7 @@
                     </q-card>
                 </q-dialog>
                 <!-- status -->
-                <q-dialog v-model="viewstatus" persistent>
+                <q-dialog v-model="viewstatus">
                     <q-card style="min-width: 200px">
                         <q-card-section class="items-center">
                             <div class="row text-overline items-center justify-around">  
@@ -726,9 +726,11 @@ export default {
       clientUID: '',
       status: [],
       id: '',
+      profile: {},
       filterReserve: '',
       pagination: { sortBy: 'clientReserveDate', descending: false, page: 1, rowsPerPage: 10000},
       paginations: { sortBy: 'clientReserveDate', descending: false, page: 1, rowsPerPage: 10},
+      previousPage: '',
       search_cartcolumns: [
                 { name: 'foodName', required: true, label: 'First Name', align: 'center', field: 'foodName', sortable: true }
             ],
@@ -739,13 +741,24 @@ export default {
       columns: [
                 { name: 'clientFName', required: true, label: 'First Name', align: 'center', field: 'clientFName', sortable: true },
                 { name: 'clientEvent', align: 'center', label: 'Last Name', field: 'clientEvent', sortable: true },
-            ]
+            ],
+
     }
   },
   created(){
           let self = this
+          let page = this.$q.localStorage.getItem('profile')
+          self.previousPage = page 
+          if(page.includes('res')){
+              this.tab = 'reserve'
+          } else if (page.includes('checkout')){
+              this.tab = 'order'
+          } else {
+              this.tab = 'account'
+          }
           this.$firebase.auth().onAuthStateChanged(function(user) {
               if (user) {
+                self.profile = user
                 self.clientUID = user.uid
               } else {
                 self.clientUID = ''
@@ -778,6 +791,13 @@ export default {
         console.log(this.storageRef, 'store')
   },
   computed:{
+      returnUserProfile(){
+          try {
+              return this.profile
+          } catch (error) {
+              return []
+          }
+      },
       returnSubTotal(){
         try {
             return this.$lodash.sumBy(this.returnCart,a=>{return parseInt(a.price) * parseInt(a.qty)})

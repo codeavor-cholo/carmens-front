@@ -729,11 +729,13 @@ export default {
                 
             }).onOk(()=>{
               this.loginGoogle()
+              this.login = false
             }).onCancel(()=>{
               this.login = true
             })
       } else {
           this.loginGoogle()
+          this.login = false
       } 
 
     },
