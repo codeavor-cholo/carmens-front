@@ -100,6 +100,7 @@
 <!-- END OF DESKTOP ONLY -->
 
 <!-- START OF MOBILE ONLY -->
+
       <div class="mobile-only">
         <div class="q-pt-xl">
             <p class="text-center" style="font-size:30px;font-family: 'Domine', serif">CATERING SERVICES</p>
@@ -190,6 +191,7 @@
                 </q-card-section>
                 </q-slide-transition>
              </q-card>
+        </div>
         </div>    
       </div>
 <!-- END OF MOBILE ONLY -->

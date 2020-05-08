@@ -1,46 +1,34 @@
 <template>
     <q-page>
-        <div class="q-pa-sm q-pt-xl">
-        <q-splitter v-model="splitterModel" >
-            <template v-slot:before>
-                <div>
-                <q-tabs v-model="tab" vertical inline-label class="text-pink-3 full-height relative-position" >
-                <q-tab name="account" label="My Account" />
-                <q-tab name="cart" label="My Cart" />
-                <q-tab name="order" label="My Orders" />
-                <q-tab name="reserve" label="My Reservation" />
-                <q-tab name="cancel" label="My Cancelled Reservation" />
-                </q-tabs>
-                </div>
-            </template>
-            <template v-slot:after>
+        <div class="q-py-xl">
+
+            
                 <q-tab-panels v-model="tab" animated class="transparent" transition-prev="jump-up" transition-next="jump-up" >
 <!-- ACCOUNT AREA -->
                 <q-tab-panel name="account">
-                    <div style="font-size:50px;font-family: 'Domine', serif;" class="q-px-xl">My Profile</div>
+                    <div style="font-size:30px;font-family: 'Domine', serif;">My Profile</div>
                     
-                    <div class="row items-center q-pl-xl">
-                    <div class="q-px-xl">
+                    <div class="text-right">
+                        <q-btn flat text-color="pink-3" label="Edit Profile" icon="settings" />
+                    </div>
+                    <div class="text-center">
                         <q-avatar size="120px" font-size="52px" color="teal" text-color="white">
                         <img src="statics/pics/foo.jpeg">
                         </q-avatar>
                     </div>
-                    <div class="q-px-xl" style="padding-left:200px">
-                        <q-btn flat text-color="pink-3" label="Edit Profile" icon="settings" />
-                    </div>
-                    </div>
+                   
                     
-                    <div class="column q-px-xl q-pt-lg q-gutter-md">
-                    <div class="q-pl-xl" style="font-size:20px;font-family: 'Noto Serif SC', serif;">Name: Codeavor</div>
-                    <div class="q-pl-xl" style="font-size:20px;font-family: 'Noto Serif SC', serif;">Contact Number: 0999-999-9999</div>
-                    <div class="q-pl-xl" style="font-size:20px;font-family: 'Noto Serif SC', serif;">Delivery Address: Tondo, Manila</div>
+                    <div class="column q-pl-md q-pt-lg q-gutter-md">
+                    <div style="font-size:17px;font-family: 'Noto Serif SC', serif;">Name: Codeavor</div>
+                    <div style="font-size:17px;font-family: 'Noto Serif SC', serif;">Contact Number: 0999-999-9999</div>
+                    <div style="font-size:17px;font-family: 'Noto Serif SC', serif;">Delivery Address: Tondo, Manila</div>
                     </div>
                 </q-tab-panel>
 <!-- END OF ACCOUNT AREA -->
 <!-- CART AREA -->
                 <q-tab-panel name="cart">
-                    <div style="font-size:50px;font-family: 'Domine', serif;" class="q-px-xl">My Cart</div>
-                    <q-input filled v-model="search_cart" color="pink-3" label="Search">
+                    <div style="font-size:30px;font-family: 'Domine', serif;">My Cart</div>
+                    <q-input dense filled v-model="search_cart" color="pink-3" label="Search">
                         <template v-slot:prepend>
                         <q-icon name="search" />
                         </template>
@@ -75,7 +63,7 @@
                         </q-card>
                       </template>
                     </q-table>
-                        <q-card-actions align="right" class="justify-between row">
+                        <q-card-actions align="right" class="column">
                         <div class="text-weight-bold text-h6" >SUBTOTAL : <span class="text-teal-6">{{returnSubTotal}}</span></div>
                         <q-btn :label="'Checkout '+returnLength+ ' items'" color="pink-6" v-close-popup  class="text-weight-bold" outline="" @click="checkOutOrders"/>
                         </q-card-actions>
@@ -83,8 +71,8 @@
 <!-- END OF CART AREA -->
 <!-- ORDER AREA -->
                 <q-tab-panel name="order">
-                   <div style="font-size:50px;font-family: 'Domine', serif;" class="q-px-xl">My Orders</div>
-                   <q-input filled v-model="search_order" color="pink-3" label="Search">
+                   <div style="font-size:30px;font-family: 'Domine', serif;">My Orders</div>
+                   <q-input dense filled v-model="search_order" color="pink-3" label="Search">
                         <template v-slot:prepend>
                         <q-icon name="search" />
                         </template>
@@ -106,26 +94,22 @@
                                             <template v-slot:item="props">
                                                     <q-list bordered class="full-width" separator="">
                                                         <q-card class="my-card" style="border: 2px solid;border-color: pink;margin-bottom: 10px">
-                                                            <div class="row q-pl-xl">
-                                                                <div class="col-9 q-pa-md">
-                                                                    <div class="col-4"><p class="q-pt-none q-mt-none q-pb-none q-mb-none" style="font-size: 1.2rem"><b>Name:</b> {{props.row.clientName}}</p></div>
-                                                                    <div class="col-4"><p class="q-pt-none q-mt-none q-pb-none q-mb-none" style="font-size: 1.2rem"><b>Address:</b> {{props.row.clientAddress}},{{props.row.city}}</p></div>
-                                                                </div>
-                                                                <div class="col-3 q-pa-md">
-                                                                    <div class="col-4"><p class="q-pt-none q-mt-none q-pb-none q-mb-none" style="font-size: 1.2rem"><b>Date:</b> {{props.row.clientReserveDate}}</p></div>
-                                                                    <div class="col-4"><p class="q-pt-none q-mt-none q-pb-none q-mb-none" style="font-size: 1.2rem"><b>Time:</b> {{props.row.clientStartTime}}</p></div>
-                                                                </div>
+                                                            <div class="column q-pl-sm q-pt-sm">
+                                                                <div><p class="q-pt-none q-mt-none q-pb-none q-mb-none" style="font-size: 17px"><b>Name:</b> {{props.row.clientName}}</p></div>
+                                                                <div><p class="q-pt-none q-mt-none q-pb-none q-mb-none" style="font-size: 17px"><b>Address:</b> {{props.row.clientAddress}},{{props.row.city}}</p></div>
+                                                                <div><p class="q-pt-none q-mt-none q-pb-none q-mb-none" style="font-size: 17px"><b>Date:</b> {{props.row.clientReserveDate}}</p></div>
+                                                                <div><p class="q-pt-none q-mt-none q-pb-none q-mb-none" style="font-size: 17px"><b>Time:</b> {{props.row.clientStartTime}}</p></div>         
                                                             </div>
                                                             <q-separator inset/>
-                                                            <div class="row items-center justify-between">
+                                                            <div class="column">
                                                                 <div class="row items-center">
-                                                                    <div class="q-pa-sm ">
-                                                                    <q-icon name="local_shipping" style="font-size: 2rem" />
+                                                                    <div>
+                                                                    <q-icon name="local_shipping" style="font-size: 1.4rem" />
                                                                     </div>
                                                                     <div>Latest tracking update will be put here!</div>
                                                                 </div>
-                                                                    <div class="q-pr-xl">
-                                                                    <q-btn dense style="background-color:#e4acbf;width:120px" text-color="white" @click="openStatus(props.row),partytraystatus = true" label="View Status" />
+                                                                    <div class="q-px-md q-pt-sm">
+                                                                    <q-btn dense class="full-width" unelevated style="background-color:#e4acbf;" text-color="white" @click="openStatus(props.row),partytraystatus = true" label="View Status" />
                                                                     </div>
                                                                 </div>
                                                                 <q-separator inset/>
@@ -168,15 +152,11 @@
                                             <template v-slot:item="props">
                                                     <q-list bordered class="full-width" separator="">
                                                         <q-card class="my-card" style="border: 2px solid;border-color: pink;margin-bottom: 10px">
-                                                            <div class="row q-pl-xl">
-                                                                <div class="col-9 q-pa-md">
-                                                                    <div class="col-4"><p class="q-pt-none q-mt-none q-pb-none q-mb-none" style="font-size: 1.2rem"><b>Name:</b> {{props.row.clientName}}</p></div>
-                                                                    <div class="col-4"><p class="q-pt-none q-mt-none q-pb-none q-mb-none" style="font-size: 1.2rem"><b>Address:</b> {{props.row.clientAddress}}</p></div>
-                                                                </div>
-                                                                <div class="col-3 q-pa-md">
-                                                                    <div class="col-4"><p class="q-pt-none q-mt-none q-pb-none q-mb-none" style="font-size: 1.2rem"><b>Date:</b> {{props.row.clientReserveDate}}</p></div>
-                                                                    <div class="col-4"><p class="q-pt-none q-mt-none q-pb-none q-mb-none" style="font-size: 1.2rem"><b>Time:</b> {{props.row.clientStartTime}}</p></div>
-                                                                </div>
+                                                            <div class="column q-pl-sm q-pt-sm">
+                                                                <div><p class="q-pt-none q-mt-none q-pb-none q-mb-none" style="font-size: 17px"><b>Name:</b> {{props.row.clientName}}</p></div>
+                                                                <div><p class="q-pt-none q-mt-none q-pb-none q-mb-none" style="font-size: 17px"><b>Address:</b> {{props.row.clientAddress}}</p></div>
+                                                                <div><p class="q-pt-none q-mt-none q-pb-none q-mb-none" style="font-size: 17px"><b>Date:</b> {{props.row.clientReserveDate}}</p></div>
+                                                                <div><p class="q-pt-none q-mt-none q-pb-none q-mb-none" style="font-size: 17px"><b>Time:</b> {{props.row.clientStartTime}}</p></div>
                                                             </div>
                                                             <!-- <q-separator inset/>
                                                             <div class="row items-center justify-between">
@@ -225,8 +205,8 @@
 <!-- END OF ORDER AREA -->
 <!-- RESERVATION AREA -->
                 <q-tab-panel name="reserve">
-                   <div style="font-size:50px;font-family: 'Domine', serif;" class="q-px-xl">My Reservation</div>
-                   <q-input filled v-model="filterReserve" color="pink-3" label="Search">
+                   <div style="font-size:30px;font-family: 'Domine', serif;">My Reservation</div>
+                   <q-input dense filled v-model="filterReserve" color="pink-3" label="Search">
                         <template v-slot:prepend>
                         <q-icon name="search" />
                         </template>
@@ -245,54 +225,49 @@
                                     <q-card flat class="col-12" style="border: 2px solid;border-color: #ffdab9;margin-bottom: 5px" >
                                         <q-card-section side>
                                             <q-separator inset/>
-                                                    <div class="row items-center justify-between">
+                                                    <div class="column">
                                                         <div class="row items-center">
                                                             <div class="q-pa-sm ">
-                                                            <q-icon name="local_shipping" style="font-size: 2rem" />
+                                                            <q-icon name="local_shipping" style="font-size: 1.4rem" />
                                                             </div>
                                                             <div>Latest tracking update will be put here!</div>
                                                         </div>
-                                                            <div class="q-pr-xl">
-                                                            <q-btn dense style="background-color:#e4acbf;width:120px" text-color="white" @click="openStatus(props.row), eventstatus = true" label="View Status" />
+                                                            <div class="q-py-sm">
+                                                            <q-btn dense class="full-width" style="background-color:#e4acbf;" text-color="white" @click="openStatus(props.row), eventstatus = true" label="View Status" />
                                                             </div>
                                                         </div>
                                                 <q-separator inset/>
                                             <q-list dense>
                                             <q-item >
                                                 <q-item-section>
-                                                    <div style="font-size:25px;font-family: 'Noto Serif SC', serif; "><b>{{props.row.clientEvent}}</b></div>
-                                                    <div class="q-pl-xl column">
-                                                        <div class="row">
-                                                            <div class="col-6 row items-center q-gutter-sm">
-                                                                <q-icon name="today" class="text-black" style="font-size: 2rem;" />
-                                                                <div class="">Date of Event: </div>
-                                                                <div class="text-weight-bold text-h6"> {{formatDate(props.row.clientReserveDate)}}</div>
-                                                            </div>
-                                                            <div class="col-6 row items-center q-gutter-sm">
-                                                                <q-icon name="watch_later" class="text-black" style="font-size: 2rem;" />
-                                                                <div class="">Time of Event: </div>
-                                                                <div class="text-weight-bold text-h6"> {{props.row.clientStartTime}} - {{props.row.clientEndTime}}</div>
-                                                            </div>
+                                                    <div style="font-size:20px;font-family: 'Noto Serif SC', serif; "><b>{{props.row.clientEvent}}</b></div>
+                                                    <div class="column">
+                                                        <div class="row items-center q-gutter-sm">
+                                                            <q-icon name="today" class="text-black" style="font-size: 1.4rem;" />
+                                                            <div class="">Date of Event: </div>
                                                         </div>
-                                                        <div class="row">
-                                                            <div class="col-6 row items-center q-gutter-sm">
-                                                                <q-icon name="place" class="text-black" style="font-size: 2rem;" />
-                                                                <div class="">Place of Event: </div>
-                                                                <div class="text-weight-bold">{{props.row.clientPlace}},{{props.row.clientCity}}</div>
-                                                            </div>
-                                                            <div class="col-6 row items-center q-gutter-sm">
-                                                                <q-icon name="people" class="text-black" style="font-size: 2rem;" />
-                                                                <div class="">Number of attendies: </div>
-                                                                <div class="text-weight-bold text-h6">{{props.row.clientPax}}</div>
-                                                                
-                                                            </div>
+                                                        <div class="text-weight-bold text-right"> {{formatDate(props.row.clientReserveDate)}}</div>
+                                                        <div class="row items-center q-gutter-sm">
+                                                            <q-icon name="watch_later" class="text-black" style="font-size: 1.4rem;" />
+                                                            <div class="">Time of Event: </div>
                                                         </div>
+                                                        <div class="text-weight-bold text-right"> {{props.row.clientStartTime}} - {{props.row.clientEndTime}}</div>
+                                                        <div class="row items-center q-gutter-sm">
+                                                            <q-icon name="place" class="text-black" style="font-size: 1.4rem;" />
+                                                            <div class="">Place of Event: </div>
+                                                        </div>
+                                                        <div class="text-weight-bold text-right">{{props.row.clientPlace}},{{props.row.clientCity}}</div>
+                                                        <div class="row items-center q-gutter-sm">
+                                                            <q-icon name="people" class="text-black" style="font-size: 1.4rem;" />
+                                                            <div class="">Number of attendies: </div>   
+                                                        </div>
+                                                        <div class="text-weight-bold text-right">{{props.row.clientPax}}</div>            
                                                     </div>
-                                                    <div class="row justify-end q-gutter-md">
-                                                        <q-btn style="background-color:#e4acbf;width:150px" text-color="white" @click="openResched(props.row),rescheduleEvent=true" label="Reschedule Event" dense />
-                                                        <q-btn style="background-color:#e4acbf;width:120px" text-color="white" @click="openResched(props.row),cancelEvent=true" label="Cancel Event" dense />
-                                                        <q-btn dense style="background-color:#e4acbf;width:120px" text-color="white" @click="openReserve(props.row)" label="Details" />
-                                                        <q-btn dense style="background-color:#e4acbf;width:120px" text-color="white" :disable="props.row.clientTotalPayment == props.row.clientPaidAmount" @click="openPayment(props.row)" :label="props.row.clientTotalPayment == props.row.clientPaidAmount ? 'No Balance' : 'PAYMENT'" />
+                                                    <div class="column q-gutter-sm q-pt-sm">
+                                                        <q-btn class="full-width" style="background-color:#e4acbf;" text-color="white" @click="openResched(props.row),rescheduleEvent=true" label="Reschedule Event" dense />
+                                                        <q-btn class="full-width" style="background-color:#e4acbf;" text-color="white" @click="openResched(props.row),cancelEvent=true" label="Cancel Event" dense />
+                                                        <q-btn class="full-width" dense style="background-color:#e4acbf;" text-color="white" @click="openReserve(props.row)" label="Details" />
+                                                        <q-btn class="full-width" dense style="background-color:#e4acbf;" text-color="white" :disable="props.row.clientTotalPayment == props.row.clientPaidAmount" @click="openPayment(props.row)" :label="props.row.clientTotalPayment == props.row.clientPaidAmount ? 'No Balance' : 'PAYMENT'" />
                                                     </div>
                                                 </q-item-section>
                                             </q-item>
@@ -308,40 +283,35 @@
                             <template v-slot:item="props">
                                     <q-card flat class="col-12" style="border: 2px solid;border-color: #ffdab9;margin-bottom: 5px" >
                                         <q-card-section side>
-                                            <q-list dense>
+                                            <q-list dense> 
                                             <q-item >
                                                 <q-item-section>
                                                     <div style="font-size:25px;font-family: 'Noto Serif SC', serif; "><b>{{props.row.clientEvent}}</b></div>
-                                                    <div class="q-pl-xl column">
-                                                        <div class="row">
-                                                            <div class="col-6 row items-center q-gutter-sm">
-                                                                <q-icon name="today" class="text-black" style="font-size: 2rem;" />
-                                                                <div class="">Date of Event: </div>
-                                                                <div class="text-weight-bold text-h6"> {{formatDate(props.row.clientReserveDate)}}</div>
-                                                            </div>
-                                                            <div class="col-6 row items-center q-gutter-sm">
-                                                                <q-icon name="watch_later" class="text-black" style="font-size: 2rem;" />
-                                                                <div class="">Time of Event: </div>
-                                                                <div class="text-weight-bold text-h6"> {{props.row.clientStartTime}} - {{props.row.clientEndTime}}</div>
-                                                            </div>
+                                                    <div class="column q-pt-sm">                                                    
+                                                        <div class="row items-center q-gutter-sm">
+                                                            <q-icon name="today" class="text-black" style="font-size: 1.4rem;" />
+                                                            <div class="">Date of Event: </div>
                                                         </div>
-                                                        <div class="row">
-                                                            <div class="col-6 row items-center q-gutter-sm">
-                                                                <q-icon name="place" class="text-black" style="font-size: 2rem;" />
-                                                                <div class="">Place of Event: </div>
-                                                                <div class="text-weight-bold">{{props.row.clientPlace}},{{props.row.clientCity}}</div>
-                                                            </div>
-                                                            <div class="col-6 row items-center q-gutter-sm">
-                                                                <q-icon name="people" class="text-black" style="font-size: 2rem;" />
-                                                                <div class="">Number of attendies: </div>
-                                                                <div class="text-weight-bold text-h6">{{props.row.clientPax}}</div>
-                                                                
-                                                            </div>
+                                                        <div class="text-weight-bold text-right"> {{formatDate(props.row.clientReserveDate)}}</div>
+                                                        <div class="row items-center q-gutter-sm">
+                                                            <q-icon name="watch_later" class="text-black" style="font-size: 1.4rem;" />
+                                                            <div class="">Time of Event: </div>
+                                                        </div>                                 
+                                                        <div class="text-weight-bold text-right"> {{props.row.clientStartTime}} - {{props.row.clientEndTime}}</div>                  
+                                                        <div class="row items-center q-gutter-sm">
+                                                            <q-icon name="place" class="text-black" style="font-size: 1.4rem;" />
+                                                            <div class="">Place of Event: </div>
                                                         </div>
+                                                        <div class="text-weight-bold text-right">{{props.row.clientPlace}},{{props.row.clientCity}}</div>
+                                                        <div class="row items-center q-gutter-sm">
+                                                            <q-icon name="people" class="text-black" style="font-size: 1.4rem;" />
+                                                            <div class="">Number of attendies: </div>                                                        
+                                                        </div>                                       
+                                                        <div class="text-weight-bold text-right">{{props.row.clientPax}}</div> 
                                                     </div>
-                                                    <div class="row justify-end q-gutter-md">
-                                                        <q-btn dense style="background-color:#e4acbf;width:120px" text-color="white" @click="openReserve(props.row)" label="Details" />
-                                                        <q-btn dense style="background-color:#e4acbf;width:120px" text-color="white" :disable="props.row.clientTotalPayment == props.row.clientPaidAmount" @click="openPayment(props.row)" :label="props.row.clientTotalPayment == props.row.clientPaidAmount ? 'No Balance' : 'PAYMENT'" />
+                                                    <div class="column q-gutter-md q-pt-sm">
+                                                        <q-btn dense class="full-width" style="background-color:#e4acbf" text-color="white" @click="openReserve(props.row)" label="Details" />
+                                                        <q-btn dense class="full-width" style="background-color:#e4acbf" text-color="white" :disable="props.row.clientTotalPayment == props.row.clientPaidAmount" @click="openPayment(props.row)" :label="props.row.clientTotalPayment == props.row.clientPaidAmount ? 'No Balance' : 'PAYMENT'" />
                                                     </div>
                                                 </q-item-section>
                                             </q-item>
@@ -356,8 +326,8 @@
                 </q-tab-panel>
 <!-- END OF RESERVATION AREA -->
                 <q-tab-panel name="cancel">
-                    <div style="font-size:50px;font-family: 'Domine', serif;" class="q-px-xl">My Cancelled Events</div>
-                    <q-input filled v-model="filterReserve" color="pink-3" label="Search">
+                    <div style="font-size:30px;font-family: 'Domine', serif;">My Cancelled Events</div>
+                    <q-input dense filled v-model="filterReserve" color="pink-3" label="Search">
                         <template v-slot:prepend>
                         <q-icon name="search" />
                         </template>
@@ -369,33 +339,28 @@
                                         <q-list dense>
                                         <q-item >
                                             <q-item-section>
-                                                <div style="font-size:25px;font-family: 'Noto Serif SC', serif; "><b>{{props.row.clientEvent}}</b></div>
-                                                <div class="q-pl-xl column">
-                                                    <div class="row">
-                                                        <div class="col-6 row items-center q-gutter-sm">
-                                                            <q-icon name="today" class="text-black" style="font-size: 2rem;" />
-                                                            <div class="">Date of Event: </div>
-                                                            <div class="text-weight-bold text-h6"> {{formatDate(props.row.clientReserveDate)}}</div>
-                                                        </div>
-                                                        <div class="col-6 row items-center q-gutter-sm">
-                                                            <q-icon name="watch_later" class="text-black" style="font-size: 2rem;" />
-                                                            <div class="">Time of Event: </div>
-                                                            <div class="text-weight-bold text-h6"> {{props.row.clientStartTime}} - {{props.row.clientEndTime}}</div>
-                                                        </div>
+                                                <div style="font-size:20px;font-family: 'Noto Serif SC', serif; "><b>{{props.row.clientEvent}}</b></div>
+                                                <div class="column q-pt-sm">                                                 
+                                                    <div class="row items-center q-gutter-sm">
+                                                        <q-icon name="today" class="text-black" style="font-size: 1.4rem;" />
+                                                        <div class="">Date of Event: </div>
                                                     </div>
-                                                    <div class="row">
-                                                        <div class="col-6 row items-center q-gutter-sm">
-                                                            <q-icon name="place" class="text-black" style="font-size: 2rem;" />
-                                                            <div class="">Place of Event: </div>
-                                                            <div class="text-weight-bold">{{props.row.clientPlace}},{{props.row.clientCity}}</div>
-                                                        </div>
-                                                        <div class="col-6 row items-center q-gutter-sm">
-                                                            <q-icon name="people" class="text-black" style="font-size: 2rem;" />
-                                                            <div class="">Number of attendies: </div>
-                                                            <div class="text-weight-bold text-h6">{{props.row.clientPax}}</div>
-                                                            
-                                                        </div>
-                                                    </div>  
+                                                    <div class="text-weight-bold text-right"> {{formatDate(props.row.clientReserveDate)}}</div>
+                                                    <div class="row items-center q-gutter-sm">
+                                                        <q-icon name="watch_later" class="text-black" style="font-size: 1.4rem;" />
+                                                        <div class="">Time of Event: </div>
+                                                    </div>                                 
+                                                    <div class="text-weight-bold text-right"> {{props.row.clientStartTime}} - {{props.row.clientEndTime}}</div>                                                            
+                                                    <div class="row items-center q-gutter-sm">
+                                                        <q-icon name="place" class="text-black" style="font-size: 1.4rem;" />
+                                                        <div class="">Place of Event: </div>
+                                                    </div>
+                                                    <div class="text-weight-bold text-right">{{props.row.clientPlace}},{{props.row.clientCity}}</div>
+                                                    <div class="row items-center q-gutter-sm">
+                                                        <q-icon name="people" class="text-black" style="font-size: 1.4rem;" />
+                                                        <div class="">Number of attendies: </div>                                                     
+                                                    </div>                                       
+                                                     <div class="text-weight-bold text-right">{{props.row.clientPax}}</div>  
                                                 </div>
                                                 <div class="row justify-end q-gutter-md">
                                                     <!-- <q-btn style="background-color:#e4acbf;width:150px" text-color="white" @click="openResched(props.row),rescheduleEvent=true" label="Reschedule Event" dense />
@@ -412,44 +377,51 @@
                     </q-table>
                 </q-tab-panel>
                 </q-tab-panels>
-            </template>
-            
-            </q-splitter>
+    
             </div>
+
+            <div class="fixed-bottom q-pt-md" style="padding-bottom:70px">
+            <q-tabs v-model="tab"       
+            indicator-color="transparent"
+            active-color="pink-5"
+            inline-label 
+            class="text-pink-3 bg-grey-3 full-height relative-position" >
+            <q-tab name="account" label="My Account" />
+            <q-tab name="cart" label="My Cart" />
+            <q-tab name="order" label="My Orders" />
+            <q-tab name="reserve" label="My Reservation" />
+            <q-tab name="cancel" label="My Cancelled Reservation" />
+            <q-tab name="out" label="Log Out Account" @click="tempLogout" />
+            </q-tabs>
+            </div>
+
+
             <!-- QDIALOG FOR DETAILS OF RESERVATION -->
             <q-dialog v-model="reserveDetails">
-            <q-card class="my-card shadow-0" style="width: 900px; max-width: 90vw;">
+            <q-card class="my-card shadow-0">
                     <q-card-section>
                             <div align="center">
-                            <img class="q-ma-none q-pa-none" style="height:80%;width:300px" src="statics/pics/carmen-logo.png">
+                            <img class="q-ma-none q-pa-none" style="height:100%;width:250px" src="statics/pics/carmen-logo.png">
                             </div>
                             <div class="text-grey-8" align="center">
                                 <p class="q-pb-none q-mb-none">J Center Bldg. Vista Verde Ave., Vista Verde Executive Village Cainta, Rizal</p>
                                 <p class="q-pt-none q-mt-none">09175057991 . 09772774030</p>
                             </div>
-                            <div class="row q-pa-sm" style="margin-top: -20px">
-                                <div class="col-8 ">
-                                    <div class="col q-pa-sm"> 
-                                        <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif" >Full Name:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedReservation.clientFName}}&nbsp;{{this.selectedReservation.clientLName}}</b></p>
-                                        <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Email Address:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedReservation.clientEmail}}</b></p>
-                                        <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Event Address:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedReservation.clientPlace}},&nbsp;{{this.selectedReservation.clientCity}}</b></p>
-                                        <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Time:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedReservation.clientStartTime}} - {{this.selectedReservation.clientEndTime}}</b></p>
-                                    </div>
-                                </div>
-                                <div class="col-4 class-q-pa-sm">
-                                    <div>
-                                        <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif" >Date of Event:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedReservation.clientReserveDate}}</b></p>
-                                        <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Event:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedReservation.clientEvent}}</b></p>
-                                        <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Guest:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedReservation.clientPax}}</b></p>
-                                        <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Motif:&nbsp;&nbsp; <b v-for="(i, index) in this.selectedReservation.clientMotif" :key="index" class="q-pa-sm text-weight-bold">{{i}}</b></p>
-                                    </div>
-                                </div>
+                            <div class="column q-pa-sm">                   
+                                <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif" >Full Name:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedReservation.clientFName}}&nbsp;{{this.selectedReservation.clientLName}}</b></p>
+                                <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Email Address:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedReservation.clientEmail}}</b></p>
+                                <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Event Address:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedReservation.clientPlace}},&nbsp;{{this.selectedReservation.clientCity}}</b></p>
+                                <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Time:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedReservation.clientStartTime}} - {{this.selectedReservation.clientEndTime}}</b></p>    
+                                <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Date of Event:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedReservation.clientReserveDate}}</b></p>
+                                <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Event:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedReservation.clientEvent}}</b></p>
+                                <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Guest:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedReservation.clientPax}}</b></p>
+                                <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Motif:&nbsp;&nbsp; <b v-for="(i, index) in this.selectedReservation.clientMotif" :key="index" class="q-pa-sm text-weight-bold">{{i}}</b></p>   
                             </div>
-                            <div class="row">
-                                <div class="col-8" style="margin-top: -20px">
+                            <div class="column">
+                                <div style="margin-top: -20px">
                                     <q-list dense> 
                                             <q-item class="text-grey-8">
-                                            <span class="full-width text-weight-bold" style="font-family: 'Roboto Slab', serif;">FOOD Choices</span>
+                                            <span class="text-weight-bold" style="font-family: 'Roboto Slab', serif;">FOOD Choices</span>
                                             </q-item>
                                             <q-item v-for="(i, index) in this.selectedReservation.clientFoodChoice" :key="index" >
                                                 <q-item-section class="text-weight-bold"> 
@@ -458,10 +430,10 @@
                                             </q-item>
                                         </q-list>
                                 </div>
-                                <div class="col-4" style="margin-top: -20px">
+                                <div>
                                     <q-list class="q-ma-none q-pa-none" dense> 
                                         <q-item v-show="this.returnFree.inclusions" class="text-grey-8">
-                                        <span class="full-width text-weight-bold" style="font-family: 'Roboto Slab', serif;">Inclusions</span>
+                                        <span class="text-weight-bold" style="font-family: 'Roboto Slab', serif;">Inclusions</span>
                                         </q-item>
                                         <q-item class="q-ma-none q-pa-none q-mb-none q-pb-none text-weight-bold" v-for="(i, index) in this.returnFree.inclusions" :key="index">
                                             <q-item-section>
@@ -477,13 +449,13 @@
                             </div>
                             <div>
                                 <div>
-                                        <span class="q-pl-xl full-width text-weight-bold" style="font-family: 'Roboto Slab', serif;">Total Payment:</span><span class="q-pl-xl text-h6 full-width text-weight-bold">{{this.selectedReservation.clientTotalPayment}}</span>
+                                        <span class="q-pl-md text-weight-bold" style="font-family: 'Roboto Slab', serif;">Total Payment:</span><span class="q-pl-xl text-h6 full-width text-weight-bold">{{this.selectedReservation.clientTotalPayment}}</span>
                                 </div>
                                 <div style="margin-top: -10px">
-                                    <span class="q-pl-xl full-width text-weight-bold" style="font-family: 'Roboto Slab', serif;">Total Paid Amount:</span><span class="q-pl-xl text-h6 full-width text-weight-bold">{{this.selectedReservation.clientPaidAmount}}</span>
+                                    <span class="q-pl-md text-weight-bold" style="font-family: 'Roboto Slab', serif;">Total Paid Amount:</span><span class="q-pl-xl text-h6 full-width text-weight-bold">{{this.selectedReservation.clientPaidAmount}}</span>
                                 </div>
                                 <div style="margin-top: -10px">
-                                    <span class="q-pl-xl full-width text-weight-bold" style="font-family: 'Roboto Slab', serif;">Balance:</span><span class="q-pl-xl text-h6 full-width text-weight-bold">{{this.selectedReservation.clientTotalPayment - this.selectedReservation.clientPaidAmount}}</span>
+                                    <span class="q-pl-md text-weight-bold" style="font-family: 'Roboto Slab', serif;">Balance:</span><span class="q-pl-xl text-h6 full-width text-weight-bold">{{this.selectedReservation.clientTotalPayment - this.selectedReservation.clientPaidAmount}}</span>
                                 </div>
                             </div>
                             </div>
@@ -498,69 +470,65 @@
                                 </q-item>
                             </q-list>
                             </div>
-                            <div class="text-h6 column items-center">
+                            <!-- <div class="text-h6 column items-center">
                                 <q-btn class="bodyText" label="Print" color="pink-3" @click="printNow" icon="print" />
-                            </div>
+                            </div> -->
                     </q-card-section>
                 </q-card>
             </q-dialog>
             <!-- END OF QDIALOG FOR DETAILS OF RESERVATION -->
             <!-- QDIALOG FOR DETAILS OF RESERVATION -->
             <q-dialog v-model="paymentDetails">
-            <q-card class="my-card shadow-0" style="width: 900px; max-width: 90vw;">
+            <q-card class="my-card shadow-0">
                     <q-card-section>
                     <div align="center">
-                        <img class="q-ma-none q-pa-none" style="height:80%;width:300px" src="statics/pics/carmen-logo.png">
+                        <img class="q-ma-none q-pa-none" style="height:100%;width:250px" src="statics/pics/carmen-logo.png">
                         </div>
                         <div class="text-grey-8" align="center">
                             <p class="q-pb-none q-mb-none">J Center Bldg. Vista Verde Ave., Vista Verde Executive Village Cainta, Rizal</p>
                             <p class="q-pt-none q-mt-none">09175057991 . 09772774030</p>
                         </div>
-                    <div class="row q-pa-sm q-pl-xl q-ml-xl">
-                        <div class="col-8 ">
-                            <div class="col q-pa-sm"> 
-                                <p style="font-family: 'Roboto Slab', serif" >Full Name:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedPayment.clientFName}}&nbsp;{{this.selectedPayment.clientLName}}</b></p>
-                                <p style="font-family: 'Roboto Slab', serif; margin-top: -15px" >Email Address:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedPayment.clientEmail}}</b></p>
-                                <p style="font-family: 'Roboto Slab', serif; margin-top: -15px" >Event Address:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedPayment.clientPlace}},&nbsp;{{this.selectedPayment.clientCity}}</b></p>
-                                <p style="font-family: 'Roboto Slab', serif; margin-top: -15px" >Time:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedPayment.clientStartTime}} - {{this.selectedPayment.clientEndTime}}</b></p>
-                            </div>
-                        </div>
-                        <div class="col-4 class-q-pa-sm">
-                            <div>
-                                <p style="font-family: 'Roboto Slab', serif" >Date of Event:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedPayment.clientReserveDate}}</b></p>
-                                <p style="font-family: 'Roboto Slab', serif; margin-top: -15px" >Event:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedPayment.clientEvent}}</b></p>
-                                <p style="font-family: 'Roboto Slab', serif; margin-top: -15px" >Guest:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedPayment.clientPax}}</b></p>
-                                <p style="font-family: 'Roboto Slab', serif; margin-top: -15px" >Motif:&nbsp;&nbsp; <b v-for="(i, index) in this.selectedPayment.clientMotif" :key="index" class="q-pa-sm text-weight-bold">{{i}}</b></p>
-                            </div>
-                        </div>
+                    <div class="column q-pa-sm">                      
+                        <p style="font-family: 'Roboto Slab', serif" >Full Name:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedPayment.clientFName}}&nbsp;{{this.selectedPayment.clientLName}}</b></p>
+                        <p style="font-family: 'Roboto Slab', serif; margin-top: -15px" >Email Address:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedPayment.clientEmail}}</b></p>
+                        <p style="font-family: 'Roboto Slab', serif; margin-top: -15px" >Event Address:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedPayment.clientPlace}},&nbsp;{{this.selectedPayment.clientCity}}</b></p>
+                        <p style="font-family: 'Roboto Slab', serif; margin-top: -15px" >Time:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedPayment.clientStartTime}} - {{this.selectedPayment.clientEndTime}}</b></p>
+                        <p style="font-family: 'Roboto Slab', serif; margin-top: -15px" >Date of Event:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedPayment.clientReserveDate}}</b></p>
+                        <p style="font-family: 'Roboto Slab', serif; margin-top: -15px" >Event:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedPayment.clientEvent}}</b></p>
+                        <p style="font-family: 'Roboto Slab', serif; margin-top: -15px" >Guest:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedPayment.clientPax}}</b></p>
+                        <p style="font-family: 'Roboto Slab', serif; margin-top: -15px" >Motif:&nbsp;&nbsp; <b v-for="(i, index) in this.selectedPayment.clientMotif" :key="index" class="q-pa-sm text-weight-bold">{{i}}</b></p>                          
                     </div>
                     <div class="text-subtitle2 q-mb-sm q-pl-lg full-width">Select amount to pay :</div>
                     <div>
                         <q-list dense>
                         <q-item>
-                            <q-item-section class="q-ml-lg">
+                            <q-item-section>
                             <strong>
                                 <!-- <q-checkbox @input="paymentSelect" color="pink-3" v-model="fullPayment" label="Total Payment" /> -->
                             <q-radio v-model="paymentMode" val="fullPayment" label="Current Balance" />
                             </strong>
+                            <strong align="center">P {{formatNumber(this.selectedPayment.clientTotalPayment - this.selectedPayment.clientPaidAmount)}}.00</strong>
                             </q-item-section>
-                            <q-item-section class="q-mr-lg" side><strong>P {{formatNumber(this.selectedPayment.clientTotalPayment - this.selectedPayment.clientPaidAmount)}}.00</strong></q-item-section>
                         </q-item>
                         <q-item>
-                            <q-item-section class="q-ml-lg"><strong>
+                            <q-item-section class="q-pt-sm"><strong>
                                 <!-- <q-checkbox @input="paymentSelect" color="pink-3" v-model="reservationFee" label="Reservation Fee" /> -->
                             <q-radio v-model="paymentMode" val="desiredAmount" label="Desired Amount (should not be less than reservation fee)" />
                             </strong>
+                            <div align="center">
+                                <q-input hint="To Enable Select Desired Amount" input-class="text-right" v-model="desiredAmountInput" style="width: 200px" :disable="this.paymentMode == 'fullPayment'" type="number" min="5000" label="Desired Amount" dense outlined="" color="teal" :rules="[ val => val >= 5000  || 'Amount should not be less than reservation fee.']"/>
+                            </div>
                             </q-item-section>
-                            <q-item-section class="q-mr-lg" side><q-input hint="To Enable Select Desired Amount" input-class="text-right" v-model="desiredAmountInput" style="width: 200px" :disable="this.paymentMode == 'fullPayment'" type="number" min="5000" label="Desired Amount" dense outlined="" color="teal" :rules="[ val => val >= 5000  || 'Amount should not be less than reservation fee.']"/></q-item-section>
                         </q-item>
                         </q-list>
                     </div>
-                        <div class="container q-mx-lg q-mt-lg relative-position">
-                            <div class="row q-pa-md q-py-xl">
+                        <div class="container q-mt-lg relative-position">
+                            <div class="column">
                             <stripe-elements ref="elementsRef" :pk="publishableKey" :amount="amount" @token="tokenCreated" @loading="loading = $event" outline class="col-8 q-mr-md">
                             </stripe-elements>
-                            <q-btn outlined color="teal" class="col" size="md" @click="submit">PAY&nbsp;&nbsp;&nbsp;<b>P {{formatNumber(toPayAmount)}}.00</b></q-btn>
+                            <div class="q-pt-sm" align="center">
+                                <q-btn outlined color="teal" class="col" size="md" @click="submit">PAY&nbsp;&nbsp;&nbsp;<b>P {{formatNumber(toPayAmount)}}.00</b></q-btn>
+                            </div>
                             </div>
                         </div>
                     </q-card-section>
@@ -568,52 +536,40 @@
             </q-dialog>
             <!-- END OF QDIALOG FOR DETAILS OF RESERVATION -->
             <q-dialog v-model="reschedCancel" persistent>
-                    <q-card style="min-width: 1000px">
-                        <q-card-section class="items-center">
+                    <q-card>
+                        <q-card-section>
                                 <div align="center">
-                                <img class="q-ma-none q-pa-none" style="height:80%;width:300px" src="statics/pics/carmen-logo.png">
+                                <img class="q-ma-none q-pa-none" style="height:100%;width:250px" src="statics/pics/carmen-logo.png">
                                 </div>
                                 <div class="text-grey-8" align="center">
                                     <p class="q-pb-none q-mb-none">J Center Bldg. Vista Verde Ave., Vista Verde Executive Village Cainta, Rizal</p>
                                     <p class="q-pt-none q-mt-none">09175057991 . 09772774030</p>
                                 </div>
-                                <div class="row q-pa-sm" style="margin-top: -20px">
-                                    <div class="col-8 ">
-                                        <div class="col q-pa-sm"> 
-                                            <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif" >Full Name:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedResched.clientFName}}&nbsp;{{this.selectedResched.clientLName}}</b></p>
-                                            <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Email Address:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedResched.clientEmail}}</b></p>
-                                            <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Event Address:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedResched.clientPlace}},&nbsp;{{this.selectedResched.clientCity}}</b></p>
-                                            <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Time:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedResched.clientStartTime}} - {{this.selectedResched.clientEndTime}}</b></p>
-                                        </div>
-                                    </div>
-                                    <div class="col-4 class-q-pa-sm">
-                                        <div>
-                                            <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif" >Date of Event:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedResched.clientReserveDate}}</b></p>
-                                            <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Event:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedResched.clientEvent}}</b></p>
-                                            <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Guest:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedResched.clientPax}}</b></p>
-                                            <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Motif:&nbsp;&nbsp; <b v-for="(i, index) in this.selectedResched.clientMotif" :key="index" class="q-pa-sm text-weight-bold">{{i}}</b></p>
-                                        </div>
-                                    </div>
+                                <div class="column q-pa-sm" style="margin-top: -20px">                                
+                                    <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif" >Full Name:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedResched.clientFName}}&nbsp;{{this.selectedResched.clientLName}}</b></p>
+                                    <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Email Address:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedResched.clientEmail}}</b></p>
+                                    <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Event Address:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedResched.clientPlace}},&nbsp;{{this.selectedResched.clientCity}}</b></p>
+                                    <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Time:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedResched.clientStartTime}} - {{this.selectedResched.clientEndTime}}</b></p>                                    
+                                    <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Date of Event:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedResched.clientReserveDate}}</b></p>
+                                    <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Event:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedResched.clientEvent}}</b></p>
+                                    <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Guest:&nbsp;&nbsp; <b class="text-weight-bold">{{this.selectedResched.clientPax}}</b></p>
+                                    <p class="q-mt-none q-pt-none" style="font-family: 'Roboto Slab', serif; margin-top: -20px" >Motif:&nbsp;&nbsp; <b v-for="(i, index) in this.selectedResched.clientMotif" :key="index" class="q-pa-sm text-weight-bold">{{i}}</b></p>                                  
                                 </div>
                                 <div v-if="this.rescheduleEvent === true">
-                                    <div class="column items-center">
-                                        <div class="row">
-                                            <div>
-                                                <q-date v-model="dates" mask="YYYY/MM/DD" color="deep-orange-4" today-btn/>
-                                            </div>
-                                            <div class="q-pa-xl">
-                                                <q-input type="time" mask="YYYY-MM-DD HH:mm:ss" class="q-pt-xl q-pl-sm" color="deep-orange-3" dense outlined style="width: 170px" v-model="startTime" hint="Start Time" />
-                                                <q-input type="time" class="q-pt-xl q-ml-sm" mask="YYYY-MM-DD HH:mm:ss" dense style="width: 163px" color="deep-orange-3" outlined v-model="endTime" hint="End Time"/>
-                                            </div>
+                                    <div class="column items-center">     
+                                        <div>
+                                            <q-date v-model="dates" mask="YYYY/MM/DD" color="deep-orange-4" today-btn/>
                                         </div>
+                                            <q-input type="time" mask="YYYY-MM-DD HH:mm:ss" class="q-pt-md" color="deep-orange-3" dense outlined style="width: 220px" v-model="startTime" hint="Start Time" />
+                                            <q-input type="time" class="q-pt-sm" mask="YYYY-MM-DD HH:mm:ss" dense style="width: 220px" color="deep-orange-3" outlined v-model="endTime" hint="End Time"/>                                       
                                     </div>
-                                    <div class="q-pa-md column items-center">
-                                    <q-btn class="q-pa-sm" label="Reschedule Event" @click="rescheduleNow" color="pink-3" icon="settings" />
+                                    <div class="q-pt-md">
+                                    <q-btn class="full-width" label="Reschedule Event" @click="rescheduleNow" color="pink-3" icon="settings" />
                                     </div>
                                 </div>
                                 <div v-else>
-                                    <div class="q-pa-md column items-center">
-                                        <q-btn class="q-pa-sm" @click="cancelNow" style="width: 400px" label="Cancel Event" color="pink-3" icon="close" />
+                                    <div>
+                                        <q-btn dense class="q-pa-sm full-width" @click="cancelNow" label="Cancel Event" color="pink-3" icon="close" />
                                     </div>
                                 </div>
                         </q-card-section>
@@ -625,7 +581,7 @@
                 </q-dialog>
                 <!-- status -->
                 <q-dialog v-model="viewstatus" persistent>
-                    <q-card style="min-width: 200px">
+                    <q-card>
                         <q-card-section class="items-center">
                             <div class="row text-overline items-center justify-around">  
                                 <div style="font-size:20px">Delivery Status</div>
@@ -907,6 +863,30 @@ export default {
       }
   },
   methods: {
+    tempLogout(){
+            this.$q.dialog({
+                title: `Are you sure you want to logout?`,
+                type: 'negative',
+                color: 'pink-3',
+                class: 'text-grey-8',
+                icon: 'warning',
+                ok: 'Ok',
+                cancel: 'Cancel',
+                persistent: true
+                
+            }).onOk(()=>{
+              this.$firebase.auth().signOut()
+              .then(()=>{
+                console.log('no user')
+                this.show = false
+                this.displayName = ''
+                this.$router.push('/')
+                location.reload()
+              })
+              // 
+              // remove this comment if you are done with the testing
+            })
+    },
     openStatus(props){
             this.selectedStatus = props 
             this.viewstatus = true
@@ -1085,7 +1065,7 @@ export default {
             color:'pink-6'
         }).onOk(() => {
           console.log('orders',this.returnCart)
-          this.$router.push('/checkout')
+          this.$router.push('/checkoutmob')
         }).onCancel(()=>{
           this.basket = true
         })
