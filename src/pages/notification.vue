@@ -7,7 +7,7 @@
         <div id="list">
             <q-list bordered separator>
                 <div v-for="(notif,i) in returnWithUserUID" :key="i">
-                <q-item clickable v-ripple v-if="notif.typeOf == 'reserve'">
+                <q-item clickable v-ripple v-if="notif.typeOf == 'reserve'" @click.native="saveDataForNextPage('reserve',notif)">
                     <q-item-section>
                         <div id="row" class="row justify-between">
                             <div>
@@ -25,7 +25,7 @@
                         
                     </q-item-section>
                 </q-item>
-                <q-item clickable v-ripple v-else-if="notif.typeOf == 'payment'">
+                <q-item clickable v-ripple v-else-if="notif.typeOf == 'payment'" @click.native="saveDataForNextPage('payment',notif)">
                     <q-item-section>
                         <div id="row" class="row justify-between">
                             <div>
@@ -45,7 +45,7 @@
                         
                     </q-item-section>
                 </q-item>
-                <q-item clickable v-ripple v-else>
+                <q-item clickable v-ripple v-else @click.native="saveDataForNextPage('orders',notif)">
                     <q-item-section>
                         <div id="row" class="row justify-between">
                             <div>
@@ -148,21 +148,34 @@ export default {
                 return []
             }
         },
-    getPaymentNotifs(){
-        try {
-            let user = this.$firebase.auth().currentUser
+        getPaymentNotifs(){
+            try {
+                let user = this.$firebase.auth().currentUser
 
-            let filter = this.AdminNotifications.filter(a=>{
-                a.typeOf = 'payment'
-                return a.userID == user.uid && a.message == "Payment Recieved!"
-            })
+                let filter = this.AdminNotifications.filter(a=>{
+                    a.typeOf = 'payment'
+                    return a.userID == user.uid && a.message == "Payment Recieved!"
+                })
 
-            return filter
-        } catch (error) {
-            return []
+                return filter
+            } catch (error) {
+                return []
+            }
         }
-    }
     },
+    methods:{
+        saveDataForNextPage(type,obj){
+            try {
+                this.$q.localStorage.set('notifType', type)
+                console.log('done 1')
+                this.$q.localStorage.set('notifData', obj)
+                console.log('done 2')
+                this.$router.push('/profile')
+            } catch (error) {
+                console.log('error',error)
+            }   
+        },
+    }
 
 }
 </script>

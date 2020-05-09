@@ -753,6 +753,22 @@ export default {
               this.tab = 'reserve'
           } else if (page.includes('checkout')){
               this.tab = 'order'
+          } else if (page.includes('notification')){
+              let type = this.$q.localStorage.getItem('notifType')
+              let data = this.$q.localStorage.getItem('notifData')
+
+                if(type == 'payment'){
+                    if(data.forPartytray == ''){
+                        this.tab = 'reserve'
+                    } else {
+                        this.tab = 'order'
+                    }
+                } else if (type == 'orders') {
+                    this.tab = 'order'
+                } else {
+                    this.tab = 'reserve'
+                }
+
           } else {
               this.tab = 'account'
           }
