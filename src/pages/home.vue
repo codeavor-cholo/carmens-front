@@ -31,7 +31,7 @@
           <div class="row q-pa-sm">
           <div><q-route-tab to="/" name="air"><b>PARTY TRAYS</b></q-route-tab></div>
           <div><q-route-tab to="/catering"><b>CATERING SERVICES</b></q-route-tab></div>
-          <div style="padding-left:380px;"><q-route-tab to="" ><b>sign up</b></q-route-tab></div>
+          <div style="padding-left:380px;" ><q-route-tab to="" v-if="show" ><b>sign up</b></q-route-tab></div>
           <!-- STATIC SHOW HIDE LOGIN -->
           <div><q-tab v-show="show" @click="login = true"><b>login</b></q-tab></div>
           <div class="row items-center">
