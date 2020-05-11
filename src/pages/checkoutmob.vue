@@ -298,7 +298,7 @@ export default {
             // for additional charge objects go to https://stripe.com/docs/api/charges/object
             this.charge = {
                 source: token.card,
-                amount: this.amount,
+                amount: this.returnToPay,
             }
             this.sendTokenToServer(this.charge);
         },
