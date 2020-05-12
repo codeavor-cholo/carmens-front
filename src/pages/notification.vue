@@ -1,7 +1,7 @@
 <template>
     <q-page id="page">
         <div id="noti" class="text-weight-bold">
-            Notifications
+            <span class="text-pink-3">{{returnLengthForToday.length}} New Notifications</span> for Today
         </div>
 
         <div id="list">
@@ -17,7 +17,7 @@
                             </div>
                             <div class="text-overline">
                                 {{notif.notifStatus}}
-                                 <q-item-label class="text-blue text-right" caption>{{$moment(notif.notifTime).fromNow()}}</q-item-label>
+                                 <q-item-label class="text-blue text-right" caption>{{$moment(notif.dateTime).fromNow()}}</q-item-label>
                             </div>
                         </div>
                         <div id="eve">{{notif.clientEvent}}</div>
@@ -55,7 +55,7 @@
                             </div>
                             <div class="text-overline">
                                 {{notif.notifStatus}}
-                                 <q-item-label class="text-blue text-right" caption>{{$moment(notif.notifTime).fromNow()}}</q-item-label>
+                                 <q-item-label class="text-blue text-right" caption>{{$moment(notif.dateTime).fromNow()}}</q-item-label>
                             </div>
                         </div>
                         <div id="eve" v-for="order in notif.orders.slice(0,3)" :key="order.checkerName">{{order.foodName}} {{order.size}} - x{{order.qty}}</div>
@@ -67,6 +67,7 @@
     </q-page>
 </template>
 <script>
+import { date } from 'quasar'
 export default {
     data (){
         return {
@@ -121,29 +122,25 @@ export default {
                     }
                 })
                 
+                console.log('keys',keys)
+                console.log(this.ClientNotifications,'ClientNotifications')
+
                 let myNotifs = []
-                let loop = keys.forEach(a=>{
-
-
-                    let find = this.ClientNotifications.filter(b=>{
-                        return b.reservationKey == a.key
-                    })[0]
-
-                    if(typeof find != "undefined"){
-                        let notif = {...a.data}
-                        notif.notifTime = find.dateTime
-                        notif.notifStatus = find.status
-                        myNotifs.push(notif)
-                    }      
+                this.ClientNotifications.forEach(b=>{
+                    let status = b.status
+                    let data = this.getDataOfReservations(keys,b.reservationKey)
+                    console.log(status,'status')
+                    let notif = {...data.data}
+                    notif.dateTime = b.dateTime
+                    notif.notifStatus = status
+                    console.log(notif,'notif')
+                    myNotifs.push(notif)
                 })
-
-                console.log(orders,'orders') 
-                console.log(concat,'concat')         
-                console.log(keys,'keys')  
-                console.log(myNotifs,'myNotifs')  
-                console.log(this.getPaymentNotifs,'payments')  
+    
                 let join = myNotifs.concat(this.getPaymentNotifs)
-                return join
+                console.log(this.$lodash.orderBy(join,'dateTime','desc'),'order')
+
+                return this.$lodash.orderBy(join,'dateTime','desc')
             } catch (error) {
                 return []
             }
@@ -161,6 +158,15 @@ export default {
             } catch (error) {
                 return []
             }
+        },
+        returnLengthForToday(){
+            try {
+                return this.returnWithUserUID.filter(a=>{
+                    return date.formatDate(a.dateTime,'MM-DD-YYYY') == date.formatDate(new Date(),'MM-DD-YYYY')
+                })
+            } catch (error) {
+                return 0
+            }
         }
     },
     methods:{
@@ -170,11 +176,25 @@ export default {
                 console.log('done 1')
                 this.$q.localStorage.set('notifData', obj)
                 console.log('done 2')
-                this.$router.push('/profile')
+                if(this.$q.screen.lt.sm){
+                    this.$router.push('/profilemob')
+                } else {
+                    this.$router.push('/profile')
+                }
+                
             } catch (error) {
                 console.log('error',error)
             }   
         },
+        getDataOfReservations(array,key){
+            try {
+                return this.$lodash.filter(array,a=>{
+                        return key == a.key
+                    })[0]
+            } catch (error) {
+                return null
+            }
+        }
     }
 
 }

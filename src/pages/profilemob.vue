@@ -13,15 +13,15 @@
                     </div>
                     <div class="text-center">
                         <q-avatar size="120px" font-size="52px" color="teal" text-color="white">
-                        <img src="statics/pics/foo.jpeg">
+                        <img :src="returnUserProfile.photoURL">
                         </q-avatar>
                     </div>
                    
                     
                     <div class="column q-pl-md q-pt-lg q-gutter-md">
-                    <div style="font-size:17px;font-family: 'Noto Serif SC', serif;">Name: Codeavor</div>
-                    <div style="font-size:17px;font-family: 'Noto Serif SC', serif;">Contact Number: 0999-999-9999</div>
-                    <div style="font-size:17px;font-family: 'Noto Serif SC', serif;">Delivery Address: Tondo, Manila</div>
+                    <div style="font-size:17px;font-family: 'Noto Serif SC', serif;">Name: {{returnUserProfile.displayName}}</div>
+                    <div style="font-size:17px;font-family: 'Noto Serif SC', serif;">Contact Number:  {{returnUserProfile.phoneNumber}} <q-btn color="pink-3" flat icon="add" label="add" v-show="returnUserProfile.phoneNumber == null" /></div>
+                    <div style="font-size:17px;font-family: 'Noto Serif SC', serif;">Delivery Address: {{returnUserProfile.phoneNumber}}<q-btn color="pink-3" flat icon="add" label="add" v-show="returnUserProfile.phoneNumber == null" /></div>
                     </div>
                 </q-tab-panel>
 <!-- END OF ACCOUNT AREA -->
@@ -106,7 +106,7 @@
                                                                     <div>
                                                                     <q-icon name="local_shipping" style="font-size: 1.4rem" />
                                                                     </div>
-                                                                    <div>Latest tracking update will be put here!</div>
+                                                                    <div><q-chip :color="returnLatestStatus(props.row).status == 'Order Delivered!' ? 'teal' : 'pink-3'" text-color="white" :label="returnLatestStatus(props.row).status" /></div>
                                                                 </div>
                                                                     <div class="q-px-md q-pt-sm">
                                                                     <q-btn dense class="full-width" unelevated style="background-color:#e4acbf;" text-color="white" @click="openStatus(props.row),partytraystatus = true" label="View Status" />
@@ -230,7 +230,7 @@
                                                             <div class="q-pa-sm ">
                                                             <q-icon name="local_shipping" style="font-size: 1.4rem" />
                                                             </div>
-                                                            <div>Latest tracking update will be put here!</div>
+                                                            <div><q-chip :color="returnLatestStatus(props.row).status == 'Event Place Is Ready!' ? 'teal' : 'pink-3'" text-color="white" :label="returnLatestStatus(props.row).status" /></div>
                                                         </div>
                                                             <div class="q-py-sm">
                                                             <q-btn dense class="full-width" style="background-color:#e4acbf;" text-color="white" @click="openStatus(props.row), eventstatus = true" label="View Status" />
@@ -663,7 +663,7 @@ export default {
       paymentMode: 'fullPayment',
       paymentDetails: false,
       reserveDetails: false,
-      tab: 'reserve',
+      tab: 'account',
       ordertab: 'pending',
       reservationtab: 'pending_res',
       splitterModel: 20,
@@ -681,6 +681,7 @@ export default {
       partyTrayOrders: [],
       clientUID: '',
       status: [],
+      profile: [],
       id: '',
       filterReserve: '',
       pagination: { sortBy: 'clientReserveDate', descending: false, page: 1, rowsPerPage: 10000},
@@ -699,9 +700,36 @@ export default {
     }
   },
   created(){
+
           let self = this
+          let page = this.$q.localStorage.getItem('profile')
+          self.previousPage = page 
+          if(page.includes('res')){
+              this.tab = 'reserve'
+          } else if (page.includes('checkout')){
+              this.tab = 'order'
+          } else if (page.includes('notification')){
+              let type = this.$q.localStorage.getItem('notifType')
+              let data = this.$q.localStorage.getItem('notifData')
+
+                if(type == 'payment'){
+                    if(data.forPartytray == ''){
+                        this.tab = 'reserve'
+                    } else {
+                        this.tab = 'order'
+                    }
+                } else if (type == 'orders') {
+                    this.tab = 'order'
+                } else {
+                    this.tab = 'reserve'
+                }
+
+          } else {
+              this.tab = 'account'
+          }
           this.$firebase.auth().onAuthStateChanged(function(user) {
               if (user) {
+                  self.profile = user
                 self.clientUID = user.uid
               } else {
                 self.clientUID = ''
@@ -709,6 +737,7 @@ export default {
               }
           })
   },
+
   mounted(){
         this.$binding('EventStatus', this.$firestoreApp.collection('EventStatus'))
         .then(EventStatus => {
@@ -734,6 +763,13 @@ export default {
         console.log(this.storageRef, 'store')
   },
   computed:{
+      returnUserProfile(){
+          try {
+              return this.profile
+          } catch (error) {
+              return []
+          }
+      },
       returnSubTotal(){
         try {
             return this.$lodash.sumBy(this.returnCart,a=>{return parseInt(a.price) * parseInt(a.qty)})
@@ -885,6 +921,8 @@ export default {
               })
               // 
               // remove this comment if you are done with the testing
+            }).onCancel(()=>{
+                this.tab = 'account'
             })
     },
     openStatus(props){
@@ -1203,6 +1241,20 @@ export default {
           })
 
       }
+    },
+    returnLatestStatus(props){
+
+        let reservations = this.$lodash.filter(this.EventStatus,a=>{
+            return a.reservationKey == props['.key']
+            console.log('ss',a.reservationKey)
+        })
+
+        if(reservations.length == 0){
+            return {status: 'Waiting for Confimation ...'}
+        }
+
+        console.log(reservations,'sdf')
+        return this.$lodash.orderBy(reservations,'dateTime','desc')[0]
     },
   }
 }

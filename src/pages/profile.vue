@@ -122,7 +122,7 @@
                                                                     <div class="q-pa-sm ">
                                                                     <q-icon name="local_shipping" style="font-size: 2rem" />
                                                                     </div>
-                                                                    <div>Latest tracking update will be put here!</div>
+                                                                    <div><q-chip :color="returnLatestStatus(props.row).status == 'Order Delivered!' ? 'teal' : 'pink-3'" text-color="white" :label="returnLatestStatus(props.row).status" /></div>
                                                                 </div>
                                                                     <div class="q-pr-xl">
                                                                     <q-btn dense style="background-color:#e4acbf;width:120px" text-color="white" @click="openStatus(props.row),partytraystatus = true" label="View Status" />
@@ -250,7 +250,7 @@
                                                             <div class="q-pa-sm ">
                                                             <q-icon name="local_shipping" style="font-size: 2rem" />
                                                             </div>
-                                                            <div>Latest tracking update will be put here!</div>
+                                                            <div><q-chip :color="returnLatestStatus(props.row).status == 'Event Place Is Ready!' ? 'teal' : 'pink-3'" text-color="white" :label="returnLatestStatus(props.row).status" /></div>
                                                         </div>
                                                             <div class="q-pr-xl">
                                                             <q-btn dense style="background-color:#e4acbf;width:120px" text-color="white" @click="openStatus(props.row), eventstatus = true" label="View Status" />
@@ -960,6 +960,21 @@ export default {
                 return []
             }
     },
+    returnLatestStatus(props){
+
+        let reservations = this.$lodash.filter(this.EventStatus,a=>{
+            return a.reservationKey == props['.key']
+            console.log('ss',a.reservationKey)
+        })
+
+        if(reservations.length == 0){
+            return {status: 'Waiting for Confimation ...'}
+        }
+
+        console.log(reservations,'sdf')
+        return this.$lodash.orderBy(reservations,'dateTime','desc')[0]
+    },
+
     returnColor(index){
           try {
               if(this.status[index] === undefined){
