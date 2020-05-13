@@ -131,7 +131,7 @@
 <!-- START OF QPAGE CONTAINER DESKTOP -->
     <div class="desktop-only">
     <q-page-container style="background: linear-gradient(to right, #ffffff 50%, #eeeeee 50%)">
-        <q-dialog v-model="basket" persistent >
+        <q-dialog v-model="basket" >
         <div>
           <q-card style="min-width:500px;border-radius:20px;" class="q-pa-lg">
             <div class="row justify-between">
@@ -278,9 +278,9 @@
 <!-- START OF QPAGE MOBILE -->
 <div class="mobile-only" v-show="!splashscreen">
 <q-page-container style="background: linear-gradient(to right, #ffffff 50%, #eeeeee 50%)">
-        <q-dialog v-model="basketmob" persistent >
+        <q-dialog v-model="basketmob" >
         <div>
-          <q-card style="border-radius:20px;" class="q-pa-sm">
+          <q-card style="border-radius:20px;width:80vw;" class="q-pa-sm">
             <div class="row justify-between items-center">
               <span class="text-h6 col">BASKET <span class="text-teal-6 text-subtitle2">({{returnLength}} ITEMS)</span></span>
               <q-btn color="grey-10" icon="close" flat round  v-close-popup />
@@ -437,7 +437,7 @@
               <div>
                 <q-tab dense style="color:#e4acbf" icon="person" v-show="!show" flat label="Account" @click="$router.push('/profilemob')" />
               </div>
-              <q-tab name="alarms" icon="notifications" @click="$router.push('/notification')">
+              <q-tab name="alarms" icon="notifications" @click="$router.push('/notification')" :disable="show">
               <q-badge color="red" text-color="white" :label="returnLengthForToday.length" floating/>
                 <b>Notifications</b>
               </q-tab>
@@ -499,7 +499,8 @@ export default {
                 
               } else {
                 //if apk $q.platform.is.cordova
-                if(self.$q.screen.lt.sm){
+                //if mobile screen $q.screen.lt.sm
+                if(self.$q.platform.is.cordova){
                   self.$router.push('/login')
                 } else {
                   self.$router.push('/')
