@@ -140,7 +140,7 @@ export default {
                 let join = myNotifs.concat(this.getPaymentNotifs)
                 console.log(this.$lodash.orderBy(join,'dateTime','desc'),'order')
 
-                return this.$lodash.orderBy(join,'dateTime','desc')
+                return this.$lodash.orderBy(join,a=>{return this.$moment(a.dateTime)},'desc')
             } catch (error) {
                 return []
             }

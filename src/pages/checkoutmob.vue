@@ -96,6 +96,7 @@
                             <div style="font-size:18px"><b>Delivery Date and Time</b></div> 
                             <q-input dense v-model="time" type="time" label="Delivery Time" outlined color="pink-6"/>    
                             <q-date
+                                :options="optionsFn"
                                 v-model="date"
                                 minimal
                                 flat
@@ -286,6 +287,9 @@ export default {
         }
     },
     methods:{
+        optionsFn (date) {
+            return new Date(date) >= new Date()
+        },
         formatNumber(num) {
             return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
         },
