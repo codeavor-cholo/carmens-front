@@ -58,7 +58,9 @@
           </div>
 
           <div class="q-pr-sm">
-              <q-btn dense flat style="font-size: 1.3em;" round icon="notifications" text-color="pink-2" color="white" @click="$router.push('/notification')"/>
+              <q-btn v-show="!show" dense flat style="font-size: 1.3em;" round icon="notifications" text-color="pink-2" color="white" @click="$router.push('/notification')">
+                <q-badge color="red" text-color="white" :label="returnLengthForToday.length" floating/>
+              </q-btn>
           </div>
           <div>
           <q-btn dense style="background-color:#e4acbf;width:120px" text-color="white" label="view basket" @click="basket=true">
@@ -129,7 +131,7 @@
 <!-- START OF QPAGE CONTAINER DESKTOP -->
     <div class="desktop-only">
     <q-page-container style="background: linear-gradient(to right, #ffffff 50%, #eeeeee 50%)">
-        <q-dialog v-model="basket" persistent >
+        <q-dialog v-model="basket" >
         <div>
           <q-card style="min-width:500px;border-radius:20px;" class="q-pa-lg">
             <div class="row justify-between">
@@ -276,9 +278,9 @@
 <!-- START OF QPAGE MOBILE -->
 <div class="mobile-only" v-show="!splashscreen">
 <q-page-container style="background: linear-gradient(to right, #ffffff 50%, #eeeeee 50%)">
-        <q-dialog v-model="basketmob" persistent >
+        <q-dialog v-model="basketmob" >
         <div>
-          <q-card style="border-radius:20px;" class="q-pa-sm">
+          <q-card style="border-radius:20px;width:80vw;" class="q-pa-sm">
             <div class="row justify-between items-center">
               <span class="text-h6 col">BASKET <span class="text-teal-6 text-subtitle2">({{returnLength}} ITEMS)</span></span>
               <q-btn color="grey-10" icon="close" flat round  v-close-popup />
@@ -435,7 +437,10 @@
               <div>
                 <q-tab dense style="color:#e4acbf" icon="person" v-show="!show" flat label="Account" @click="$router.push('/profilemob')" />
               </div>
-              <q-tab name="alarms" icon="notifications" @click="$router.push('/notification')"><b>Notifications</b></q-tab>
+              <q-tab name="alarms" icon="notifications" @click="$router.push('/notification')" :disable="show">
+              <q-badge color="red" text-color="white" :label="returnLengthForToday.length" floating/>
+                <b>Notifications</b>
+              </q-tab>
               <q-tab name="movies" icon="shopping_cart" @click="basketmob=true">
                 <q-badge color="grey-10" text-color="white" :label="returnLength" floating/>  
                 <b>Basket</b>
@@ -450,6 +455,7 @@
 </template>
 
 <script>
+import { date } from 'quasar'
 export default {
   data () {
     return {
@@ -467,8 +473,11 @@ export default {
       login: false,
       loginmob: false,
       clientEmail: '',
-      clientPassword: ''
-     
+      clientPassword: '',
+      ClientNotifications: [],
+      Reservation: [],
+      partyTrayOrders: [],
+      AdminNotifications: []
     }
   },
     created() {
@@ -489,15 +498,25 @@ export default {
                 self.displayName = gg.displayName
                 
               } else {
-                self.show = true
+                //if apk $q.platform.is.cordova
+                //if mobile screen $q.screen.lt.sm
+                if(self.$q.platform.is.cordova){
+                  self.$router.push('/login')
+                } else {
+                  self.$router.push('/')
+                  self.show = true
+                }
+
+                
               }
           })
   },
   mounted(){
         this.$binding('CartItems', this.$firestoreApp.collection('CartItems'))
-        .then(CartItems => {
-        console.log(CartItems, 'CartItems')
-        })
+        this.$binding('ClientNotifications', this.$firestoreApp.collection('ClientNotifications'))
+        this.$binding('Reservation', this.$firestoreApp.collection('Reservation'))
+        this.$binding('partyTrayOrders', this.$firestoreApp.collection('partyTrayOrders'))
+        this.$binding('AdminNotifications', this.$firestoreApp.collection('AdminNotifications'))
   },
   computed: {
     returnCart(){
@@ -544,6 +563,73 @@ export default {
         console.log(error,'er')
         return 0
       }
+    },
+    returnWithUserUID(){
+        try {
+            let user = this.$firebase.auth().currentUser
+            console.log(user,'user')
+            let reserve = this.Reservation.filter(a=>{
+                a.typeOf = 'reserve'
+                return a.clientUID == user.uid
+            })
+            console.log(reserve,'reserve')
+            let orders = this.partyTrayOrders.filter(a=>{
+                a.typeOf = 'order'
+                return a.accountUID == user.uid
+            })
+            let concat = reserve.concat(orders)
+
+            let keys = this.$lodash.map(concat,a=>{
+                return {
+                    key: a['.key'],
+                    data: a,
+                    typeOf: a.typeOf
+                }
+            })
+            
+            console.log('keys',keys)
+            console.log(this.ClientNotifications,'ClientNotifications')
+
+            let myNotifs = this.ClientNotifications.map(b=>{
+
+                let data = this.getDataOfReservations(keys,b.reservationKey)
+                
+                let notif = data.data
+                notif.dateTime = b.dateTime
+                notif.notifStatus = b.status
+                return notif
+            })
+
+            let join = myNotifs.concat(this.getPaymentNotifs)
+            console.log(this.$lodash.orderBy(join,'dateTime','desc'),'order')
+
+            return this.$lodash.orderBy(join,'dateTime','desc')
+        } catch (error) {
+            return []
+        }
+    },
+    getPaymentNotifs(){
+        try {
+            let user = this.$firebase.auth().currentUser
+
+            let filter = this.AdminNotifications.filter(a=>{
+                a.typeOf = 'payment'
+                return a.userID == user.uid && a.message == "Payment Recieved!"
+            })
+
+            return filter
+        } catch (error) {
+            return []
+        }
+    },
+    returnLengthForToday(){
+        try {
+            return this.returnWithUserUID.filter(a=>{
+                return date.formatDate(a.dateTime,'MM-DD-YYYY') == date.formatDate(new Date(),'MM-DD-YYYY')
+            })
+        } catch (error) {
+            return 0
+        }
     }
   },
   methods:{
@@ -823,6 +909,15 @@ export default {
         this.login = true
       }
     },
+    getDataOfReservations(array,key){
+        try {
+            return this.$lodash.filter(array,a=>{
+                    return key == a.key
+                })[0]
+        } catch (error) {
+            return null
+        }
+    }
   }
 }
 </script>

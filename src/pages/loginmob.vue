@@ -48,7 +48,7 @@
       <q-card-actions>
         <div class="row q-px-md items-center">                     
           <q-btn color="grey" class="col" label="LOGIN VIA GOOGLE" @click="loginGoogle"/>
-          <div class="text-overline text-center col">OR</div>
+          <div class="text-overline text-center col-2">OR</div>
           <q-btn color="teal" label="LOGIN account" class="col"/>
           </div>
       </q-card-actions>

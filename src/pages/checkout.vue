@@ -92,6 +92,7 @@
                             <div class="row">
                                 <div class="col">
                                     <q-date
+                                        :options="optionsFn"
                                         v-model="date"
                                         landscape
                                         minimal
@@ -281,6 +282,9 @@ export default {
         }
     },
     methods:{
+        optionsFn (date) {
+            return new Date(date) >= new Date()
+        },
         formatNumber(num) {
             return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
         },
