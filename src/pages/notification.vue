@@ -129,19 +129,22 @@ export default {
                 this.ClientNotifications.forEach(b=>{
                     let status = b.status
                     let data = this.getDataOfReservations(keys,b.reservationKey)
-                    console.log(status,'status')
-                    let notif = {...data.data}
-                    notif.dateTime = b.dateTime
-                    notif.notifStatus = status
-                    console.log(notif,'notif')
-                    myNotifs.push(notif)
+                    // console.log(status,'status')
+
+                    if(data !== null) {
+                        let notif = {...data.data}
+                        notif.dateTime = b.dateTime
+                        notif.notifStatus = status
+                        myNotifs.push(notif)
+                    }
                 })
     
                 let join = myNotifs.concat(this.getPaymentNotifs)
                 console.log(this.$lodash.orderBy(join,'dateTime','desc'),'order')
 
-                return this.$lodash.orderBy(join,a=>{return this.$moment(a.dateTime)},'desc')
+                return this.$lodash.orderBy(join,a=>{return this.$moment(a.dateTime)},'desc') 
             } catch (error) {
+                console.log(error,'error in return by uid')
                 return []
             }
         },
@@ -188,10 +191,17 @@ export default {
         },
         getDataOfReservations(array,key){
             try {
-                return this.$lodash.filter(array,a=>{
+                let filter = this.$lodash.filter(array,a=>{
                         return key == a.key
                     })[0]
+                if(filter == undefined){
+                    return null
+                } else {
+                    return filter
+                }
+
             } catch (error) {
+                console.log(error,'getDataOfReservations error')
                 return null
             }
         }
