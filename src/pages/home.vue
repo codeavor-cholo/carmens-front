@@ -590,14 +590,18 @@ export default {
             console.log('keys',keys)
             console.log(this.ClientNotifications,'ClientNotifications')
 
-            let myNotifs = this.ClientNotifications.map(b=>{
+            let myNotifs = this.ClientNotifications.filter(b=>{
 
                 let data = this.getDataOfReservations(keys,b.reservationKey)
-                
-                let notif = data.data
-                notif.dateTime = b.dateTime
-                notif.notifStatus = b.status
-                return notif
+                let notif
+                if(data == null){
+                  notif = null
+                } else {
+                  notif = data.data
+                  notif.dateTime = b.dateTime
+                  notif.notifStatus = b.status
+                }
+                  return notif !== null
             })
 
             let join = myNotifs.concat(this.getPaymentNotifs)
@@ -605,6 +609,7 @@ export default {
 
             return this.$lodash.orderBy(join,'dateTime','desc')
         } catch (error) {
+            console.log(error,'returnWithUserUID')
             return []
         }
     },
@@ -911,9 +916,14 @@ export default {
     },
     getDataOfReservations(array,key){
         try {
-            return this.$lodash.filter(array,a=>{
-                    return key == a.key
-                })[0]
+          let filter = this.$lodash.filter(array,a=>{
+                  return key == a.key
+              })[0]
+          if(filter == undefined){
+              return null
+          } else {
+              return filter
+          }
         } catch (error) {
             return null
         }

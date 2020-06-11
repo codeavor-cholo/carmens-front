@@ -704,38 +704,45 @@ export default {
           let self = this
           let page = this.$q.localStorage.getItem('profile')
           self.previousPage = page 
-          if(page.includes('res')){
-              this.tab = 'reserve'
-          } else if (page.includes('checkout')){
-              this.tab = 'order'
-          } else if (page.includes('notification')){
-              let type = this.$q.localStorage.getItem('notifType')
-              let data = this.$q.localStorage.getItem('notifData')
+          if(page !== null){
+            if(page.includes('res')){
+                this.tab = 'reserve'
+            } else if (page.includes('checkout')){
+                this.tab = 'order'
+            } else if (page.includes('notification')){
+                let type = this.$q.localStorage.getItem('notifType')
+                let data = this.$q.localStorage.getItem('notifData')
 
-                if(type == 'payment'){
-                    if(data.forPartytray == ''){
-                        this.tab = 'reserve'
-                    } else {
+                    if(type == 'payment'){
+                        if(data.forPartytray == ''){
+                            this.tab = 'reserve'
+                        } else {
+                            this.tab = 'order'
+                        }
+                    } else if (type == 'orders') {
                         this.tab = 'order'
+                    } else {
+                        this.tab = 'reserve'
                     }
-                } else if (type == 'orders') {
-                    this.tab = 'order'
-                } else {
-                    this.tab = 'reserve'
-                }
 
-          } else {
-              this.tab = 'account'
+            } else {
+                this.tab = 'account'
+            }
+
           }
-          this.$firebase.auth().onAuthStateChanged(function(user) {
-              if (user) {
-                  self.profile = user
+
+        this.$firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                console.log('user',user)
+                self.profile = user
                 self.clientUID = user.uid
-              } else {
+                console.log(self.profile,'self.profile')
+            } else {
                 self.clientUID = ''
                 this.$router.push('/')
-              }
-          })
+            }
+        })
+
   },
 
   mounted(){
@@ -767,6 +774,7 @@ export default {
           try {
               return this.profile
           } catch (error) {
+              console.log(error,'returnUserProfile')
               return []
           }
       },

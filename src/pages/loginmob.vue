@@ -104,6 +104,7 @@ export default {
                 self.show = true
               }
           })
+
       },
     computed: {
 
