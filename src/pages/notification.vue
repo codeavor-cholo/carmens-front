@@ -131,12 +131,15 @@ export default {
                     let data = this.getDataOfReservations(keys,b.reservationKey)
                     // console.log(status,'status')
 
-                    if(data !== null) {
-                        let notif = {...data.data}
-                        notif.dateTime = b.dateTime
-                        notif.notifStatus = status
-                        myNotifs.push(notif)
+                    let notif
+                    if(data == null){
+                    notif = null
+                    } else {
+                    notif = data.data
+                    notif.dateTime = b.dateTime
+                    notif.notifStatus = b.status
                     }
+                    return notif !== null
                 })
     
                 let join = myNotifs.concat(this.getPaymentNotifs)

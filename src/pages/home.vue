@@ -686,96 +686,99 @@ export default {
                     refreshToken: user.refreshToken
                   }
 
-                  let index = this.$lodash.findIndex(this.CartItems,a=>{
-                    return a['.key'] == uid
-                  })
-                  console.log(index,'indexcheck')
-                  if(index == -1){
-                    if(this.returnCart.length != 0){
+                  this.$firestoreApp.collection('Customers').doc(uid).set(newUser)
+                  .then(()=>{
+                    console.log('saved user')
+                    //save progress for future reference
+                    // console.log('progress', this.returnProgress)
+                    this.login = false
+                    let index = this.$lodash.findIndex(this.CartItems,a=>{
+                      return a['.key'] == uid
+                    })
+                    console.log(index,'indexcheck')
+                    if(index == -1){
+                      if(this.returnCart.length != 0){
 
-                      let addCart = {
-                        items: this.returnCart
-                      }
-                      this.$firestoreApp.collection('CartItems').doc(uid).set(addCart)
-                      .then(()=>{
-                        this.$firestoreApp.collection("CartItems").doc(key).delete().
-                          then(()=> {
-                              console.log("Document successfully deleted!")
-                              this.$q.localStorage.clear()
-                              this.$firestoreApp.collection('Customers').doc(uid).set(newUser)
-                              .then(()=>{
-                                console.log('saved user')
-                                //save progress for future reference
-                                // console.log('progress', this.returnProgress)
-                                this.login = false
-
-                              })
-
-                              console.log('newUser',newUser)
-                              // location.reload()
-                          }).catch((error)=> {
-                              console.error("Error removing document: ", error)
-                          })
-                      })
-                    }
-                  } else {
-                    let vm = this
-                    
-                    if(this.returnCart.length != 0){
-                      
-                      // console.log(key,'key')
-
-                      let value = vm.CartItems.filter(a=>{
-                        return a['.key'] == uid
-                      })
-                      // console.log(value,'value')
-                      var first = function(element) { return !!element }    
-                      var itemsFirst = value.find(first)
-                      let items = itemsFirst.items
-                      console.log(items,'items')
-                      let local = vm.returnCart
-                      console.log(local)
-                      for(var x = 0; x < local.length; x++){
-                        //check local if available in items
-                        let indexing = vm.$lodash.findIndex(items,a=>{
-                          return a.checkerName == local[x].checkerName
-                        })
-                        console.log(indexing,'indexing')
-                        if(indexing > -1){
-                            items[indexing].qty = parseInt(items[indexing].qty) + parseInt(local[x].qty)
-                        } else {
-                            items.push(order) 
+                        let addCart = {
+                          items: this.returnCart
                         }
+                        this.$firestoreApp.collection('CartItems').doc(uid).set(addCart)
+                        .then(()=>{
+                          this.$firestoreApp.collection("CartItems").doc(key).delete().
+                            then(()=> {
+                                console.log("Document successfully deleted!")
+                                this.$q.localStorage.clear()
+
+                                // location.reload()
+                            }).catch((error)=> {
+                                console.error("Error removing document: ", error)
+                            })
+                        })
                       }
+                    } else {
+                      let vm = this
+                      
+                      if(this.returnCart.length != 0){
+                        
+                        // console.log(key,'key')
 
-                      console.log(items, 'itemsMerge')
-                      let addCart = {
-                        items: items
-                      }
-
-                      vm.$firestoreApp.collection('CartItems').doc(uid).set(addCart)
-                      .then(()=>{
-                        vm.$firestoreApp.collection("CartItems").doc(key).delete().
-                          then(()=> {
-                              console.log("Document successfully deleted!")
-                              vm.$q.localStorage.clear()
-                              this.$firestoreApp.collection('Customers').doc(uid).set(newUser)
-                              .then(()=>{
-                                console.log('saved user')
-                                //save progress for future reference
-                                // console.log('progress', this.returnProgress)
-                                this.login = false
-
-                              })
-
-                              console.log('newUser',newUser)
-                              // location.reload()
-                          }).catch((error)=> {
-                              console.error("Error removing document: ", error)
+                        let value = vm.CartItems.filter(a=>{
+                          return a['.key'] == uid
+                        })
+                        // console.log(value,'value')
+                        var first = function(element) { return !!element }    
+                        var itemsFirst = value.find(first)
+                        let items = itemsFirst.items
+                        console.log(items,'items')
+                        let local = vm.returnCart
+                        console.log(local)
+                        for(var x = 0; x < local.length; x++){
+                          //check local if available in items
+                          let indexing = vm.$lodash.findIndex(items,a=>{
+                            return a.checkerName == local[x].checkerName
                           })
-                      })
+                          console.log(indexing,'indexing')
+                          if(indexing > -1){
+                              items[indexing].qty = parseInt(items[indexing].qty) + parseInt(local[x].qty)
+                          } else {
+                              items.push(order) 
+                          }
+                        }
+
+                        console.log(items, 'itemsMerge')
+                        let addCart = {
+                          items: items
+                        }
+
+                        vm.$firestoreApp.collection('CartItems').doc(uid).set(addCart)
+                        .then(()=>{
+                          vm.$firestoreApp.collection("CartItems").doc(key).delete().
+                            then(()=> {
+                                console.log("Document successfully deleted!")
+                                vm.$q.localStorage.clear()
+                                this.$firestoreApp.collection('Customers').doc(uid).set(newUser)
+                                .then(()=>{
+                                  console.log('saved user')
+                                  //save progress for future reference
+                                  // console.log('progress', this.returnProgress)
+                                  this.login = false
+
+                                })
+
+                                console.log('newUser',newUser)
+                                // location.reload()
+                            }).catch((error)=> {
+                                console.error("Error removing document: ", error)
+                            })
+                        })
+                      }
                     }
-                  }
+
+                  })
+
+                  console.log('newUser',newUser)                  
+
+
 
 
 

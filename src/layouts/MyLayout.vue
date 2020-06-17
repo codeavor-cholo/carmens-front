@@ -122,14 +122,6 @@ export default {
             refreshToken: user.refreshToken
           }
 
-          this.$firestoreApp.collection('Customers').doc(uid).set(newUser)
-          .then(()=>{
-            console.log('saved user')
-            //save progress for future reference
-            console.log('progress', this.returnProgress)
-
-          })
-
           console.log('newUser',newUser)
 
         }).catch(function(error) {
@@ -155,6 +147,17 @@ export default {
         });
                   
     },
+    createCustomerOnLogin(newUser){
+          this.$firestoreApp.collection('Customers').doc(uid).set(newUser)
+          .then(()=>{
+            console.log('saved user')
+            //save progress for future reference
+
+          }).catch((err)=>{
+            console.log('saving error',err)
+          })
+    }
+    
   }
 }
 </script>
