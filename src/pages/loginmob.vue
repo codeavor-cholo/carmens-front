@@ -95,16 +95,23 @@ export default {
           let self = this
           this.$firebase.auth().onAuthStateChanged(function(user) {
               
-              if (user) {
+              if (user.emailVerified) {
                 let gg = {...user}
                 console.log('createdUser',user)
                 console.log('createdUser',user.uid)
                 console.log('user',gg.displayName)
                 self.show = false
                 self.displayName = gg.displayName
-                self.$router.push('/')
+                if(self.$q.platform.is.cordova){
+                    self.$router.push('/mobilehome')
+                } else {
+                    self.$router.push('/')
+                }
               } else {
                 self.show = true
+                if(self.$q.platform.is.cordova){
+                    self.$router.push('/registerMobile')
+                } 
               }
           })
 

@@ -9,9 +9,9 @@
                 active-color="pink-3"
                 done-color="teal"
                 animated
-                :flat="$q.platform.is.mobile"
+                :flat="$q.platform.is.mobile || $q.platform.is.cordova"
                 contracted=""
-                :style="$q.platform.is.mobile ? 'width:90vw' : 'width:50vw'"
+                :style="$q.platform.is.mobile || $q.platform.is.cordova ? 'width:90vw' : 'width:50vw'"
             >
                 <q-step
                     :name="1"
@@ -56,6 +56,7 @@
                     </q-stepper-navigation>
                 </template>
             </q-stepper>
+            <q-btn color="grey-10" icon="arrow_left" label="back to login" @click="$router.push('/login')" class="q-mt-md" v-show="$q.platform.is.cordova"/>
         </div>
     </q-page>
 </template>
@@ -77,7 +78,11 @@ export default {
         let self = this
         this.$firebase.auth().onAuthStateChanged(function(user) {
             if(user.emailVerified){
-                self.$router.push('/')
+                if(self.$q.platform.is.cordova){
+                    self.$router.push('/mobilehome')
+                } else {
+                    self.$router.push('/')
+                }
             } else {
                 self.step = 2
             }            //if mobile screen $q.screen.lt.sm 
@@ -200,6 +205,16 @@ export default {
         
             } catch (error) {
                 console.log(error,'registerUser')
+                console.log('error',errorCode)
+                console.log('error',errorMessage)
+                this.$q.dialog({
+                    title: errorCode,
+                    message: errorMessage,
+                    color: 'pink-6',
+                    textColor: 'grey',
+                    icon: 'negative',
+                    ok: 'Ok'
+                })
             }
         },        
         clickThis(){
