@@ -31,7 +31,7 @@
           <div class="row q-pa-sm">
           <div><q-route-tab to="/" name="air"><b>PARTY TRAYS</b></q-route-tab></div>
           <div><q-route-tab to="/catering"><b>CATERING SERVICES</b></q-route-tab></div>
-          <div style="padding-left:380px;" ><q-route-tab to="" v-if="show" ><b>sign up</b></q-route-tab></div>
+          <div style="padding-left:380px;" ><q-route-tab to="/register" v-if="show" ><b>sign up</b></q-route-tab></div>
           <!-- STATIC SHOW HIDE LOGIN -->
           <div><q-tab v-show="show" @click="login = true"><b>login</b></q-tab></div>
           <div class="row items-center">
@@ -179,7 +179,7 @@
       <q-card>
         <q-card-section class="row justify-between q-mx-md q-mt-md">
           <div class="text-h6">Login Account</div>
-          <q-btn class="text-overline text-teal" flat>CREATE ACCOUNT</q-btn>
+          <q-btn class="text-overline text-teal" flat @click="$router.push('/register')">CREATE ACCOUNT</q-btn>
         </q-card-section>
 
         <q-card-section class="q-pt-none text-center">
@@ -189,7 +189,7 @@
                                 
           <q-btn color="grey"  label="LOGIN VIA GOOGLE" @click="basketChecker" class="col-5"/>
           <div class="text-overline text-center col-2">OR</div>
-          <q-btn color="teal" label="LOGIN account" class="col"/>
+          <q-btn color="teal" label="LOGIN account" class="col" @click="loginUserSignIn"/>
 
           </div>
           
@@ -337,7 +337,7 @@
           <div class="row q-px-md items-center q-mt-md">                     
           <q-btn color="grey"  label="LOGIN VIA GOOGLE" @click="basketChecker" class="col-5"/>
           <div class="text-overline text-center col-2">OR</div>
-          <q-btn color="teal" label="LOGIN account" class="col"/>
+          <q-btn color="teal" label="LOGIN account" class="col" @click="loginUserSignIn"/>
 
           </div>
           
@@ -930,6 +930,34 @@ export default {
         } catch (error) {
             return null
         }
+    },
+    loginUserSignIn(){
+      let self = this
+      this.$firebase.auth().signInWithEmailAndPassword(this.clientEmail, this.clientPassword)
+      .then(()=>{
+        self.login = false
+        self.loginmob = false
+      })
+      .catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        self.$q.dialog({
+            title: errorCode,
+            message: errorMessage,
+            type: 'negative',
+            color: 'orange-7',
+            class: 'text-grey-8',
+            icon: 'warning',
+            ok: 'Ok',
+            persistent: true
+            
+        }).onOk(()=>{
+          self.login = true
+          self.loginmob = true
+        })        
+        // ...
+      });      
     }
   }
 }
