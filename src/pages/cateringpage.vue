@@ -195,7 +195,7 @@
              </q-card>
         </div>
         </div>    
-      
+
 <!-- END OF MOBILE ONLY -->
 <div v-show="!$q.platform.is.cordova">
       <div class="desktop-only">
