@@ -3,7 +3,7 @@
 <q-page-container>
     <q-page style="background-image: url('statics/pics/foo.jpeg');background-position: center; background-repeat: no-repeat; background-size: cover; position: relative;">
 
-      <div class="fixed-center mobile-only" v-show="splashscreen">
+      <div class="fixed-center cordova-only" v-show="splashscreen">
           <div class="q-pa-sm" >
               <img class="col" style="width:350px;height:100%" src="statics/pics/logo.png">
           </div>

@@ -1,6 +1,7 @@
 <template>
 <q-page>
 <!-- START OF DESKTOP ONLY -->
+<div v-show="!$q.platform.is.cordova">
     <div class="desktop-only">
         <div class="container row">
 <!-- LEFT PART -->
@@ -99,11 +100,12 @@
 
         </div>
     </div>
+</div>
 <!-- END OF DESKTOP ONLY -->
 
 
 <!-- START OF MOBILE ONLY -->
-    <div class="mobile-only">
+    <div class="cordova-only">
         <!-- PARTY TRAY PART -->
         <div class="q-pt-xl">
             <p class="q-px-md text-weight-bold" style="font-size:28px;font-family: 'Domine', serif;">A taste of local organ<br> & seasonal flavours</p>

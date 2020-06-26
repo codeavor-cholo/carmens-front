@@ -1,6 +1,7 @@
 <template>
 <q-page>
 <!-- DESKTOP ONLY -->
+<div v-show="!$q.platform.is.cordova">
     <div class="desktop-only">    
         <div>
             <div class="row q-gutter-md">
@@ -74,10 +75,11 @@
             </div>
             </div> 
     </div>
+</div>
 <!-- END OF DESKTOP ONLY -->
 
 <!-- MOBILE ONLY -->
-    <div class="mobile-only">    
+    <div class="cordova-only">    
         <div>
             <div>
             <div class="q-pt-xl text-center" style="font-size:40px;font-family: 'Domine', serif">PARTY TRAYS</div>
@@ -154,6 +156,7 @@
 
             <q-dialog v-model="addPorder" persistent="">
 <!-- DESKTOP ONLY -->
+<div v-show="!$q.platform.is.cordova">
             <div class="desktop-only">
                 <q-card class="text-center text-weight-bold" style="min-width: 400px">
                                 <q-img
@@ -183,10 +186,11 @@
                         </q-card-actions>
                     </q-card>
                 </div>
+</div>
 <!-- END OF DESKTOP ONLY -->
 
 <!-- MOBILE ONLY -->
-            <div class="mobile-only">
+            <div class="cordova-only">
                 <q-card class="text-center text-weight-bold">
                                 <q-img
                                     :src="this.selectedPorder.foodPic"

@@ -2,7 +2,7 @@
     <q-page>
 
 <!-- START OF MOBILE -->
-        <div class="mobile-only">
+        <div class="cordova-only">
         <div class="q-pt-xl">
         
         <div>

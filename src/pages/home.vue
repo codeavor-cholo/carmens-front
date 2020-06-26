@@ -1,7 +1,7 @@
 <template>
   <q-layout view="hhh lpR fFf">
 <div v-show="$q.platform.is.cordova || $q.platform.is.mobile">
-        <div class="fixed-center mobile-only" v-show="splashscreen" >
+        <div class="fixed-center cordova-only" v-show="splashscreen" >
           <div class="q-pa-sm" >
               <img class="col" style="width:350px;height:100%" src="statics/pics/carmen-logo.png">
           </div>
@@ -16,6 +16,7 @@
         </div>
 </div>
 <!-- START OF DESKTOP HEADER    -->
+<div v-show="!$q.platform.is.cordova">
     <div class="desktop-only">
       <q-header class="transparent text-white row items-center justify-start" style="height:63px">
         <q-toolbar>
@@ -71,11 +72,12 @@
         </q-toolbar>
       </q-header>
     </div>
+</div>
 <!-- END OF DESKTOP HEADER -->
 
 <!-- START OF MOBILE HEADER    -->
 <div v-show="$q.platform.is.cordova || $q.platform.is.mobile">
-    <div class="mobile-only" v-show="!splashscreen">
+    <div class="cordova-only" v-show="!splashscreen">
       <q-header class="transparent text-white" style="height:63px">
         <q-toolbar>
 
@@ -131,6 +133,7 @@
 <!-- END OF MOBILE HEADER -->
 
 <!-- START OF QPAGE CONTAINER DESKTOP -->
+<div v-show="!$q.platform.is.cordova ">
     <div class="desktop-only">
     <q-page-container style="background: linear-gradient(to right, #ffffff 50%, #eeeeee 50%)">
         <q-dialog v-model="basket" >
@@ -275,11 +278,12 @@
       <router-view />
     </q-page-container>
     </div>
+</div>
 <!-- END OF QPAGE CONTAINER DESKTOP -->
 
 <!-- START OF QPAGE MOBILE -->
 <div v-show="$q.platform.is.cordova || $q.platform.is.mobile">
-<div class="mobile-only" v-show="!splashscreen">
+<div class="cordova-only" v-show="!splashscreen">
 <q-page-container style="background: linear-gradient(to right, #ffffff 50%, #eeeeee 50%)">
         <q-dialog v-model="basketmob" >
         <div>
@@ -429,7 +433,7 @@
 
 <!-- MOBILE FOOTER -->
 <div v-show="$q.platform.is.cordova || $q.platform.is.mobile">
-  <div class="mobile-only" v-show="!splashscreen">
+  <div class="cordova-only" v-show="!splashscreen">
       <q-footer class="bg-grey-4 text-white">
         <q-toolbar class="row justify-center">
             <div style="color:#E4ACBF">  
