@@ -23,9 +23,17 @@ const routes = [
        { path: '/checkoutmob', component: () => import('pages/checkoutmob.vue') },
        { path: '/mobilehome', component: () => import('pages/mobilehome.vue') },
        { path: '/notification', component: () => import('pages/notification.vue') },
+       { path: '/register', component: () => import('pages/registerPage.vue') },
     ]
   },
   { path: '/login', component: () => import('pages/loginmob.vue') },
+  {
+    path: '/registerMobile',
+    component: () => import('layouts/MyLayout.vue'),
+    children: [
+        { path: '', component: () => import('pages/registerPage.vue') },
+    ]
+  }
 ]
 
 // Always leave this as last one

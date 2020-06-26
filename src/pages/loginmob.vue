@@ -19,14 +19,14 @@
 
 
     <div v-show="!splashscreen">
-    <q-card class="my-card fixed-center shadow-0" style=" top:50%; left:50%; transform: translate(-50%, -50%); height:350px; width:320px; box-sizing: border-box; background:rgba(255,255,255,0.7) ; border-radius:25px;">
+    <q-card class="my-card fixed-center shadow-0" style=" top:50%; left:50%; transform: translate(-50%, -50%); height:auto; width:320px; box-sizing: border-box; background:rgba(255,255,255,0.7) ; border-radius:25px;">
         <div>
           <q-icon name="person" class="bg-white text-pink-4 q-pa-md" style="font-size:100px;overflow:hidden; position:absolute; top:calc(-100px/2); left:calc(50% - 50px); border-radius:50%; "></q-icon>
           <!-- <q-img src="statics/bg/3.png"  :ratio="1" basic spinner-color="white"></q-img> -->
         </div>
         <div class="text-pink-5" style="margin:0; padding:55px 0 0;text-align:center;font-size:30px;font-family: 'Simonetta', serif;"><b>LOGIN HERE</b></div>
       <q-card-section>
-        <q-input color="pink-4" outlined style="width:290px; margin-bottom: 20px; border: none; border-bottom: 1px solid #fff; background: white; outline:none; height:50px; color:#fff; font-size: 16px;" v-model="email" type="text" prefix="Username:">
+        <q-input color="pink-4" outlined style="width:290px; margin-bottom: 20px; border: none; border-bottom: 1px solid #fff; background: white; outline:none; height:50px; color:#fff; font-size: 16px;" v-model="email" type="text" prefix="Email:">
         <template v-slot:append>
           <q-avatar>
             <q-icon name="person" />
@@ -49,8 +49,11 @@
         <div class="row q-px-md items-center">                     
           <q-btn color="grey" class="col" label="LOGIN VIA GOOGLE" @click="loginGoogle"/>
           <div class="text-overline text-center col-2">OR</div>
-          <q-btn color="teal" label="LOGIN account" class="col"/>
-          </div>
+          <q-btn color="teal" label="LOGIN account" class="col" @click="loginUserSignIn"/>
+        </div>
+        <div class="row q-px-md q-my-md items-center">
+          Don't have a account ? <q-btn color="teal" flat label="create here" @click="$router.push('/registerMobile')" />
+        </div>
       </q-card-actions>
     </q-card>
 <!-- 
@@ -99,7 +102,7 @@ export default {
                 console.log('user',gg.displayName)
                 self.show = false
                 self.displayName = gg.displayName
-                
+                self.$router.push('/')
               } else {
                 self.show = true
               }
@@ -163,8 +166,37 @@ export default {
         })
         // ...
         });
+    },
+    loginUserSignIn(){
+      let self = this
+      this.$firebase.auth().signInWithEmailAndPassword(this.email, this.password)
+      .then(()=>{
+        self.login = false
+        self.loginmob = false
+      })
+      .catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        self.$q.dialog({
+            title: errorCode,
+            message: errorMessage,
+            type: 'negative',
+            color: 'orange-7',
+            class: 'text-grey-8',
+            icon: 'warning',
+            ok: 'Ok',
+            persistent: true
+            
+        }).onOk(()=>{
+          self.login = true
+          self.loginmob = true
+        })        
+        // ...
+      });      
     }
-    }
+    },
+
 
 }
 </script>
