@@ -193,7 +193,7 @@
              </q-card>
         </div>
         </div>    
-      </div>
+
 <!-- END OF MOBILE ONLY -->
 
       <div class="desktop-only">
