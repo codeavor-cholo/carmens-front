@@ -1,6 +1,7 @@
 <template>
     <q-page>
 <!-- START OF DESKTOP -->
+<div v-show="!$q.platform.is.cordova">
         <div class="desktop-only">
         <div class="container row q-gutter-md q-pt-xl q-pb-xl">
         
@@ -168,6 +169,7 @@
         </div>
         </div>
         </div>
+</div>
 <!-- END OF DESKTOP -->
 
     </q-page>    
